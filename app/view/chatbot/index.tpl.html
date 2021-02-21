@@ -1,0 +1,581 @@
+
+
+<style>
+    :root {
+    --left-msg-bg: #ececec;
+    --right-msg-bg: #579ffb;
+}
+
+.msg {
+    display: flex;
+    align-items: flex-end;
+    margin-bottom: 10px;
+}
+
+.msg:last-of-type {
+    margin: 0;
+}
+
+.msg-img {
+    width: 50px;
+    height: 50px;
+    margin-right: 10px;
+    background: #ddd;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+    border-radius: 50%;
+}
+
+.msg-bubble {
+    max-width: 450px;
+    padding: 15px;
+    border-radius: 15px;
+    background: var(--left-msg-bg);
+}
+
+.msg-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.msg-info-name {
+    margin-right: 10px;
+    font-weight: bold;
+}
+
+.msg-info-time {
+    font-size: 0.85em;
+}
+
+.left-msg .msg-bubble {
+    border-bottom-left-radius: 0;
+}
+
+.right-msg {
+    flex-direction: row-reverse;
+}
+
+.right-msg .msg-bubble {
+    background: var(--right-msg-bg);
+    color: #fff;
+    border-bottom-right-radius: 0;
+}
+
+.right-msg .msg-img {
+    margin: 0 0 0 10px;
+}
+
+
+.chatbox-popup button, .chatbox-panel button {
+    color: inherit;
+    background-color: transparent;
+    border: 0;
+    outline: 0 !important;
+    cursor: pointer;
+}
+
+button.chatbox-open {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    width: 52px;
+    height: 52px;
+    color: #fff;
+    background-color: #0360a5;
+    background-position: center center;
+    background-repeat: no-repeat;
+    box-shadow: 12px 15px 20px 0 rgba(46, 61, 73, 0.15);
+    border: 0;
+    border-radius: 50%;
+    cursor: pointer;
+    margin: 16px;
+}
+
+button.chatbox-close {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    width: 52px;
+    height: 52px;
+    color: #fff;
+    background-color: #0360a5;
+    background-position: center center;
+    background-repeat: no-repeat;
+    box-shadow: 12px 15px 20px 0 rgba(46, 61, 73, 0.15);
+    border: 0;
+    border-radius: 50%;
+    cursor: pointer;
+    display: none;
+    margin: 16px calc(2 * 16px + 52px) 16px 16px;
+}
+
+.chatbox-popup textarea, .chatbox-panel textarea {
+    box-sizing: border-box;
+    width: 100%;
+    margin: 0;
+    height: calc(16px + 16px / 2);
+    padding: 0 calc(16px / 2);
+    font-family: inherit;
+    font-size: 16px;
+    line-height: calc(16px + 16px / 2);
+    color: #888;
+    border: 0;
+    outline: 0 !important;
+    resize: none;
+    overflow: hidden;
+}
+
+.chatbox-popup textarea::-webkit-input-placeholder, .chatbox-panel textarea::-webkit-input-placeholder {
+    color: #888;
+}
+
+.chatbox-popup textarea::-moz-placeholder, .chatbox-panel textarea::-moz-placeholder {
+    color: #888;
+}
+
+.chatbox-popup textarea:-ms-input-placeholder, .chatbox-panel textarea:-ms-input-placeholder {
+    color: #888;
+}
+
+.chatbox-popup textarea::-ms-input-placeholder, .chatbox-panel textarea:-ms-input-placeholder {
+    color: #888;
+}
+
+.chatbox-popup textarea::placeholder, .chatbox-panel textarea:-ms-input-placeholder {
+    color: #888;
+}
+
+.chatbox-popup {
+    display: -webkit-box;
+    display: flex;
+    position: fixed;
+    box-shadow: 5px 5px 25px 0 rgba(46, 61, 73, 0.2);
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    flex-direction: column;
+    display: none;
+    bottom: calc(2 * 16px + 52px);
+    right: 16px;
+    width: 377px;
+    height: auto;
+    background-color: #fff;
+    border-radius: 16px;
+}
+
+.chatbox-popup .chatbox-popup__header {
+    box-sizing: border-box;
+    display: -webkit-box;
+    display: flex;
+    width: 100%;
+    padding: 16px;
+    color: #fff;
+    background-color: #0360a5;
+    -webkit-box-align: center;
+    align-items: center;
+    justify-content: space-around;
+    border-top-right-radius: 12px;
+    border-top-left-radius: 12px;
+}
+
+.chatbox-popup .chatbox-popup__header .chatbox-popup__avatar {
+    margin-top: -32px;
+    background-color: #0360a5;
+    border: 5px solid rgba(0, 0, 0, 0.1);
+    border-radius: 50%;
+}
+
+.chatbox-popup .chatbox-popup__main {
+    box-sizing: border-box;
+    width: 100%;
+    padding: calc(2 * 16px) 16px;
+    line-height: calc(16px + 16px / 2);
+    color: #888;
+}
+
+.chatbox-popup .chatbox-popup__footer {
+    box-sizing: border-box;
+    display: -webkit-box;
+    display: flex;
+    width: 100%;
+    padding: 16px;
+    border-top: 1px solid #ddd;
+    -webkit-box-align: center;
+    align-items: center;
+    justify-content: space-around;
+    border-bottom-right-radius: 12px;
+    border-bottom-left-radius: 12px;
+}
+
+.chatbox-panel {
+    display: -webkit-box;
+    display: flex;
+    position: fixed;
+    box-shadow: 5px 5px 25px 0 rgba(46, 61, 73, 0.2);
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    flex-direction: column;
+    display: none;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 377px;
+    background-color: #fff;
+}
+
+.chatbox-panel .chatbox-panel__header {
+    box-sizing: border-box;
+    display: -webkit-box;
+    display: flex;
+    width: 100%;
+    padding: 16px;
+    color: #fff;
+    background-color: #0360a5;
+    -webkit-box-align: center;
+    align-items: center;
+    justify-content: space-around;
+    -webkit-box-flex: 0;
+    flex: 0 0 auto;
+}
+
+.chatbox-panel .chatbox-panel__main {
+    box-sizing: border-box;
+    width: 100%;
+    padding: calc(2 * 16px) 16px;
+    line-height: calc(16px + 16px / 2);
+    color: #888;
+    -webkit-box-flex: 1;
+    flex: 1 1 auto;
+}
+
+.chatbox-panel .chatbox-panel__footer {
+    box-sizing: border-box;
+    display: -webkit-box;
+    display: flex;
+    width: 100%;
+    padding: 16px;
+    border-top: 1px solid #ddd;
+    -webkit-box-align: center;
+    align-items: center;
+    justify-content: space-around;
+    -webkit-box-flex: 0;
+    flex: 0 0 auto;
+}
+
+</style>
+
+
+<button class="chatbox-open">
+    <i class="fa fa-comment fa-2x" aria-hidden="true"></i>
+</button>
+<button class="chatbox-close">
+    <i class="fa fa-close fa-2x" aria-hidden="true"></i>
+</button>
+<section class="chatbox-popup">
+    <header class="chatbox-popup__header">
+        <aside style="flex:3">
+            <img src="#botimg#" class="chatbox-popup__avatar" width="65">
+        </aside>
+        <aside style="flex:8">
+            <h2>Assistente Virtual</h2> #botname# (Online) <span class="pull-right"> Em fase de teste!</span>
+        </aside>
+        <aside style="flex:1">
+            <button class="chatbox-maximize"><i class="fa fa-window-maximize" aria-hidden="true"></i></button>
+        </aside>
+    </header>
+    <main class="chatbox-popup__main j_scroll_chat_popup j_msger_chat">
+    </main>
+    <footer class="chatbox-popup__footer">
+        <aside style="flex:11">
+            <textarea type="text" class="j_bot_text_popup" placeholder="Digite sua pergunta aqui" autofocus></textarea>
+        </aside>
+        <aside style="flex:1;color:#888;text-align:center;">
+            <a href="javascript:" class="j_bot_send_popup"><i class="fa fa-paper-plane"></i></a>
+        </aside>
+    </footer>
+</section>
+<section class="chatbox-panel">
+    <header class="chatbox-panel__header">
+        <aside style="flex:3">
+            <img src="#botimg#" class="chatbox-popup__avatar" width="65">
+        </aside>
+        <aside style="flex:6">
+            <h3>Assistente Virtual</h3> #botname# (Online) <span class="pull-right"> Em fase de teste!</span>
+        </aside>
+        <aside style="flex:3;text-align:right;">
+            <button class="chatbox-minimize"><i class="fa fa-window-restore" aria-hidden="true"></i></button>
+            <button class="chatbox-panel-close"><i class="fa fa-close" aria-hidden="true"></i></button>
+        </aside>
+    </header>
+    <main class="chatbox-panel__main j_scroll_chat_panel j_msger_chat" style="flex:1">
+    </main>
+    <footer class="chatbox-panel__footer">
+        <aside style="flex:11">
+            <textarea type="text" class="j_bot_text_panel" placeholder="Digite sua pergunta aqui" autofocus></textarea>
+        </aside>
+        <aside style="flex:1;color:#888;text-align:center;">
+            <a href="javascript:" class="j_bot_send_panel"><i class="fa fa-paper-plane"></i></a>
+        </aside>
+    </footer>
+</section>
+<div class="j_data_chatbot" data-username="#username#" data-userid="#userid#" data-userimg="#userimg#"
+    data-botname="#botname#" data-botimg="#botimg#"></div>
+
+<!-- inport o jquery -->
+<script
+  src="https://code.jquery.com/jquery-3.5.1.min.js"
+  integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0="
+  crossorigin="anonymous"></script>
+<script>
+    const baseUrl = "";
+    const msgerChat = $(".j_msger_chat");
+    const datachat = $(".j_data_chatbot");
+    const BOT_NAME = datachat[0].dataset.botname;
+    const BOT_IMG = datachat[0].dataset.botimg;
+    const PERSON_IMG = datachat[0].dataset.userimg;
+    const PERSON_NAME = datachat[0].dataset.username;
+    const PERSON_ID = datachat[0].dataset.userid;
+    const patch = baseUrl + "bot";
+    const imgloading = baseUrl + 'public/assets/img/carregando.gif';
+    const open = ".chatbox-open";
+    const close = ".chatbox-close";
+    const popup = ".chatbox-popup";
+    const popup_close = popup + ", " + close;
+    const maximize = ".chatbox-maximize";
+    const minimize = ".chatbox-minimize";
+    const popup_open_close = popup + ", " + open + ", " + close;
+    const panel = ".chatbox-panel";
+    const panel_close = ".chatbox-panel-close";
+    const scroll_popup = '.j_scroll_chat_popup';
+    const scroll_panel = '.j_scroll_chat_panel';
+    const send_popup = '.j_bot_send_popup';
+    const text_popup = '.j_bot_text_popup';
+    const send_panel = '.j_bot_send_panel';
+    const text_panel = '.j_bot_text_panel';
+    const bot_option = '.j_bot_option';
+
+    //Enviar e receber dados do bot
+    function send_bot(classe_input) {
+
+        let time = hora();
+        let msgerInput = $(classe_input);
+        let personMsg = msgerInput.val();
+        let data = {
+            "driver": "web",
+            "userId": PERSON_ID,
+            "message": personMsg,
+        };
+
+        appendMessage(PERSON_NAME, PERSON_IMG, "right", { "type": "text", "text": personMsg }, time);
+
+        $.ajax({
+            url: patch,
+            data: data,
+            type: 'POST',
+            dataType: 'JSON',
+            beforeSend: function () {
+                appendMsgWait(true);
+                msgerInput.val('');
+            },
+            success: function (result) {
+
+                if (result.status === 200) {
+                    result.messages.forEach(function (messages) {
+                        botResponse(messages, time);
+                    });
+                } else {
+                    botResponse({ "type": "text", "text": "Opss! Volte mais tarde!" }, time);
+                }
+            }
+        });
+        return false;
+    }
+
+    //Enviar e receber dados do bot conforme opção
+    function send_bot_option(text) {
+
+        let time = hora();
+        let data = {
+            "driver": "web",
+            "userId": PERSON_ID,
+            "message": text.value,
+        };
+
+        appendMessage(PERSON_NAME, PERSON_IMG, "right", { "type": "text", "text": text.text }, time);
+
+        $.ajax({
+            url: patch,
+            data: data,
+            type: 'POST',
+            dataType: 'JSON',
+            beforeSend: function () {
+                appendMsgWait(true);
+            },
+            success: function (result) {
+
+                if (result.status === 200) {
+                    result.messages.forEach(function (messages) {
+                        botResponse(messages, time);
+                    });
+                } else {
+                    botResponse({ "type": "text", "text": "Opss! Volte mais tarde!" }, time);
+                }
+            }
+        });
+        return false;
+    }
+
+    //html padrão das mensagens
+    function appendMessage(name, avatar, side, messages, time) {
+        let content = "";
+
+        if (messages.type === "text") {
+
+            if (messages.attachment === null || messages.attachment === undefined) {
+                content += '<div class="msg-text"><p>' + messages.text + '</p></div>';
+            } else if (messages.attachment.type === "image") {
+                content += '<p><img src="' + messages.attachment.url + '" alt="Imagem"><br><b>'
+                    + messages.attachment.title + '</b></p><p>' + messages.text + '</p>';
+            } else if (messages.attachment.type === "audio") {
+                content += '<audio controls style="width: 250px">'
+                    + '<source src="' + messages.attachment.url + '" type="audio/mpeg">'
+                    + messages.attachment.title
+                    + '</audio>';
+            }
+
+        } else if (messages.type === "actions") {
+            content += '<div class="msg-text"><p>' + messages.text + '</p><p>';
+
+            messages.actions.forEach(function (action) {
+                if (action.type === "button") {
+                    content += '<a class="'
+                        + action.additional.classes + '" data-value="'
+                        + action.value + '">'
+                        + action.text + '</a> ';
+                }
+            });
+
+            content += '</p></div>';
+        }
+
+        msgerChat.append('<div class="msg ' + side + '-msg">' +
+            '<div class="msg-img" style="background-image: url(' + avatar + ')"></div>' +
+            '<div class="msg-bubble">' +
+            '<div class="msg-info">' +
+            '<div class="msg-info-name">' + name + '</div>' +
+            '<div class="msg-info-time">' + time + '</div>' +
+            '</div>' +
+            '<div class="msg-text">' + content + '</div>' +
+            '</div>' +
+            '</div>');
+        addScroll();
+
+        //Enviar ao clicar no btn de opção do bot
+        $(bot_option).click(function () {
+            let data = { "text": $(this)[0].innerText, "value": $(this)[0].dataset.value };
+            send_bot_option(data);
+        });
+    }
+
+    //html da mensagem em espera
+    function appendMsgWait(set) {
+
+        const msgWait = $('.j_MsgWait');
+        const msgHTML = '<div class="msg left-msg j_MsgWait">' +
+            '<div class="msg-img" style="background-image: url(' + BOT_IMG + ')"></div>' +
+            '<div class="msg-bubble">' +
+            '<div class="msg-info">' +
+            '<div class="msg-info-name">' + BOT_NAME + '</div>' +
+            '</div>' +
+            '<div class="msg-text"><img src="' + imgloading + '" width="100" alt="Imagem"></div>' +
+            '</div>' +
+            '</div>';
+
+        if (set) {
+            msgerChat.append(msgHTML);
+        } else {
+            msgWait.remove();
+        }
+    }
+
+    //Mensagem do bot
+    function botResponse(messages, time) {
+
+        setTimeout(() => {
+            appendMsgWait(false);
+            appendMessage(BOT_NAME, BOT_IMG, "left", messages, time);
+        }, 1000);
+        addScroll();
+    }
+
+    //Adicionar mais scroll
+    function addScroll() {
+        document.querySelector(scroll_popup).scrollTop += 500;
+        document.querySelector(scroll_panel).scrollTop += 550;
+    }
+
+    //Hora e minutos da mensagem
+    function hora() {
+        let now = new Date;
+        return now.getHours() + ":" + ("0" + now.getMinutes()).slice(-2);
+    }
+
+    /* ======= widget do chatbox ======= */
+
+    $(open).click(function () {
+        $(popup_close).fadeIn()
+    });
+
+    $(close).click(function () {
+        $(popup_close).fadeOut()
+    });
+
+    $(maximize).click(function () {
+        $(popup_open_close).fadeOut();
+        $(panel).fadeIn();
+        $(panel).css({ display: "flex" });
+    });
+
+    $(minimize).click(function () {
+        $(panel).fadeOut();
+        $(popup_open_close).fadeIn();
+    });
+
+    $(panel_close).click(function () {
+        $(panel).fadeOut();
+        $(open).fadeIn();
+    });
+
+    /* ================================= */
+
+    //Scroll do chat
+    $(scroll_popup).slimScroll({ height: '300px' });
+    $(scroll_panel).slimScroll({ height: '500px' });
+
+    //Enviar ao clicar no btn - popup
+    $(send_popup).click(function () {
+        send_bot(text_popup);
+    });
+
+    //Enviar ao pressionar Enter na caixa de msg - popup
+    $(text_popup).keypress(function (e) {
+        if (e.which === 13) {
+            send_bot(text_popup);
+        }
+    });
+
+    //Enviar ao clicar no btn - panel
+    $(send_panel).click(function () {
+        send_bot(text_panel);
+    });
+
+    //Enviar ao pressionar Enter na caixa de msg - panel
+    $(text_panel).keypress(function (e) {
+        if (e.which === 13) {
+            send_bot(text_panel);
+        }
+    });
+
+</script>
