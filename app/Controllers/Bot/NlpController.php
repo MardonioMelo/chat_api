@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) 2020.  Mardônio M. Filho STARTMELO DESENVOLVIMENTO WEB.
  */
@@ -41,8 +42,8 @@ class NlpController
      * NplController constructor.
      */
     public function __construct()
-    {     
-            
+    {
+
         $this->botModel = new BotModel();
         $this->tokP = new WhitespaceAndPunctuationTokenizer(); // será dividido em tokens com pontuação
         $this->tset = new TrainingSet(); // manterá os documentos de treinamento
@@ -115,20 +116,23 @@ class NlpController
             // ---------- Previsão ----------------
             $correct = 0;
             $intent = "";
-            $pre = "";
-            foreach ($testing as $d) {              
+            $pre = "<br>";
+            $match = "";
+            foreach ($testing as $d) {
                 $intent = $cls->classify(
                     $this->returnClasses($training), // todas as classes possíveis
                     $this->tokDocument($d[1]) // doc/msg do user
                 );
-                if ((int)$intent === (int)$d[0]):
+                if ((int)$intent === (int)$d[0]) :
                     $correct++;
-                    $pre .= ', ' . $d[2];
+                    $match .= $d[2] . ", ";
                 endif;
+
+                $pre .= "Teste " . $d[2] . " - Acurácia: " . (100 * $correct) / count($testing) . "%<br>";
             }
 
             // ---------- Resposta ----------------
-            $this->setResponse("Teste: " . $pre, $intent, $this->data[$intent]['entitie'], (100 * $correct) / count($testing));
+            $this->setResponse($pre, $intent, $this->data[$intent]['entitie'], (100 * $correct) / count($testing));
         } else {
             $this->setResponse("function", "notUnderstand", "null");
         }
@@ -140,7 +144,7 @@ class NlpController
      * @return bool
      */
     protected function dataTraining($dataTokens)
-    {      
+    {
         $this->botModel->exeReadArray($dataTokens);
         return $this->botModel->getResult();
     }
@@ -149,9 +153,9 @@ class NlpController
      * @param $data
      */
     protected function setTraining($data)
-    {     
+    {
         foreach ($data as $d) {
-            $exemples = json_decode($d->bot_exemples, true)['exemples'];          
+            $exemples = json_decode($d->bot_exemples, true)['exemples'];
 
             foreach ($exemples as $ex) {
                 $this->tset->addDocument($d->bot_intent, $this->tokDocument($ex)); // classe e documento
@@ -300,6 +304,4 @@ class NlpController
     {
         return json_encode($this->response);
     }
-
-
 }
