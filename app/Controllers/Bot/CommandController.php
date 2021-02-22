@@ -60,7 +60,7 @@ class CommandController
     public function setCommand()
     {
         $command = $this->botman->getMessage()->getExtras('apiIntent');
-        $reply = (string)$this->botman->getMessage()->getExtras('apiReply');
+        $reply = (string)$this->botman->getMessage()->getExtras('apiReply');       
 
         if ($reply === "function") {
             $this->$command();
@@ -92,6 +92,14 @@ class CommandController
     public function listCommands()
     {
         $this->botman->reply("Lista de comandos que eu entendo: <small style='font-size:20px'>&#129299;</small> {$this->commands()}");
+    }
+
+    /**
+     * Boas vindas
+     */
+    public function cumprimento()
+    {
+        $this->botman->reply($this->botModel->cumprimento($this->nameUser));
     }
 
     /**
@@ -262,7 +270,7 @@ class CommandController
     {
         $img = new UtilitiesController($this->botman);
         $img->img(
-            'http://sisgesatec/public/uploads/uuid5e38d6cf31a78/2020/02/logo.png',
+            'link da imagem',
             "veja essa imagem",
             "Foto"
         );
@@ -275,7 +283,7 @@ class CommandController
     {
         $audio = new UtilitiesController($this->botman);
         $audio->audio(
-            'http://sisgesatec/public/assets/audio/ola.mp3',
+            'link do arquivo mp3',
             "veja essa imagem"
         );
     }

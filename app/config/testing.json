@@ -1,32 +1,32 @@
 {
   "testing": [
     [
-      "cal_frete",
+      "fretePrecoPrazo",
       "Bom dia! meu nome é jurema e gostaria de verificar o frete",
       "1"
     ],
     [
-      "cal_frete",
+      "fretePrecoPrazo",
       "Bom dia! gostaria de calcular o frete",
       "2"
     ],
     [
-      "cal_frete",
+      "fretePrecoPrazo",
       "Calcular o frete",
       "3"
     ],
     [
-      "cal_frete",
+      "fretePrecoPrazo",
       "Calcular o meu frete por favor!",
       "4"
     ],
     [
-      "cal_frete",
+      "fretePrecoPrazo",
       "Meu nome é ramyla, você poderia me ajudar a calcular o frete do pedido?",
       "5"
     ],
     [
-      "cal_frete",
+      "fretePrecoPrazo",
       "fala vei, quero calcular o envio",
       "6"
     ]

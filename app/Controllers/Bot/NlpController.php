@@ -116,20 +116,25 @@ class NlpController
             // ---------- Previsão ----------------
             $correct = 0;
             $intent = "";
-            $pre = "<br>";
+            $pre = "<br>";     
             $match = "";
+            
             foreach ($testing as $d) {
+
                 $intent = $cls->classify(
                     $this->returnClasses($training), // todas as classes possíveis
                     $this->tokDocument($d[1]) // doc/msg do user
                 );
-                if ((int)$intent === (int)$d[0]) :
-                    $correct++;
-                    $match .= $d[2] . ", ";
+                if ($intent === $d[0]) :
+                    $correct++; 
+                    $match = "Acerto.";
+                else:
+                    $match = "Erro.";
                 endif;
-
-                $pre .= "Teste " . $d[2] . " - Acurácia: " . (100 * $correct) / count($testing) . "%<br>";
+                $pre .= "Teste " . $d[2] . " - Intent:  $intent - Resultado: $match<br>" ;
             }
+
+            $pre .= "Acuracy: " . (100 * $correct) / count($testing) . "%<br>";
 
             // ---------- Resposta ----------------
             $this->setResponse($pre, $intent, $this->data[$intent]['entitie'], (100 * $correct) / count($testing));
