@@ -29,6 +29,24 @@ class BotModel
     }
 
     /**
+     * Bom turno
+     * @return string
+     */
+    public function cumprimento($nameUser)
+    {
+        $hr = date(" H ");
+        if ($hr >= 12 && $hr < 18) {
+            $resp = "Boa tarde! <small style='font-size:20px'>&#128515;</small>";
+        } else if ($hr >= 0 && $hr < 12) {
+            $resp = "Bom dia! <small style='font-size:20px'>&#128515;</small>";
+        } else {
+            $resp = "Boa noite {$nameUser}! <small style='font-size:20px'>&#128564;</small>";
+        }
+
+        return $resp;
+    }
+
+    /**
      * Faz uma conta simples tipo 2 + 2
      * @param $text
      * @param $nameUser
