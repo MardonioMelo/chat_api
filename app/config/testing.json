@@ -21,12 +21,12 @@
       "4"
     ],
     [
-      "cal_frete",
+      "fretePrecoPrazo",
       "Meu nome é ramyla, você poderia me ajudar a calcular o frete do pedido?",
       "5"
     ],
     [
-      "cal_frete",
+      "fretePrecoPrazo",
       "fala vei, quero calcular o envio",
       "6"
     ]

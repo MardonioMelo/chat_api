@@ -36,7 +36,7 @@ class CustomMiddleware implements Captured, Sending, Received, Heard, Matching
             $result = json_decode($this->nlp->getResponse());
 
         } else {
-            $this->nlp->start(true);
+            $this->nlp->start(true); //Informe true para modo de teste ou deixe vazio pata produção 
             $result = json_decode($this->nlp->getResponse());
         }
 

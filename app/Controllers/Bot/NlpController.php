@@ -118,20 +118,19 @@ class NlpController
             $intent = "";
             $pre = "<br>";     
             $match = "";
+            
             foreach ($testing as $d) {
 
                 $intent = $cls->classify(
                     $this->returnClasses($training), // todas as classes possíveis
                     $this->tokDocument($d[1]) // doc/msg do user
                 );
-
                 if ($intent === $d[0]) :
                     $correct++; 
                     $match = "Acerto.";
                 else:
                     $match = "Erro.";
                 endif;
-
                 $pre .= "Teste " . $d[2] . " - Intent:  $intent - Resultado: $match<br>" ;
             }
 
