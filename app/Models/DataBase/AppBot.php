@@ -5,8 +5,8 @@ namespace App\Models\DataBase;
 use CoffeeCode\DataLayer\DataLayer;
 
 /**
- * Class responsável pela tabela app_bot
- */
+   * Class responsável pela tabela app_bot
+   */
 class AppBot extends DataLayer
 {
   private $Error;
@@ -34,7 +34,11 @@ class AppBot extends DataLayer
 
   /**
    * Consulta com busca na tabela por coluna
-   */
+   *
+   * @param string $col
+   * @param string $search
+   * @return void
+   */ 
   public function readCol($col, $search)
   {
     $read = $this->find($col, $search)->fetch(true);

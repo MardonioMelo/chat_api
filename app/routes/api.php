@@ -24,7 +24,7 @@ $app->add(function ($request, $handler) {
 
 
 //Rotas GET
-$app->get('/', Api::class . ":home");
+$app->get('/', Home::class . ":home");
 //$app->get(APP_CONFIG['api_v']. '/home/{id}', Api::class . ":home"); 
 
 
