@@ -135,18 +135,22 @@ class BotModel
     public function createExemple($bot_intent, $bot_entitie, $bot_exemples, $bot_reply)
     {
         if (!empty($bot_intent) || !empty($bot_entitie) || !empty($bot_exemples) || !empty($bot_reply)) {
-           
-            $this->appbot->bot_intent = $bot_intent;
-            $this->appbot->bot_entitie = $bot_entitie;
-            $this->appbot->bot_exemples = '{"exemples": ["' . implode('","', $bot_exemples) . '"]}';
-            $this->appbot->bot_reply = $bot_reply;
 
-            var_dump($this->appbot->bot_exemples);
+            $create = new AppBot;
+            $create->bot_intent = $bot_intent;
+            $create->bot_entitie = $bot_entitie;
+            $create->bot_exemples = '{"exemples": ["' . implode('","', $bot_exemples) . '"]}';
+            $create->bot_reply = $bot_reply;
 
-            // $this->appbot->save();
-
-            $this->Result = true;
-            $this->Error = "Cadastro realizado com sucesso!";
+           $result = $create->save();           
+          
+            if (!$result) {
+                $this->Result = false;
+                $this->Error = $create->fail()->getMessage();
+            } else {
+                $this->Result = true;
+                $this->Error = "Cadastro realizado com sucesso!";
+            }
         } else {
             $this->Result = false;
             $this->Error = "Não foi possível cadastrar, informe todos os parâmetros!";

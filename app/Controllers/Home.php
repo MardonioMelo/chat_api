@@ -11,11 +11,12 @@ use App\Models\BotModel;
  */
 class Home
 {
+
     private $BotModel;
-    private $linkImg;
 
     public function __construct()
     {
+        set_time_limit(3600); // 60 minutos de execução máxima
         $this->BotModel = new BotModel();
     }
 
@@ -39,7 +40,7 @@ class Home
     //Processar dados
     public function processData()
     {
-        $urlJson = '../app/config/refinar_dados/teste.json';
+        $urlJson = '../app/config/refinar_dados/help_chamados.json';
 
         if (is_file($urlJson)) {
             $payload = "Sucesso!";
@@ -64,8 +65,8 @@ class Home
 
                             $cham_bot[$key_anterior]["bot_exemples"] = [trim(strip_tags($cham->inter_historico))];
                         } else {
-                            $cham_bot[$key]["bot_intent"] = "teste";
-                            $cham_bot[$key]["bot_entitie"] = "teste";
+                            $cham_bot[$key]["bot_intent"] = $this->processIntent($cham->cham_assunto);
+                            $cham_bot[$key]["bot_entitie"] = $this->processEntities($this->processIntent($cham->cham_assunto));
                             $cham_bot[$key]["bot_exemples"] = [trim(strip_tags($cham->inter_historico))];
                             $cham_bot[$key]["bot_reply"] = "";
                         }
@@ -76,8 +77,8 @@ class Home
 
                             $cham_bot[$key_anterior]["bot_reply"] = trim(strip_tags($cham->inter_historico));
                         } else {
-                            $cham_bot[$key]["bot_intent"] = "teste";
-                            $cham_bot[$key]["bot_entitie"] = "teste";
+                            $cham_bot[$key]["bot_intent"] = $this->processIntent($cham->cham_assunto);
+                            $cham_bot[$key]["bot_entitie"] = $this->processEntities($this->processIntent($cham->cham_assunto));
                             $cham_bot[$key]["bot_exemples"] = "";
                             $cham_bot[$key]["bot_reply"] = trim(strip_tags($cham->inter_historico));
                         }
@@ -90,8 +91,8 @@ class Home
                     }
 
                     //Abertura do chamado - cliente e funcionário
-                    $cham_bot[$key]["bot_intent"] = "teste";
-                    $cham_bot[$key]["bot_entitie"] = "teste";
+                    $cham_bot[$key]["bot_intent"] = $this->processIntent($cham->cham_assunto);
+                    $cham_bot[$key]["bot_entitie"] = $this->processEntities($this->processIntent($cham->cham_assunto));
                     $cham_bot[$key]["bot_exemples"] = [trim(strip_tags($cham->cham_historico))];
                     $cham_bot[$key]["bot_reply"] = trim(strip_tags($cham->inter_historico));
                 }
@@ -108,7 +109,7 @@ class Home
         }
 
         //Salvar os dados processados
-        $this->saveProcessData($cham_bot);
+       // $this->saveProcessData($cham_bot);
 
         return $payload;
     }
@@ -128,14 +129,88 @@ class Home
      */
     public function saveProcessData($arr)
     {
-        foreach ($arr as $item) {
+        die("Se vc deseja cadastrar novos dados nesse loop, remova essa linha para continuar!");
+
+        foreach ($arr as $key => $item) {
+                   
 
             $this->BotModel->createExemple(
                 $item["bot_intent"],
                 $item["bot_entitie"],
                 $item["bot_exemples"],
                 $item["bot_reply"]
-            );
-        };
+            );          
+
+            echo  $key ." - ". $this->BotModel->getError(). "<br>";   
+        };   
+    }
+
+    /**
+     * Função para obter a intenção conforme o assunto informado
+     *
+     * @param string $assunto
+     * @return void
+     */
+    public function processIntent($assunto)
+    {
+        $intent = [
+            "Dúvidas - Como utilizar algum recurso do sistema" => "duvida_utilizar_recurso",
+            "Dúvidas - Já efetuei o pagamento da mensalidade do Sistema, mas ele não desaparece" => "duvida_pagamento",
+            "Dúvidas - Não consigo completar alguma ação no sistema" => "duvida_completar_action",
+            "Dúvidas - O sistema dá mensagem de mensalidade em atraso" => "duvida_mensalidade_atrasada",
+            "Dúvidas - O sistema está com informações erradas" => "duvida_info_erradas",
+            "Dúvidas - O valor da mensalidade do sistema está errado" => "duvida_valor_mensalidade",
+            "Dúvidas - Outro..." => "duvida_outro",
+            "Dúvidas - Sugestão de recurso" => "duvida_dica_recurso",
+            "Problemas - Como utilizar algum recurso do sistema" => "problema_utilizar_recurso",
+            "Problemas - Estou dando uma informação mas ela não é salva" => "problema_salvar_dados",
+            "Problemas - Já efetuei o pagamento da mensalidade do Sistema, mas ele não desaparece" => "problema_pag_mensalidade",
+            "Problemas - Não consigo completar alguma ação no sistema" => "problema_completar_action",
+            "Problemas - Não estou achando uma página do sistema" => "problema_localizar_page",
+            "Problemas - O sistema dá mensagem de mensalidade em atraso" => "problema_mensalidade_atrasada",
+            "Problemas - O sistema está com informações erradas" => "problema_info_erradas",
+            "Problemas - O sistema mostra um erro ao tentar acessar uma página" => "problema_acessar_page",
+            "Problemas - O valor da mensalidade do sistema está errado" => "problema_valor_mensalidade",
+            "Problemas - Outro..." => "problema_outro",
+            "Problemas - Quando tento preencher uma informação, ela é salva errada" => "problema_dados_errados",
+            "Problemas - Sugestão de recurso" => "problema_dica_recurso"
+        ];
+
+        return $intent[$assunto];
+    }
+
+    /**
+     * Função para obter as entidades conforme o assunto informado
+     * Futuramente as entidades devem ser obtidas baseadas nos exemplos de treinamento
+     *
+     * @param string $assunto
+     * @return void
+     */
+    public function processEntities($intent)
+    {
+        $entitie = [
+            "duvida_utilizar_recurso" => "recurso do sistema",
+            "duvida_pagamento" =>  "pagamento de mensalidade",
+            "duvida_completar_action" => "completar ação",
+            "duvida_mensalidade_atrasada" => "mensalidade em atraso",
+            "duvida_info_erradas" => "informações erradas",
+            "duvida_valor_mensalidade" =>  "valor mensalidade errada",
+            "duvida_outro" => "outra dúvida",
+            "duvida_dica_recurso" => "sugestão de recurso",
+            "problema_utilizar_recurso" => "utilizar recurso",
+            "problema_salvar_dados" => "informação não salva",
+            "problema_pag_mensalidade" => "pagamento da mensalidade",
+            "problema_completar_action" =>  "completar ação",
+            "problema_localizar_page" => "achar uma página",
+            "problema_mensalidade_atrasada" => "mensalidade em atraso",
+            "problema_info_erradas" => "informações erradas",
+            "problema_acessar_page" => "erro ao acessar página",
+            "problema_valor_mensalidade" => "valor da mensalidade errado",
+            "problema_outro" => "outro problema",
+            "problema_dados_errados" => "informação salva errada",
+            "problema_dica_recurso" => "sugestão de recurso"
+        ];
+
+        return $entitie[$intent];
     }
 }

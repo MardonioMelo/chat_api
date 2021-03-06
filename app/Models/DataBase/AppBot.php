@@ -20,14 +20,14 @@ class AppBot extends DataLayer
     //string "TABLE_NAME", array ["REQUIRED_FIELD_1", "REQUIRED_FIELD_2"], string "PRIMARY_KEY", bool "TIMESTAMPS"
     parent::__construct(
       "app_bot",
-      [
-        "bot_id",
+      [       
         "bot_intent",
         "bot_entitie",
         "bot_exemples",
         "bot_reply"
       ],
-      "bot_id"
+      "bot_id",
+      false
     );
   }
 

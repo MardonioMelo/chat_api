@@ -116,9 +116,9 @@ class NlpController
             // ---------- Previsão ----------------
             $correct = 0;
             $intent = "";
-            $pre = "<br>";     
+            $pre = "<br>";
             $match = "";
-            
+
             foreach ($testing as $d) {
 
                 $intent = $cls->classify(
@@ -126,12 +126,12 @@ class NlpController
                     $this->tokDocument($d[1]) // doc/msg do user
                 );
                 if ($intent === $d[0]) :
-                    $correct++; 
+                    $correct++;
                     $match = "Acerto.";
-                else:
+                else :
                     $match = "Erro.";
                 endif;
-                $pre .= "Teste " . $d[2] . " - Intent:  $intent - Resultado: $match<br>" ;
+                $pre .= "Teste " . $d[2] . " - Intent:  $intent - Resultado: $match<br>";
             }
 
             $pre .= "Acuracy: " . (100 * $correct) / count($testing) . "%<br>";
@@ -162,15 +162,20 @@ class NlpController
         foreach ($data as $d) {
             $exemples = json_decode($d->bot_exemples, true)['exemples'];
 
-            foreach ($exemples as $ex) {
-                $this->tset->addDocument($d->bot_intent, $this->tokDocument($ex)); // classe e documento
-            }
+            if (empty($exemples)) {
+               // echo $d->bot_id . "<br>";
+            } else {
 
-            $this->data[$d->bot_intent] = [
-                "id" => $d->bot_id,
-                "entitie" => $d->bot_entitie,
-                "reply" => $d->bot_reply,
-            ];
+                foreach ($exemples as $ex) {
+                    $this->tset->addDocument($d->bot_intent, $this->tokDocument($ex)); // classe e documento
+                }
+
+                $this->data[$d->bot_intent] = [
+                    "id" => $d->bot_id,
+                    "entitie" => $d->bot_entitie,
+                    "reply" => $d->bot_reply,
+                ];
+            }
         }
         $this->modelNB->train($this->ff, $this->tset);   // treinar um modelo Naive Bayes
     }
