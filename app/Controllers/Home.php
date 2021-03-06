@@ -4,19 +4,20 @@ namespace App\Controllers;
 
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
-//use App\Models\Breed;
+use App\Models\BotModel;
 
 /**
  * Classe controller principal da API
  */
-class Api
+class Home
 {
-    private $breed;
-    private $linkImg;
+
+    private $BotModel;
 
     public function __construct()
     {
-       // $this->breed = new Breed();
+        set_time_limit(3600); // 60 minutos de execução máxima
+        $this->BotModel = new BotModel();
     }
 
     /**
@@ -29,131 +30,187 @@ class Api
      */
     public function home(Request $request, Response $response, array $args)
     {
-        $payload = "API para consulta para chatbot de atendimento";
+        $payload = $this->processData();
+
+        //$payload = "API para consulta para chatbot de atendimento";
         $response->getBody()->write($payload);
         return $response;
     }
 
-
-    /**
-     * Lista todas as raças
-     *
-     * @param Request $request
-     * @param Response $response
-     * @param array $args
-     * @return void
-     */
-    public function listBreed(Request $request, Response $response, array $args)
+    //Processar dados
+    public function processData()
     {
-        $offset = (int) $request->getQueryParams()['offset'];
-        $limit = (int) $request->getQueryParams()['limit'];
-        $url = APP_CONFIG['home'] . $request->getUri()->getPath();
-        $pathImgs = "img-raca";
+        $urlJson = '../app/config/refinar_dados/help_chamados.json';
 
-        $read_breeds = $this->breed->find()->limit($limit)->offset($offset)->fetch(true);
-        $count = $this->breed->find()->count();
+        if (is_file($urlJson)) {
+            $payload = "Sucesso!";
 
-        $next = ($limit + $offset) > $count ? null : $url . "?offset=" . ($limit + $offset) . "&limit=" . $limit;
-        $offset_pre = str_replace("-", "", $limit - $offset);
-        $previous = (int) $offset === 0 ? null : $url . "?offset=" . $offset_pre  . "&limit=" . $limit;
+            //Consultar todos os chamados em um arquivo json
+            $getJson = json_decode(file_get_contents($urlJson));
 
-        $results = [];
-        if ($read_breeds !== null) {
-            foreach ($read_breeds as $info_breed) {
+            $id_anterior = 0;
+            $cham_bot = [];
 
-                $path = getcwd() . DIRECTORY_SEPARATOR . $pathImgs . $info_breed->breed_img;
-                if (is_dir($path)) {
-                    $dirImgs = scandir($path);
-                    $img =  $dirImgs[2];
+            //Consultar registros de um chamado
+            foreach ($getJson->data as $key => $cham) {
+
+                if ((int) $id_anterior === (int) $cham->cham_id) {
+
+                    $key_anterior = $key - 1;
+
+                    if ((int) $cham->inter_cli_id > 0) {
+
+                        //Msg cliente       
+                        if (empty($cham_bot[$key_anterior]["bot_exemples"]) && !empty($cham_bot[$key_anterior]["bot_reply"])) {
+
+                            $cham_bot[$key_anterior]["bot_exemples"] = [trim(strip_tags($cham->inter_historico))];
+                        } else {
+                            $cham_bot[$key]["bot_intent"] = $this->processIntent($cham->cham_assunto);
+                            $cham_bot[$key]["bot_entitie"] = $this->processEntities($this->processIntent($cham->cham_assunto));
+                            $cham_bot[$key]["bot_exemples"] = [trim(strip_tags($cham->inter_historico))];
+                            $cham_bot[$key]["bot_reply"] = "";
+                        }
+                    } else {
+
+                        //Msg funcionário
+                        if (empty($cham_bot[$key_anterior]["bot_reply"]) && !empty($cham_bot[$key_anterior]["bot_exemples"])) {
+
+                            $cham_bot[$key_anterior]["bot_reply"] = trim(strip_tags($cham->inter_historico));
+                        } else {
+                            $cham_bot[$key]["bot_intent"] = $this->processIntent($cham->cham_assunto);
+                            $cham_bot[$key]["bot_entitie"] = $this->processEntities($this->processIntent($cham->cham_assunto));
+                            $cham_bot[$key]["bot_exemples"] = "";
+                            $cham_bot[$key]["bot_reply"] = trim(strip_tags($cham->inter_historico));
+                        }
+                    }
                 } else {
-                    $img = "";
+
+                    //Excluir conversa anterior que não casou o exemplo e a resposta
+                    if (empty($cham_bot[$key - 1]["bot_exemples"]) || empty($cham_bot[$key - 1]["bot_reply"])) {
+                        unset($cham_bot[$key - 1]);
+                    }
+
+                    //Abertura do chamado - cliente e funcionário
+                    $cham_bot[$key]["bot_intent"] = $this->processIntent($cham->cham_assunto);
+                    $cham_bot[$key]["bot_entitie"] = $this->processEntities($this->processIntent($cham->cham_assunto));
+                    $cham_bot[$key]["bot_exemples"] = [trim(strip_tags($cham->cham_historico))];
+                    $cham_bot[$key]["bot_reply"] = trim(strip_tags($cham->inter_historico));
                 }
 
-                $results[] = [
-                    "id" => (int) $info_breed->breed_id,
-                    "name" => $info_breed->breed_name,
-                    "url" => $url . "/" . $info_breed->breed_id,
-                    "img" => APP_CONFIG['home'] . "/api-racadog/public/" . $pathImgs . $info_breed->breed_img . "/" . $img
-                ];
+                $id_anterior = $cham->cham_id;
             };
-        }
 
-        $arr = [
-            "count" => $count, //quantidade total de raças
-            "next" => $next, //link para avançar
-            "previous" => $previous, //link para voltar          
-            "results" => $results
-        ];
-
-        $payload = json_encode($arr);
-
-        $response->getBody()->write($payload);
-        return  $response->withHeader('Content-Type', 'application/json; charset=utf-8');
-    }
-
-
-    /**
-     * Consulta dados de uma raça
-     *
-     * @param Request $request
-     * @param Response $response
-     * @param array $args
-     * @return void
-     */
-    public function readBreed(Request $request, Response $response, array $args)
-    {
-        $id = (int) $args['id'];
-        $read_breed = $this->breed->findById($id);
-        $arr = array();
-        $pathImgs = "img-raca";
-
-        if ($read_breed != null) {
-
-            $arr['success'] = true;
-            $arr['id'] = (int) $read_breed->breed_id;
-            $arr["breed"] = [
-                "id"            => (int) $read_breed->breed_id, # id
-                "name"          =>  $read_breed->breed_name, # nome inglês
-                "name_pt"       =>  $read_breed->breed_name_pt, # nome em português
-                "history"       =>  $read_breed->breed_history, # história
-                "about"         =>  $read_breed->breed_about, # sobre
-                "group_akc"     =>  $read_breed->breed_group_akc, # grupo conforme AKC
-                "group_akc_pt"  =>  $read_breed->breed_group_akc_pt, # grupo conforme AKC em português  
-                "group_fci"     =>  $read_breed->breed_group_fci, # grupo conforme FCI
-                "height"        =>  $read_breed->breed_height, # altura em cm
-                "weight"        =>  $read_breed->breed_weight, # peso em kg
-                "size"          =>  $read_breed->breed_size, # porte
-                "lifetime"      =>  $read_breed->breed_lifetime, # tempo de vida
-                "temperament"   =>  $read_breed->breed_temperament, # temperamento do animal
-                "color"         =>  $read_breed->breed_color, # cor em geral predominante
-                "brand_color"   =>  $read_breed->breed_brand_color, # cor das marcas
-                "head"          =>  $read_breed->breed_head, # descrição da cabeça
-                "body"          =>  $read_breed->breed_body,  # descrição do corpo           
-            ];
-
-            $this->linkImg = APP_CONFIG['home'] . "/api-racadog/public/" . $pathImgs . $read_breed->breed_img;
-            $path = getcwd() . DIRECTORY_SEPARATOR . $pathImgs . $read_breed->breed_img;
-
-            if (is_dir($path)) {
-                $dirImgs = scandir($path);
-                unset($dirImgs[0]);
-                unset($dirImgs[1]);
-
-                $arr["album"] = array_map(function ($img) {
-                    return $this->linkImg . '/' . $img;
-                }, array_values($dirImgs));
-            } else {
-                $arr["album"] = "";
+            //Excluir ultima conversa que não casou o exemplo e a resposta
+            if (empty($cham_bot[$key]["bot_exemples"]) || empty($cham_bot[$key]["bot_reply"])) {
+                unset($cham_bot[$key]);
             }
         } else {
-
-            $arr['success'] = false;
-            $arr['error'] = "O ID da raça não existe no banco de dados!";
+            $payload = "O arquivo json não existe ou o caminho está errado!";
         }
 
-        $payload = json_encode($arr);
-        $response->getBody()->write($payload);
-        return  $response->withHeader('Content-Type', 'application/json');
+        //Salvar os dados processados
+       // $this->saveProcessData($cham_bot);
+
+        return $payload;
     }
-  
+
+    /**
+     * Salvar dados no banco
+     * Essa é a estrutura dentro de cada chave no array
+     * array [
+     *  ["bot_intent"] => "string unica"
+     *  ["bot_entitie"] => "string"   
+     *  ["bot_exemples"]=> array["ok1","ok2","ok3"]
+     *  ["bot_reply"]=> "string"
+     * ]
+     * 
+     * @param array $arr
+     * @return void
+     */
+    public function saveProcessData($arr)
+    {
+        die("Se vc deseja cadastrar novos dados nesse loop, remova essa linha para continuar!");
+
+        foreach ($arr as $key => $item) {
+                   
+
+            $this->BotModel->createExemple(
+                $item["bot_intent"],
+                $item["bot_entitie"],
+                $item["bot_exemples"],
+                $item["bot_reply"]
+            );          
+
+            echo  $key ." - ". $this->BotModel->getError(). "<br>";   
+        };   
+    }
+
+    /**
+     * Função para obter a intenção conforme o assunto informado
+     *
+     * @param string $assunto
+     * @return void
+     */
+    public function processIntent($assunto)
+    {
+        $intent = [
+            "Dúvidas - Como utilizar algum recurso do sistema" => "duvida_utilizar_recurso",
+            "Dúvidas - Já efetuei o pagamento da mensalidade do Sistema, mas ele não desaparece" => "duvida_pagamento",
+            "Dúvidas - Não consigo completar alguma ação no sistema" => "duvida_completar_action",
+            "Dúvidas - O sistema dá mensagem de mensalidade em atraso" => "duvida_mensalidade_atrasada",
+            "Dúvidas - O sistema está com informações erradas" => "duvida_info_erradas",
+            "Dúvidas - O valor da mensalidade do sistema está errado" => "duvida_valor_mensalidade",
+            "Dúvidas - Outro..." => "duvida_outro",
+            "Dúvidas - Sugestão de recurso" => "duvida_dica_recurso",
+            "Problemas - Como utilizar algum recurso do sistema" => "problema_utilizar_recurso",
+            "Problemas - Estou dando uma informação mas ela não é salva" => "problema_salvar_dados",
+            "Problemas - Já efetuei o pagamento da mensalidade do Sistema, mas ele não desaparece" => "problema_pag_mensalidade",
+            "Problemas - Não consigo completar alguma ação no sistema" => "problema_completar_action",
+            "Problemas - Não estou achando uma página do sistema" => "problema_localizar_page",
+            "Problemas - O sistema dá mensagem de mensalidade em atraso" => "problema_mensalidade_atrasada",
+            "Problemas - O sistema está com informações erradas" => "problema_info_erradas",
+            "Problemas - O sistema mostra um erro ao tentar acessar uma página" => "problema_acessar_page",
+            "Problemas - O valor da mensalidade do sistema está errado" => "problema_valor_mensalidade",
+            "Problemas - Outro..." => "problema_outro",
+            "Problemas - Quando tento preencher uma informação, ela é salva errada" => "problema_dados_errados",
+            "Problemas - Sugestão de recurso" => "problema_dica_recurso"
+        ];
+
+        return $intent[$assunto];
+    }
+
+    /**
+     * Função para obter as entidades conforme o assunto informado
+     * Futuramente as entidades devem ser obtidas baseadas nos exemplos de treinamento
+     *
+     * @param string $assunto
+     * @return void
+     */
+    public function processEntities($intent)
+    {
+        $entitie = [
+            "duvida_utilizar_recurso" => "recurso do sistema",
+            "duvida_pagamento" =>  "pagamento de mensalidade",
+            "duvida_completar_action" => "completar ação",
+            "duvida_mensalidade_atrasada" => "mensalidade em atraso",
+            "duvida_info_erradas" => "informações erradas",
+            "duvida_valor_mensalidade" =>  "valor mensalidade errada",
+            "duvida_outro" => "outra dúvida",
+            "duvida_dica_recurso" => "sugestão de recurso",
+            "problema_utilizar_recurso" => "utilizar recurso",
+            "problema_salvar_dados" => "informação não salva",
+            "problema_pag_mensalidade" => "pagamento da mensalidade",
+            "problema_completar_action" =>  "completar ação",
+            "problema_localizar_page" => "achar uma página",
+            "problema_mensalidade_atrasada" => "mensalidade em atraso",
+            "problema_info_erradas" => "informações erradas",
+            "problema_acessar_page" => "erro ao acessar página",
+            "problema_valor_mensalidade" => "valor da mensalidade errado",
+            "problema_outro" => "outro problema",
+            "problema_dados_errados" => "informação salva errada",
+            "problema_dica_recurso" => "sugestão de recurso"
+        ];
+
+        return $entitie[$intent];
+    }
 }
