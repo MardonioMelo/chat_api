@@ -32,9 +32,6 @@ class Home
     {
         //$payload = $this->processData();
 
-        $this->BotModel->createExemplesJsonFile('../app/config/app_bot.json', true);
-        echo "<br>" . $this->BotModel->getError() . "<br>";
-
         $payload = "<br> API para chatbot de atendimento!";
         $response->getBody()->write($payload);
         return $response;

@@ -16,7 +16,7 @@ use Requests;
  */
 class BotModel
 {
-    private $Query;
+    
     private $Error;
     private $Result;
     /** @var AppBot */
@@ -158,10 +158,10 @@ class BotModel
     }
 
     /**
-     * Salvar dados no banco obtidos de um arquivo json
-     * Essa é a estrutura dentro de cada chave no array    
+     * Cadastra dados no banco de dados obtidos de um arquivo json  
      * 
-     * @param string $url
+     * @param string $url = URL onde está o arquivo json com os dados na estrutura predefinida.
+     * @param bool $log = Opcional - informe true para imprimir os log de cada cadastro.
      * @return void
      */
     public function createExemplesJsonFile($url, $log = false)
@@ -182,7 +182,7 @@ class BotModel
                 );
 
                 if ($log) {
-                    echo "<br>" . $this->getError();
+                    echo "\n" . $this->getError();
                 }
             };
 
