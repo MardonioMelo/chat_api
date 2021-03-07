@@ -1,0 +1,208 @@
+{
+    "type": "table",
+    "name": "app_bot",
+    "database": "chatbot",
+    "data": [
+        {
+            "bot_id": 1,
+            "bot_intent": "createCliente",
+            "bot_entitie": "cadastrar cliente",
+            "bot_exemples": [
+                "Cadastre um cliente",
+                "Como cadastrar clientes",
+                "Cadastro de clientes",
+                "Como eu cadastro um cliente?",
+                "Quero cadastrar cliente",
+                "hey, você sabe cadastrar clientes?"
+            ],
+            "bot_reply": "function"
+        },
+        {
+            "bot_id": 2,
+            "bot_intent": "cumprimento",
+            "bot_entitie": "bom turno",
+            "bot_exemples": [
+                "Bom dia!",
+                "Boa tarde!",
+                "Boa noite!"
+            ],
+            "bot_reply": "function"
+        },
+        {
+            "bot_id": 3,
+            "bot_intent": "respNegativa",
+            "bot_entitie": "resposta negativa",
+            "bot_exemples": [
+                "vou mais ou menos",
+                "vou ruim",
+                "levando a vista",
+                "com dificuldades",
+                "não estou bem"
+            ],
+            "bot_reply": "Faz parte da vida <small style='font-size:20px'>&#128540;</small>"
+        },
+        {
+            "bot_id": 4,
+            "bot_intent": "fretePrecoPrazo",
+            "bot_entitie": "calcule frete",
+            "bot_exemples": [
+                "Bom dia! Preciso calcular o valor do envio e o prazo de entrega",
+                "verificar o frete e o prazo de entrega",
+                "calcular frete e o prazo de entrega",
+                "Cálcule o frete e veja o prazo de entrega",
+                "preciso do valor do frete e o prazo de entrega",
+                "como cálcular o frete?",
+                "quero verificar o frete",
+                "Você pode cálcular o meu frete?",
+                "como eu faço para cálcular o frente do pedido",
+                "tempo de entrega",
+                "prazo da entrega da encomenda",
+                "quanto tempo leva para entrega uma encomenda na cidade"
+            ],
+            "bot_reply": "function"
+        },
+        {
+            "bot_id": 5,
+            "bot_intent": "oi",
+            "bot_entitie": "oi",
+            "bot_exemples": [
+                "oi",
+                "ola",
+                "oie",
+                "opa",
+                "oiee"
+            ],
+            "bot_reply": "Olá! Tudo bem? <small style='font-size:20px'>&#128515;</small>"
+        },
+        {
+            "bot_id": 6,
+            "bot_intent": "nlp",
+            "bot_entitie": "Testar nlp",
+            "bot_exemples": [
+                "nlp"
+            ],
+            "bot_reply": "function"
+        },
+        {
+            "bot_id": 7,
+            "bot_intent": "stop",
+            "bot_entitie": "Parar conversar",
+            "bot_exemples": [
+                "stop",
+                "cancelar"
+            ],
+            "bot_reply": "function"
+        },
+        {
+            "bot_id": 8,
+            "bot_intent": "meme1",
+            "bot_entitie": "meme rindo",
+            "bot_exemples": [
+                "que legal",
+                "a sim",
+                "ta certo",
+                "interessante",
+                "beleza",
+                "tbm",
+                "de nada"
+            ],
+            "bot_reply": "<small style='font-size:20px'>&#128578;</small>"
+        },
+        {
+            "bot_id": 9,
+            "bot_intent": "tdbem",
+            "bot_entitie": "tudo bem",
+            "bot_exemples": [
+                "como você está?",
+                "tudo bem?",
+                "como vai?",
+                "tudo joia?",
+                "como esta?"
+            ],
+            "bot_reply": "Ótimo e você? <small style='font-size:20px'>&#128526;</small>"
+        },
+        {
+            "bot_id": 10,
+            "bot_intent": "evc ",
+            "bot_entitie": "sim e vc",
+            "bot_exemples": [
+                "bem e vc?",
+                "e você?",
+                "estou ótimo",
+                "estou bem",
+                "bem graças a Deus",
+                "bem tbm",
+                "bem também",
+                "sim e você",
+                "sim e vc"
+            ],
+            "bot_reply": "Ótimo! <small style='font-size:20px'>&#128536;</small>"
+        },
+        {
+            "bot_id": 11,
+            "bot_intent": "nameBot",
+            "bot_entitie": "nome do bot",
+            "bot_exemples": [
+                "qual o seu nome?",
+                "como vc se chama?",
+                "você tem nome?",
+                "qual seu nome de batismo?",
+                "vc tem nome?"
+            ],
+            "bot_reply": "Meu nome é Gê! <small style='font-size:20px'>&#128579;</small>"
+        },
+        {
+            "bot_id": 12,
+            "bot_intent": "obr",
+            "bot_entitie": "elogio",
+            "bot_exemples": [
+                "o seu também",
+                "belo nome",
+                "lindo nome",
+                "bonito nome",
+                "vc é"
+            ],
+            "bot_reply": "Obrigado! <small style='font-size:20px'>&#128521;</small>"
+        },
+        {
+            "bot_id": 13,
+            "bot_intent": "myName",
+            "bot_entitie": "nome do usuario",
+            "bot_exemples": [
+                "meu nome é",
+                "me chamo",
+                "E o meu é"
+            ],
+            "bot_reply": "function"
+        },
+        {
+            "bot_id": 14,
+            "bot_intent": "listCommands",
+            "bot_entitie": "listar comandos",
+            "bot_exemples": [
+                "O que vc faz?",
+                "liste os comandos",
+                "quais os seus comandos",
+                "mostre os comandos",
+                "o que você faz?"
+            ],
+            "bot_reply": "function"
+        },
+        {
+            "bot_id": 15,
+            "bot_intent": "conta",
+            "bot_entitie": "fazer um cálculo",
+            "bot_exemples": [
+                "quanto é 1 + 1",
+                "quanto é 1 - 1",
+                "quanto é 1/ 2",
+                "quanto é 1 * 1",
+                "1 + 1",
+                "1 - 1",
+                "1 * 1",
+                "1/ 1"
+            ],
+            "bot_reply": "function"
+        }
+    ]
+}

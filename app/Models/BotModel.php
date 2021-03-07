@@ -128,22 +128,22 @@ class BotModel
      *
      * @param string $bot_intent = Intenção do exemplo
      * @param string $bot_entitie = Entidades do exemplo
-     * @param array $bot_exemples = Exemplos
+     * @param array $bot_exemples = Exemplos com essa estrutura ["ok1","ok2","ok3"]
      * @param string $bot_reply = Resposta ou Ação
      * @return void
      */
     public function createExemple($bot_intent, $bot_entitie, $bot_exemples, $bot_reply)
     {
-        if (!empty($bot_intent) || !empty($bot_entitie) || !empty($bot_exemples) || !empty($bot_reply)) {
+        if (!empty($bot_intent) && !empty($bot_entitie) && !empty($bot_exemples) && !empty($bot_reply)) {
 
             $create = new AppBot;
             $create->bot_intent = $bot_intent;
             $create->bot_entitie = $bot_entitie;
-            $create->bot_exemples = '{"exemples": ["' . implode('","', $bot_exemples) . '"]}';
+            $create->bot_exemples = json_encode($bot_exemples);
             $create->bot_reply = $bot_reply;
 
-           $result = $create->save();           
-          
+            $result = $create->save();
+
             if (!$result) {
                 $this->Result = false;
                 $this->Error = $create->fail()->getMessage();
@@ -154,6 +154,43 @@ class BotModel
         } else {
             $this->Result = false;
             $this->Error = "Não foi possível cadastrar, informe todos os parâmetros!";
+        }
+    }
+
+    /**
+     * Salvar dados no banco obtidos de um arquivo json
+     * Essa é a estrutura dentro de cada chave no array    
+     * 
+     * @param string $url
+     * @return void
+     */
+    public function createExemplesJsonFile($url, $log = false)
+    {
+        if (is_file($url)) {
+
+            //Consultar todos de um arquivo json
+            $getJson = json_decode(file_get_contents($url));
+
+            //Consultar registros
+            foreach ($getJson->data as $item) {
+
+                $this->createExemple(
+                    $item->bot_intent,
+                    $item->bot_entitie,
+                    $item->bot_exemples,
+                    $item->bot_reply
+                );
+
+                if ($log) {
+                    echo "<br>" . $this->getError();
+                }
+            };
+
+            $this->Result = false;
+            $this->Error = "Sucesso!";
+        } else {
+            $this->Result = false;
+            $this->Error = "O arquivo json não existe ou o caminho está errado!";
         }
     }
 
