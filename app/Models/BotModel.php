@@ -8,6 +8,7 @@ namespace App\Models;
 
 use App\Models\DataBase\AppBot;
 use Requests;
+use CoffeeCode\DataLayer\Connect;
 
 
 /**
@@ -16,7 +17,7 @@ use Requests;
  */
 class BotModel
 {
-    
+
     private $Error;
     private $Result;
     /** @var AppBot */
@@ -124,6 +125,16 @@ class BotModel
     }
 
     /**
+     * Executar consulta de todos de todos os exemplos cadastrados
+     *
+     * @return void
+     */
+    public function exeReadAllExemples()
+    {
+        $this->readAllExemples();
+    }
+
+    /**
      * Função para cadastrar novo exemplo para treinamento
      *
      * @param string $bot_intent = Intenção do exemplo
@@ -195,6 +206,31 @@ class BotModel
     }
 
     /**
+     * Limpar dados de uma tabela   
+     *
+     * @param string $db
+     * @param string $tb
+     * @return void
+     */
+    public function clearTable(string $db, string $tb): void
+    {
+        /*
+        * GET PDO instance AND errors
+        */
+        $connect = Connect::getInstance();
+        $error = Connect::getError();
+
+        /*
+        * CHECK connection/errors
+        */
+        if ($error) {
+            echo $error->getMessage();
+        }
+
+        $connect->query("TRUNCATE {$db}.{$tb}");
+    }
+
+    /**
      * <b>Verificar Ação:</b> Retorna TRUE se ação for efetuada ou FALSE se não. Para verificar erros
      * execute um getError();
      * @return BOOL $Var = True(com os dados) or False
@@ -236,6 +272,18 @@ class BotModel
         $Query['col'] .= ')';
 
         $this->appbot->readCol($Query['col'], $Query['search']);
+        $this->Result = $this->appbot->getResult();
+        $this->Error = $this->appbot->getError();
+    }
+
+    /**
+     * Consultar todos os dados de exemplos cadastrados
+     *
+     * @return void
+     */
+    private function readAllExemples()
+    {
+        $this->appbot->readAll();
         $this->Result = $this->appbot->getResult();
         $this->Error = $this->appbot->getError();
     }

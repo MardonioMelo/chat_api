@@ -71,7 +71,20 @@ class NlpController
     protected function processing()
     {
         // ---------- Dados ----------------
-        $training = $this->dataTraining(array_unique($this->stopW($this->tokP->tokenize($this->query))));
+        $training = $this->dataTraining(
+            array_unique(
+                array_map(
+                    function ($str) {
+                        return  $this->retirarAcentos($str);
+                    },
+                    $this->stopW(
+                        $this->tokP->tokenize(
+                            $this->query
+                        )
+                    )
+                )
+            )
+        );
 
         if ($training) {
 
@@ -150,7 +163,8 @@ class NlpController
      */
     protected function dataTraining($dataTokens)
     {
-        $this->botModel->exeReadArray($dataTokens);
+       // $this->botModel->exeReadArray($dataTokens);
+       $this->botModel->exeReadAllExemples();
         return $this->botModel->getResult();
     }
 
@@ -160,10 +174,11 @@ class NlpController
     protected function setTraining($data)
     {
         foreach ($data as $d) {
-            $exemples = json_decode($d->bot_exemples, true)['exemples'];
+
+            $exemples = json_decode($d->bot_exemples, true);
 
             if (empty($exemples)) {
-               // echo $d->bot_id . "<br>";
+                // echo $d->bot_id . "<br>";
             } else {
 
                 foreach ($exemples as $ex) {
@@ -211,6 +226,36 @@ class NlpController
     {
         return file_exists($url) ?
             json_decode(file_get_contents($url), true)['testing'] : "Arquivo de teste não localizado!";
+    }
+
+    /**
+     * Remover assentos das palavras  e converte para minusculas
+     *
+     * @param string $string
+     * @return void
+     */
+    protected function retirarAcentos($str)
+    {
+        return strtolower(
+            preg_replace(
+                array(
+                    "/(á|à|ã|â|ä)/",
+                    "/(Á|À|Ã|Â|Ä)/",
+                    "/(é|è|ê|ë)/",
+                    "/(É|È|Ê|Ë)/",
+                    "/(í|ì|î|ï)/",
+                    "/(Í|Ì|Î|Ï)/",
+                    "/(ó|ò|õ|ô|ö)/",
+                    "/(Ó|Ò|Õ|Ô|Ö)/",
+                    "/(ú|ù|û|ü)/",
+                    "/(Ú|Ù|Û|Ü)/",
+                    "/(ñ)/",
+                    "/(Ñ)/"
+                ),
+                explode(" ", "a A e E i I o O u U n N"),
+                $str
+            )
+        );
     }
 
     /**

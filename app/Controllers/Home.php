@@ -164,7 +164,20 @@ class Home
             "Problemas - Como utilizar algum recurso do sistema" => "problema_utilizar_recurso",
             "Problemas - Estou dando uma informação mas ela não é salva" => "problema_salvar_dados",
             "Problemas - Já efetuei o pagamento da mensalidade do Sistema, mas ele não desaparece" => "problema_pag_mensalidade",
-            "Problemas - Não consigo completar alguma ação no sistema" => "problema_completar_action",
+            "Problemas - Não consigo completar alguma ação no sistema" => "problema_completar_actionINSERT INTO app_bot (
+                bot_id,
+                bot_intent,
+                bot_entitie,
+                bot_exemples,
+                bot_reply
+              )
+            VALUES (
+                bot_id:int,
+                'bot_intent:varchar',
+                'bot_entitie:varchar',
+                'bot_exemples:longtext',
+                'bot_reply:text'
+              );",
             "Problemas - Não estou achando uma página do sistema" => "problema_localizar_page",
             "Problemas - O sistema dá mensagem de mensalidade em atraso" => "problema_mensalidade_atrasada",
             "Problemas - O sistema está com informações erradas" => "problema_info_erradas",
