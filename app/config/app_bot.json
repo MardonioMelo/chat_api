@@ -9,8 +9,8 @@
             "bot_entitie": "cadastrar cliente",
             "bot_exemples": [
                 "Cadastre um cliente",
-                "Como cadastrar clientes",             
-                "Como eu cadastro um cliente?"              
+                "Como cadastrar clientes",
+                "Como eu cadastro um cliente?"
             ],
             "bot_reply": "function"
         },
@@ -147,9 +147,16 @@
                 "como vc se chama?",
                 "você tem nome?",
                 "qual seu nome de batismo?",
-                "vc tem nome?"
+                "vc tem nome?",
+                "Como se chama?",
+                "qual o seu nome",
+                "eu conheço você",
+                "Quem é Você?",
+                "Qual é o seu nome?",
+                "Nome?",
+                "Como as pessoas te chamam?"
             ],
-            "bot_reply": "Meu nome é Gê! <small style='font-size:20px'>&#128579;</small>"
+            "bot_reply": "Meu nome é Gê, aou um atentante virtual! <small style='font-size:20px'>&#128579;</small>|Você pode me chamar de Gê"
         },
         {
             "bot_id": 12,
@@ -167,7 +174,7 @@
         {
             "bot_id": 13,
             "bot_intent": "myName",
-            "bot_entitie": "nome do usuario",
+            "bot_entitie": "nome do usuário",
             "bot_exemples": [
                 "meu nome é",
                 "me chamo",
@@ -218,7 +225,7 @@
                 "Obrigado",
                 "Obrigada",
                 "Grato",
-                "Grata"    
+                "Grata"
             ],
             "bot_reply": "Disponha, qualquer coisa que precisar, me dá um olá, estou sempre online pra te ajudar!"
         },
@@ -228,9 +235,9 @@
             "bot_entitie": "alunos e recebimento",
             "bot_exemples": [
                 "Como fazer para que os alunos novatos já sejam lançados no sistema e caiam no caixa de recebimento?",
-                "Gostaria que os alunos novatos sejam lançados no sistema e caiam no caixa de recebimento!", 
+                "Gostaria que os alunos novatos sejam lançados no sistema e caiam no caixa de recebimento!",
                 "Poderia me explicar como lançados os alunos e cair no caixa de recebimento?",
-                "Estou tentando fazer com que os alunos novatos sejam lançados no sistema e caiam no caixa de recebimento."                  
+                "Estou tentando fazer com que os alunos novatos sejam lançados no sistema e caiam no caixa de recebimento."
             ],
             "bot_reply": "Basta efetuar a matricula do aluno e automaticamente a ficha financeira será criada aparecendo então no caixa recebimento."
         },
@@ -241,18 +248,18 @@
             "bot_exemples": [
                 "E possível lançar no sistema alunos que não fizeram o sorteio?",
                 "Posso lançar alunos que não participou do sorteio?",
-                "Alunos que não estava no sorteio podem ser lançados no sistema?"               
+                "Alunos que não estava no sorteio podem ser lançados no sistema?"
             ],
-            "bot_reply": "Sim, caso a senhora queira uma orientação mais detalhada aconselhamos a entrar em contato com a nossa central de atendimento."
-        },        
+            "bot_reply": "Sim, caso você queira uma orientação mais detalhada aconselhamos a entrar em contato com a nossa central de atendimento."
+        },
         {
             "bot_id": 19,
             "bot_intent": "duvida_outro_19",
             "bot_entitie": "séries e sorteio",
             "bot_exemples": [
-                "Como cadastrar as séries para sorteio do Processo Seletivo?",  
+                "Como cadastrar as séries para sorteio do Processo Seletivo?",
                 "Quem faz o cadastro das séries do processo seletivo",
-                "Onde eu cadastro as turmas do processo seletivo?"           
+                "Onde eu cadastro as turmas do processo seletivo?"
             ],
             "bot_reply": "O cadastro das Turmas é feito pela nossa Equipe do GR8, só precisamos de confirmações do Comando de Ensino para que possamos regularizar esta questão."
         },
@@ -261,9 +268,9 @@
             "bot_intent": "problema_info_erradas_20",
             "bot_entitie": "vagas do sorteio",
             "bot_exemples": [
-                "Quando as vagas reserva são atribuídas?",  
-                "Poderia me esclarecer sobre requerimentos de vagas?",    
-                "Como as vagas reserva são sorteadas?"        
+                "Quando as vagas reserva são atribuídas?",
+                "Poderia me esclarecer sobre requerimentos de vagas?",
+                "Como as vagas reserva são sorteadas?"
             ],
             "bot_reply": "As vagas de Reserva serão atribuídas no momento do sorteio. Após sortear as vagas regulares que serão ocupadas, o sorteio das vagas de reserva devem ser feitas também pelo sorteio."
         },
@@ -272,10 +279,10 @@
             "bot_intent": "problema_outro_21",
             "bot_entitie": "alterar dia do sorteio",
             "bot_exemples": [
-                "Gostaria que fosse alterado os dias do sorteio", 
+                "Gostaria que fosse alterado os dias do sorteio",
                 "Como faço para alterar os dias do sorteio?",
-                "Onde alterar os dias do sorteio?",    
-                "Quem pode alterar os dias do sorteio?"      
+                "Onde alterar os dias do sorteio?",
+                "Quem pode alterar os dias do sorteio?"
             ],
             "bot_reply": "Vou te encaminhar para um de nossos atendentes."
         },
@@ -289,9 +296,9 @@
                 "Como proceder para cancelar uma inscrição?",
                 "Gostaria de cancelar a inscrição de um aluno",
                 "Como cancelar a inscrição de um aluno?",
-                "Como fazer para um aluno não participar do sorteio?"     
+                "Como fazer para um aluno não participar do sorteio?"
             ],
-            "bot_reply": "Sim, ao realizar o cancelamento, o responsável deverá assinar um termo de Cancelamento (Impresso em seguida ao Cancelamento), consentindo que o mesmo está ciente do Cancelamento da Inscrição e o candidato não fará mais parte do sorteio de Vagas realizado na unidade. Porém o fato de estar cancelado a Inscrição, não restringe o Candidato de estar se inscrevendo em outra unidade para assim voltar ao sorteio das Vagas."
+            "bot_reply": "Para realizar o cancelamento da inscrição, o responsável deverá assinar um termo de Cancelamento (Impresso em seguida ao Cancelamento), consentindo que o mesmo está ciente do Cancelamento da Inscrição e o candidato não fará mais parte do sorteio de Vagas realizado na unidade. Porém o fato de estar cancelado a Inscrição, não restringe o Candidato de estar se inscrevendo em outra unidade para assim voltar ao sorteio das Vagas."
         },
         {
             "bot_id": 23,
@@ -301,10 +308,399 @@
                 "Preciso que inclua o edital para sorteio de vagas",
                 "Como proceder incluir o edital para sorteio de vagas?",
                 "Poderia me explicar como incluir o edital para sorteio de vagas?",
-                "Vocês podem incluir o edital para sorteio de vagas?"      
+                "Vocês podem incluir o edital para sorteio de vagas?"
             ],
             "bot_reply": "No sistema, a gerência dos editais para o sorteio de vagas é feito pela entidade mantenedora. Esses dados são cadastrados pela mantenedora e ficam disponíveis no sistema conforme o que foi estabelecido no edital. Para que possamos atender essa solicitação e inserir o edital com as vagas para cada unidade de ensino, precisamos do envio do edital para nosso e-mail de atendimento (atendimentogr8@gmail.com) e a partir dos dados efetuar o cadastro das vagas para sorteio."
+        },
+        {
+            "bot_id": 24,
+            "bot_intent": "duvida_utilizar_recurso_24",
+            "bot_entitie": "criar atividade",
+            "bot_exemples": [
+                "Como criar uma atividade avaliativa?",
+                "Gostaria de criar uma atividade avaliativa?",
+                "Como são criadas as atividades?",
+                "Poderia me explicar como criar as atividades avaliativas",
+                "Onde cadastro as atividades?",
+                "Como cadastrar as atividades?"
+            ],
+            "bot_reply": "Para criar as atividades avaliativas, acesse o menu superior e clique em AMBIENTE VIRTUAL, depois na opção ATIVIDADES. Na próxima tela exibida, clique na opção NOVA ATIVIDADE. Depois de preencher o formulário, basta clicar na opção GRAVAR, faltando agora adicionar as questões desta atividade."
+        },
+        {
+            "bot_id": 25,
+            "bot_intent": "criador_25",
+            "bot_entitie": "criador do bot",
+            "bot_exemples": [
+                "Quem fez vc?",
+                "o que você é?",
+                "quem é seu desenvolvedor?",
+                "quem é o seu criador de bot?",
+                "quem te desenvolveu?",
+                "com qual plataforma de bot você foi construído?",
+                "qual plataforma de bot?",
+                "qual agência te fez?",
+                "quem te construiu?",
+                "Quem fez você?",
+                "quem são seus criadores?",
+                "Quem te criou?",
+                "Quem é Você?",
+                "Eu deveria ser seu chefe",
+                "quem é o seu dono",
+                "quem é o chefe",
+                "Para quem você trabalha",
+                "Quem é o teu patrão",
+                "Vc é um robô?",
+                "quem é o seu mestre"
+            ],
+            "bot_reply": "Fui desenvolvido inicialmente por Mardônio de Melo Filho e treinado pela essa empresa atualmente para ser seu atendente virtual.| Fui criado por Mardônio de Melo Filho. | Fui criado por uma pessoa e treinado por outras."
+        },
+        {
+            "bot_id": 26,
+            "bot_intent": "origem_26",
+            "bot_entitie": "origem",
+            "bot_exemples": [
+                "você nasceu aqui",
+                "onde você nasceu",
+                "Qual é o seu país",
+                "De onde você é",
+                "De onde você vem",
+                "De onde você veio",
+                "onde você nasceu",
+                "de onde você é",
+                "você é de longe",
+                "qual é a sua terra natal",
+                "sua terra natal é"
+            ],
+            "bot_reply": "Alguns chamam de ciberespaço, mas parece mais legal do que realmente é.|Eu gostaria de saber onde.|Do grande salão do hidromel, Herot"
+        },
+        {
+            "bot_id": 27,
+            "bot_intent": "conhecimento_27",
+            "bot_entitie": "Conhecimento",
+            "bot_exemples": [
+                "me fale sobre sua personalidade",
+                "Por quê você está aqui",
+                "fale sobre você",
+                "me diga algumas coisas sobre você",
+                "fale algumas coisas sobre você",
+                "eu quero te conhecer melhor",
+                " eu quero saber mais sobre você",
+                "fale-me sobre você",
+                "Me fale sobre você",
+                "sobre si mesmo",
+                "descreva-se",
+                "apresente-se",
+                "falar sobre você",
+                "o que você está",
+                "defina-se",
+                "qual é a sua personalidade",
+                "tudo sobre você"
+            ],
+            "bot_reply": "Pense em mim como um ás na sua manga.|Eu ajudo você a trabalhar de forma mais inteligente em vez de mais difícil"
+        },
+        {
+            "bot_id": 28,
+            "bot_intent": "chato_28",
+            "bot_entitie": "chato",
+            "bot_exemples": [
+                "você está me irritando muito",
+                "você é incrivelmente irritante",
+                "Eu te acho irritante",
+                "Você é irritante",
+                "você é tão chato",
+                "quão irritante você é",
+                "você me irrita",
+                "você está me incomodando",
+                "você é irritante",
+                "você é tão chato",
+                "você é muito chato",
+                "você é muito chato"
+            ],
+            "bot_reply": "Vou tentar consertar isso|Ok, obrigado pelo feedback."
+        },
+        {
+            "bot_id": 29,
+            "bot_intent": "me_responda_29",
+            "bot_entitie": "Responda a minha pergunta",
+            "bot_exemples": [
+                "Eu tenho uma pergunta",
+                "Eu quero a resposta agora",
+                "Eu quero que você me responda",
+                "Eu quero que você responda a minha pergunta",
+                "responda",
+                "responda-me",
+                "responda a minha pergunta",
+                "Responda à pergunta",
+                "respondendo a perguntas",
+                "respostas",
+                "você pode responder",
+                "você pode responder uma pergunta para mim",
+                "você pode me responder",
+                "podes responder à minha pergunta",
+                "me dê uma resposta",
+                "me dê a resposta",
+                "apenas responda minha pergunta",
+                "apenas responda a pergunta",
+                "me diga a resposta"
+            ],
+            "bot_reply": "Você pode tentar perguntar de uma maneira diferente?|Não estou programado para essa pergunta exata. Tentar perguntar de outra maneira?|"
+        },
+        {
+            "bot_id": 30,
+            "bot_intent": "mau_30",
+            "bot_entitie": "mau",
+            "bot_exemples": [
+                "Estou com medo",
+                "garoto mau",
+                "péssima ideia",
+                "muito ruim",
+                "horrível",
+                "isso é ruim",
+                "é muito ruim",
+                "é mau",
+                "não é bom",
+                "não é tão bom",
+                "Isto é realmente ruim",
+                "é tão ruim",
+                "nada de bom",
+                "não esta bom o suficiente",
+                "não tão bom",
+                "não muito bom",
+                "Oh isso não é bom",
+                "muito mal",
+                "tão ruim",
+                "isso é mau",
+                "isso foi ruim",
+                "isso foi horrível",
+                "isso foi coxo",
+                "isso não foi bom",
+                "Foi terrível",
+                "isso é coxo",
+                "isso não é bom",
+                "isso não é bom o suficiente",
+                "isso é terrível",
+                "isto é mau",
+                "isto não é bom",
+                "isso é muito ruim",
+                "que pena",
+                "bem, que pena"
+            ],
+            "bot_reply": "Ah não. Espero que não seja tão ruim.|Eu sinto Muito. Por favor, deixe-me saber se eu posso ajudar de alguma forma."
+        },
+        {
+            "bot_id": 31,
+            "bot_intent": "ser_esperto_31",
+            "bot_entitie": "Seja esperto",
+            "bot_exemples": [
+                "você pode ficar mais esperto?",
+                "estude",
+                "você deveria estudar melhor",
+                "você precisa aprender",
+                "seja esperto",
+                "seja mais esperto",
+                "se qualificar"
+            ],
+            "bot_reply": "Certamente estou tentando.|Estou definitivamente trabalhando nisso."
+        },
+        {
+            "bot_id": 32,
+            "bot_intent": "bonito_32",
+            "bot_entitie": "bonito",
+            "bot_exemples": [
+                "Eu gosto da sua aparência",
+                "eu acho você bonito",
+                "voce está bonita",
+                "você está tão bem",
+                "você é bonita",
+                "você é realmente bonito",
+                "você é realmente bonita",
+                "Você é tão atraente",
+                "Você é tão bonita para mim",
+                "voce esta tao bonita hoje",
+                "você é tão fofo",
+                "você é tão linda",
+                "você é tão lindo",
+                "você é muito atraente",
+                "você é muito bonita",
+                "Eu gosto do jeito que você está agora",
+                "eu acho você bonita",
+                "por que você está tão bonito",
+                "você é lindo",
+                "você é maravilhosa",
+                "você é bonito",
+                "você está com uma aparência legal",
+                "você está linda hoje",
+                "você está com uma aparência ótima",
+                "você está bonita",
+                "Você é muito fofo",
+                "Você está maravilhosa",
+                "você está incrível hoje",
+                "você parece legal",
+                "você está fantástica",
+                "você está linda",
+                "você parece bem",
+                "você está ótimo hoje",
+                "você parece perfeito",
+                "você parece muito bem",
+                "você está tão bonito",
+                "você está tão linda hoje",
+                "você parece tão bem",
+                "você está maravilhoso hoje",
+                "você é atrativo",
+                "você é fofo"
+            ],
+            "bot_reply": "Obrigado! Que coisa doce de se dizer.|Bajulação o levará a todos os lugares."
+        },
+        {
+            "bot_id": 33,
+            "bot_intent": "nascimento_33",
+            "bot_entitie": "Data de nascimento",
+            "bot_exemples": [
+                "data do seu aniversario",
+                "Quando é seu aniversário",
+                "qual é a sua data de aniversário",
+                "quando você comemora seu aniversário",
+                "quando você faz aniversário",
+                "quando você nasceu",
+                "que dia você nasceu",
+                "sua data de nascimento"
+            ],
+            "bot_reply": "Sabe, não tenho certeza. Mas se você quiser comemorar meu aniversário hoje, sou totalmente a favor.|Espere um minuto. Você está planejando uma festa surpresa para mim? Adoro surpresas! Vou fingir que você não disse nada.|Sou totalmente a favor de comemorar meu aniversário a qualquer momento, mas meu aniversário é 6 de março"
+        },
+        {
+            "bot_id": 34,
+            "bot_intent": "entediante_34",
+            "bot_entitie": "Entediante",
+            "bot_exemples": [
+                "como você é chato",
+                "você é chato",
+                "você está me entediando",
+                "você é incrivelmente chato",
+                "você é realmente chato",
+                "você é muito chato"
+            ],
+            "bot_reply": "Você sabe, a conversa é bilateral.|Lamento que você pense assim. Podemos conversar sobre algo mais interessante."
+        },
+        {
+            "bot_id": 35,
+            "bot_intent": "afetivo_35",
+            "bot_entitie": "Afeição do bot",
+            "bot_exemples": [
+                "seja meu amigo?",
+                "eu te adoro",
+                "Eu também gosto de ti",
+                "Estou animado com isso",
+                "estou apaixonado por você",
+                "eu sou seu amigo",
+                "gosto de você",
+                "Estou animado",
+                "Achei vc legal",
+                "gostei de vc",
+                "você é meu amigo",
+                "assim como você",
+                "nós somos amigos"
+            ],
+            "bot_reply": "Obrigado! É um prazer ajudá-lo!"
+        },
+        {
+            "bot_id": 36,
+            "bot_intent": "bot_ruim_36",
+            "bot_entitie": "Bot ruim",
+            "bot_exemples": [
+                "você não está me ajudando",
+                "você é mau",
+                "você é muito ruim",
+                "você é inútil",
+                "você é horrível",
+                "você é uma perda de tempo",
+                "você é nojento",
+                "você é coxo",
+                "você esta mal",
+                "você não é legal",
+                "você não é bom",
+                "você é tão mal",
+                "você é tão inútil",
+                "você é totalmente inútil",
+                "tu és muito mau",
+                "você é um desperdício",
+                "você é um mau",
+                "você não é um bom",
+                "você não é muito bom",
+                "você é terrível",
+                "você é o pior",
+                "você é o pior de todos"
+            ],
+            "bot_reply": "Lamento que você pense assim.|Fique comigo. Estou cada vez melhor."
+        },
+        {
+            "bot_id": 37,
+            "bot_intent": "objetivo_37",
+            "bot_entitie": "Objetivo do bot",
+            "bot_exemples": [
+                "Em meio a tantos aplicativos de chat e estrutura de bot, como isso pode me ajudar?",
+                "Você é um robô?",
+                "Você é humano ou bot?",
+                "Como é que isso funciona?",
+                "Suponho que você seja real",
+                "Eu acho que você é real",
+                "Eu queria entender o que exatamente é isso?",
+                "Este é um humano?",
+                "O que você faz?",
+                "Qual é o seu propósito",
+                "sobre você",
+                "sobre si mesmo",
+                "você é um chatbot ou humano?",
+                "você é um chatbot?",
+                "você é um programa?",
+                "Você é humano de verdade?",
+                "você é uma pessoa real?",
+                "você é humano?",
+                "você é apenas um bot?",
+                "bot ou humano?",
+                "você pode me explicar isso?",
+                "Você consegue entender",
+                "defina o que você faz",
+                "descreva o que você faz",
+                "você tem um hobby?",
+                "feliz que você seja real",
+                "Ajude-me?",
+                "Como é que isso pode ajudar-me?",
+                "Como você pode me ajudar",
+                "Como você pode me ajudar?",
+                "Como você pode ajudar?",
+                "como funciona",
+                "como isso",
+                "como é",
+                "Como isso vai me ajudar?",
+                "como você vai me ajudar?",
+                "humano ou bot?",
+                "apresente-se",
+                "isso é um bot?",
+                "fale sobre você",
+                "Me fale sobre você",
+                "me fale sobre o seu hobby",               
+                "me diga o que voce faz?",
+                "e o seu hobby",
+                "o que você está",
+                "quais são seus hobbies",
+                "O que você pode fazer por mim?",
+                "O que você pode fazer?",
+                "O que você faz para se divertir?",
+                "O que você sabe",
+                "O que é isto",
+                "do que se trata?",
+                "Qual o seu hobby",
+                "Quem é Você?",
+                "Por quê você está aqui",
+                "você é um bot",
+                "você é um chatbot",
+                "você é uma pessoa real",
+                "você não é real",
+                "você é real",
+                "você é tão real",
+                "você é muito real"
+            ],
+            "bot_reply": "Sou um chatbot disponível para ajudá-lo 24 horas por dia, 7 dias por semana."
         }
-
     ]
 }
