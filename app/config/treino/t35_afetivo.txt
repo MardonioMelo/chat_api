@@ -1,0 +1,25 @@
+|1
+t35_afetivo
+
+|2
+Afeição do bot
+
+|3
+seja meu amigo?
+eu te adoro
+Eu também gosto de ti
+Estou animado com isso
+estou apaixonado por você
+eu sou seu amigo
+gosto de você
+Estou animado
+Achei vc legal
+gostei de vc
+você é meu amigo
+assim como você
+nós somos amigo
+
+|4
+Obrigado! É um prazer ajudá-lo!
+
+|5

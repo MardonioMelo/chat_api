@@ -1,0 +1,21 @@
+|1 
+cumprimento
+|2
+bom turno
+|3
+Bom dia!
+bom dia
+bom dia!
+Boa tarde!
+boa tarde
+Boa noite!
+boa noite
+buenos dias
+buenas tardes
+buenas noche
+ola, bom dia
+ola, boa noite
+ola, boa tarde
+|4
+function
+|5

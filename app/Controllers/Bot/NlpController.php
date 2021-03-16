@@ -101,7 +101,7 @@ class NlpController
             );
 
             // ---------- Resposta ----------------
-            $this->setResponse($this->data[$intent]['reply'], $intent, $this->data[$intent]['entitie']);
+            $this->setResponse($this->replyRand($this->data[$intent]['reply']), $intent, $this->data[$intent]['entitie']);
         } else {
             $this->setResponse("function", "notUnderstand", "null");
         }
@@ -158,13 +158,35 @@ class NlpController
 
 
     /**
+     * Verificar se existe mais de um tipo de resposta
+     * Retora uma das respostas aleatoriamente
+     *
+     * @param string $reply
+     * @return string
+     */
+    protected function replyRand(string $reply): string
+    {
+        $result = "";
+
+        if (mb_strpos($reply, "|") !== false) {
+            $arr = explode("|", $reply);
+            $result =  $arr[rand(0, array_key_last($arr))];
+        } else {
+            $result = $reply;
+        }
+
+        return $result;
+    }
+
+
+    /**
      * @param $dataTokens
      * @return bool
      */
     protected function dataTraining($dataTokens)
     {
-       // $this->botModel->exeReadArray($dataTokens);
-       $this->botModel->exeReadAllExemples();
+        // $this->botModel->exeReadArray($dataTokens);
+        $this->botModel->exeReadAllExemples();
         return $this->botModel->getResult();
     }
 

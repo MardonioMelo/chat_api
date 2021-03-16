@@ -1,5 +1,5 @@
 |1
-t_38_ocupado
+t38_ocupado
 
 |2
 Ocupado

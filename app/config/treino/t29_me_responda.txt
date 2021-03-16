@@ -1,0 +1,29 @@
+|1 
+me_responda_29
+|2
+Responda a minha pergunta
+|3
+Eu tenho uma pergunta
+Eu quero a resposta agora
+Eu quero que você me responda
+Eu quero que você responda a minha pergunta
+responda
+responda-me
+responda a minha pergunta
+Responda à pergunta
+respondendo a perguntas
+respostas
+você pode responder
+você pode responder uma pergunta para mim
+você pode me responder
+podes responder à minha pergunta
+me dê uma resposta
+me dê a resposta
+apenas responda minha pergunta
+apenas responda a pergunta
+me diga a resposta
+|4
+Você pode tentar perguntar de uma maneira diferente?
+Não estou programado para essa pergunta exata. Tentar perguntar de outra maneira?
+
+|5

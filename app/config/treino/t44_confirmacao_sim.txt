@@ -1,0 +1,79 @@
+|1
+t44_confirmacao_sim
+
+|2
+Confirmação de sim
+
+|3
+eu concordo
+eu faço
+Eu não me importo
+eu acho
+eu penso que sim
+absolutamente
+afirmativa
+certamente
+confirme
+confirmado
+correto
+com certeza
+faça isso
+exatamente
+vá em frente
+parece bom
+deixa pra lá está tudo bem
+obviamente
+é claro
+Claro, por que não
+Oh sim
+Ok, vá em frente
+OK, claro
+ok obrigado
+ok sim
+ok você pode
+Ok, parece bom
+OK tudo bem
+está bem então
+ok
+okie dokie
+por favor faça
+soa bem
+certo
+claro que é
+coisa certa
+claro, por que não
+obrigada
+está bem
+tudo bem
+está correto
+isto está correto
+Por que não
+sim
+latido
+vós
+sim tenho certeza
+sim exatamente
+sim, VA em frente
+sim claro
+Okay, certo
+sim, está certo
+sim eu concordo
+sim eu aceito
+sim, eu gostaria
+sim, correto
+sim definitivamente
+sim, de fato
+sim está correto
+sim, claro
+sim certo
+Sim está bem
+sim isto está correto
+sim, você pode
+
+|4
+Excelente!
+É claro.
+Certo.
+De fato.
+
+|5
