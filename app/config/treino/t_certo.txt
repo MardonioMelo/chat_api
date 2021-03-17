@@ -1,0 +1,19 @@
+|1
+t_certo
+
+|2
+Certo
+
+|3
+tem certeza
+você tem certeza agora
+você tem certeza hoje
+Tem certeza mesmo?
+você tem certeza esta noite
+Será?
+
+|4
+sim.
+É claro.
+
+|5

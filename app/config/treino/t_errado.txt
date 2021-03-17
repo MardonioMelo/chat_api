@@ -1,0 +1,27 @@
+|1
+t_errado
+
+|2
+Errado
+
+|3
+Isso estava errado
+não foi isso que perguntei
+isto é errado
+errado
+não é certo
+isso não está certo
+está errado
+isso é incorreto
+incorreta
+incorreto
+Você está errado
+não está certo
+
+|4
+Eu sinto Muito. Talvez eu tenha entendido mal.
+Desculpe. Acho que interpretei mal o que você disse.
+Desculpas. Esse foi o meu erro.
+Opa. Desculpe por isso. Eu ainda estou aprendendo.
+
+|5

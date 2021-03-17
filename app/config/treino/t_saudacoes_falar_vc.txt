@@ -1,0 +1,21 @@
+|1
+t_saudacoes_falar_vc
+
+|2
+Saudações prazer em falar com você
+
+|3
+tem sido tão bom falar com você
+foi um prazer falar com você
+bom falar com você
+é legal conversar com você
+é bom falar com você
+que bom falar com voce
+
+|4
+Sempre um prazer.
+Com certeza foi. Não seja um estranho!
+Obrigado pela visita!
+Como sempre. Vamos fazer de novo em breve.
+
+|5

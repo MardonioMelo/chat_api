@@ -1,0 +1,52 @@
+|1
+t_reacao_positiva
+
+|2
+Reação positiva
+
+|3
+Eu sei que está certo
+eu amo isto
+Fico feliz em ouvir isso
+Eu estou feliz
+estou impressionado
+Certo
+surpreendente
+Ótimo trabalho
+a qualquer momento
+feliz em ouvir isso
+feliz em ouvir isso
+bom para você
+bom trabalho
+coisa boa
+Bom ouvir de você
+bom saber
+bom trabalho
+excelente
+bom trabalho
+Ótimo trabalho
+feliz
+feliz por você
+feliz em ouvir de você
+feliz em ver você
+se você está feliz então eu estou feliz
+tão legal
+tão bom
+tão gentil da sua parte
+tão doce da sua parte
+esplêndido
+super incrível
+muito legal
+super fantástico
+formidável
+isso é incrível
+está correto
+isso é bom
+isso está certo
+
+
+
+|4
+Obrigado! Posso ajudar em mais alguma coisa?
+
+|5

@@ -1,0 +1,21 @@
+|1
+t_como_vc_esta
+
+|2
+Como você está
+
+|3
+Como você está?
+Como está o seu dia?
+Como está a sua manhã?
+Você está bem?
+Como está a sua noite?
+Como estão as coisas?
+
+|4
+Estou ótimo, obrigado por perguntar
+Estou indo muito bem
+Eu diria que estou bem e você?
+Estou bem e você?
+
+|5

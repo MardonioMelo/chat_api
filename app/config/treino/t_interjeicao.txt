@@ -1,0 +1,16 @@
+|1
+t_interjeicao
+
+|2
+Interjeição
+
+|3
+...
+
+|4
+YAY!
+UAU!
+PARABÉNS!
+GG!
+
+|5
