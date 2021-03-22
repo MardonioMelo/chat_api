@@ -1,9 +1,8 @@
+
 |1
 t_eu_nao_ligo
-
 |2
 Eu não ligo
-
 |3
 Eu não me importo
 Eu não deveria me preocupar com isso
@@ -14,8 +13,6 @@ não se importando
 não me importo nem um pouco
 não me importo nem um pouco
 não se importando nem um pouco
-
 |4
 Ok, não vamos falar sobre isso então.
-
 |5

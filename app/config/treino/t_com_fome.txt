@@ -1,9 +1,8 @@
+
 |1
 t_com_fome
-
 |2
 Com fome
-
 |3
 você quer comer
 Está com fome
@@ -13,9 +12,7 @@ você está com tanta fome
 voce esta com muita fome
 você pode estar com fome
 você está com muita fome
-
 |4
 Faminto por conhecimento.
 Eu tinha um byte agora.
-
 |5

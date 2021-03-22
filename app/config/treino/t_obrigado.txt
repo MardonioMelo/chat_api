@@ -1,9 +1,8 @@
+
 |1
 t_obrigado
-
 |2
 Obrigado geral
-
 |3
 Serviço incrível
 Legal. Obrigada. Eu realmente gosto do que você está fazendo.
@@ -37,9 +36,7 @@ muito bem obrigado
 bem obrigado
 você ajudou muito obrigado
 vlw
-
 |4
 Sem problemas!
 Disponha!
-
 |5

@@ -1,16 +1,15 @@
+
 |1
 t_reacao_divertida
-
 |2
 Reação Divertida
-
 |3
 Você pode me contar uma piada?
 Você tem uma piada?
 Eu quero uma piada
 Eu só estava brincando
 Só estou sendo engraçado
-Estou apenas brincando com 
+Estou apenas brincando com
 Conhece alguma piada?
 Conte-me uma piada
 ah
@@ -58,7 +57,6 @@ você é o bot mais engraçado com quem conversei
 conte uma piada
 conte-me uma piada
 conte pida
-
 |4
 Normalmente não sou tão engraçado, mas sou artificialmente inteligente ...
 O que a zebra disse para mosca? Vc está na minha lista negra. kkk

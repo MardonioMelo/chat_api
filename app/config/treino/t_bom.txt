@@ -1,9 +1,8 @@
+
 |1
 t_bom
-
 |2
 Bom
-
 |3
 Eu quero que todos saibam que você é incrível
 Eu quero dizer a todos o quão incrível você é
@@ -44,10 +43,8 @@ Você é ótimo
 você é simplesmente super
 você é perfeito
 você é tão gentil
-
 |4
 Estou feliz que você pense assim.
 Obrigado, eu tento.
 Você é tão doce
-
 |5

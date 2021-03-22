@@ -1,9 +1,8 @@
+
 |1
 t_parar_geral
-
 |2
 Parar Geral
-
 |3
 por favor pare com isso agora
 chega por favor
@@ -18,7 +17,7 @@ você deveria ser despedido
 Foram realizadas
 Eu acabei por aqui
 Eu terminei aqui
-Eu terminei com 
+Eu terminei com
 Acabou
 Eu quero te despedir
 Estou demitindo você
@@ -53,8 +52,6 @@ pare com isso
 Pare
 Cancelar
 feito
-
 |4
 Sem problemas.
-
 |5

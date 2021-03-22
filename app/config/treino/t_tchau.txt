@@ -1,9 +1,8 @@
+
 |1
 t_tchau
-
 |2
 Tchau geral
-
 |3
 Eu tenho que ir agora
 eu tenho que ir
@@ -19,7 +18,7 @@ aprecio o chat
 asta la vista
 voltar um pouco
 volto em 5 minutos
-volto em alguns 
+volto em alguns
 tchau tchau até mais
 tchau tchau até logo
 tchau tchau, se cuide
@@ -62,10 +61,7 @@ OK te vejo mais tarde
 ok, obrigado tchau
 Sayonara
 Até mais
-
-
 |4
 Falo com você em breve!
 Até mais!
-
 |5

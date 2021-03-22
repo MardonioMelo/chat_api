@@ -1,9 +1,8 @@
+
 |1
 t_reacao_positiva
-
 |2
 Reação positiva
-
 |3
 Eu sei que está certo
 eu amo isto
@@ -43,10 +42,6 @@ isso é incrível
 está correto
 isso é bom
 isso está certo
-
-
-
 |4
 Obrigado! Posso ajudar em mais alguma coisa?
-
 |5

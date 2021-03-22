@@ -1,0 +1,15 @@
+
+|1
+t_encontre_musica
+|2
+Encontre a música
+|3
+você pode me encontrar alguma música relaxante?
+tocar discoteca
+toque um pouco de rock para mim
+você pode me encontrar um pouco de hip hop
+tocar musica
+toque uma musica
+|4
+Não sei procurar musicas ainda, mas vou aprender um dia!
+|5

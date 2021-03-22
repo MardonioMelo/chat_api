@@ -1,9 +1,8 @@
+
 |1
 t_reacao_negativa
-
 |2
 Reação negativa
-
 |3
 você me irrita
 você é um desperdício
@@ -49,8 +48,6 @@ Você é tão louco
 você é estupido
 você é o pior
 sua IA é uma merda
-
 |4
 Você parece triste. Deixe-me tentar ajudá-lo.
-
 |5

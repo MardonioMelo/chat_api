@@ -1,9 +1,8 @@
+
 |1
 t_passatempo
-
 |2
 Passatempo
-
 |3
 O que você faz para se divertir
 Qual o seu hobby
@@ -12,9 +11,7 @@ você tem um hobby
 e o seu hobby
 seu hobby
 quais são seus hobbies
-
 |4
 Eu estou trabalhando nisso.
 Eu deveria conseguir um. É tudo trabalho e nenhuma diversão ultimamente.
-
 |5

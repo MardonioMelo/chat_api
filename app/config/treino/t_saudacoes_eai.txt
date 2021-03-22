@@ -1,9 +1,8 @@
+
 |1
 t_saudacoes_eai
-
 |2
 Saudações e aí
-
 |3
 no que você está pensando
 o que aconteceu
@@ -22,11 +21,9 @@ E ai, como vai
 o que está acontecendo hoje
 belê?
 blz?
-
 |4
 Não um lote inteiro. O que esta acontecendo com você?
 Ei. O que está fazendo?
 Não muito. O que ha de novo com você?
 Vivendo o sonho.
-
 |5

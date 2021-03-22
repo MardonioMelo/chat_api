@@ -1,9 +1,8 @@
+
 |1
 t_amigo
-
 |2
 Amigo
-
 |3
 eu sou seu amigo
 eu quero ser seu amigo
@@ -38,9 +37,7 @@ você é meu bom amigo
 você é meu único amigo
 você é meu amigo de infância
 você é meu querido amigo
-
 |4
 Claro que estamos.
 Absolutamente. Você não precisa perguntar.
-
 |5

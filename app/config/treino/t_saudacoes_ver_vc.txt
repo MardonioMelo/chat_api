@@ -1,16 +1,15 @@
+
 |1
 t_saudacoes_ver_vc
-
 |2
 Saudações bom ver você
-
 |3
 é bom ver você
 adorável ver você
 Fico feliz em te ver
 ótimo ver você
 É bom te ver
-feliz em te ver 
+feliz em te ver
 que bom ver voce
 sempre um prazer te ver
 bom te ver
@@ -21,11 +20,9 @@ bom ver você de novo
 feliz em ver você também
 bom te ver de novo
 é bom ver você também
-
 |4
 Da mesma maneira. Você está com a aparência de sempre!
 Você também. Eu senti falta do seu rosto!
 O prazer é meu.
 Obrigado! Fico feliz em ser visto!
-
 |5

@@ -1,0 +1,14 @@
+
+|1
+t_tdbem
+|2
+tudo bem
+|3
+como você está?
+tudo bem?
+como vai?
+tudo joia?
+como esta?
+|4
+Ótimo e você? <small style='font-size:20px'>&#128526;</small>
+|5

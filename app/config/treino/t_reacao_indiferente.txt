@@ -1,9 +1,8 @@
+
 |1
 t_reacao_indiferente
-
 |2
 Reação Indiferente
-
 |3
 sem pressa
 Nada demais
@@ -15,8 +14,6 @@ Eu não me importo
 eu não ligo
 Eu não me importo com isso
 não se importando
-
 |4
 OK legal.
-
 |5

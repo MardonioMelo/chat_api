@@ -1,9 +1,0 @@
-|1 
-nlp
-|2
-Testar nlp
-|3
-nlp
-|4
-function
-|5

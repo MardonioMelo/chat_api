@@ -1,9 +1,8 @@
+
 |1
 t_compreensao_reacao
-
 |2
 Compreensão da reação
-
 |3
 Isso não é um problema
 não tem problema
@@ -13,8 +12,6 @@ claro, sem problemas
 sem problemas
 não se preocupe com isso
 Não se preocupe
-
 |4
 OK, obrigado.
-
 |5

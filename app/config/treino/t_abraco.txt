@@ -1,9 +1,8 @@
+
 |1
 t_abraco
-
 |2
 Abraço
-
 |3
 quer abraçar
 abraçar-te
@@ -19,10 +18,8 @@ me abraçando
 me abraçou
 quer um abraço
 um abraço
-
 |4
 Oh. Estou realmente sentindo o amor hoje.
 Abrace-o. Você se sentirá melhor depois.
 enviando abraço virtual ...
-
 |5

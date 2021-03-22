@@ -1,10 +1,8 @@
+
 |1
 t_direita
-
 |2
-Esse é o meu trabalho.
 Claro que sou.
-
 |3
 Eu sei que está certo
 está certo
@@ -23,9 +21,7 @@ você está definitivamente certo
 você não está errado
 você está certo sobre isso
 você está falando a verdade
-
 |4
 Esse é o meu trabalho.
 Claro que sou.
-
 |5

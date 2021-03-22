@@ -27,6 +27,7 @@ echo "\nEscolha um método para executar:";
 echo "\n 1 - Buscar dados de um arquivo json e salva no banco de dados";
 echo "\n 2 - Buscar dados de um arquivo json e salva em arquivos de txt na pasta treino";
 echo "\n 3 - Buscar dados de arquivos txt dentro de uma pasta";
+echo "\n 4 - Renomear intent conforme nome do arquivo";
 echo "\n 0 - Cancelar";
 echo "\n\nMétodo: ";
 
@@ -52,6 +53,10 @@ switch ($metodo) {
     case 3:
         # Buscar dados de arquivos txt dentro de uma pasta
         $BotModel->createExemplesFolderTxt('treino/', true);
+        break;
+    case 4:
+        # Renomear intent conforme nome do arquivo
+        $BotModel->renameIntentExemples('treino/', true);
         break;
     default:
         echo "\nEssa opção não exite, tente novamente";
