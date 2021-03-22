@@ -1,0 +1,19 @@
+
+|1
+t_refocar
+|2
+Refocar
+|3
+Como?
+mostre-me
+diga-me
+eu quero saber
+Eu gostaria de mais
+Eu quero saber mais
+explique por favor
+algo mais
+me diga mais
+Por favor explique
+|4
+Fico feliz em te contar mais. Apenas me faça perguntas.
+|5

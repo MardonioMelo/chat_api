@@ -1,0 +1,15 @@
+
+|1
+t_problema_completar_action
+|2
+cancelar inscrições
+|3
+Gostaria de saber se é possível fazer o cancelamento de Inscrições
+É possível cancelar uma Inscrição?
+Como proceder para cancelar uma inscrição?
+Gostaria de cancelar a inscrição de um aluno
+Como cancelar a inscrição de um aluno?
+Como fazer para um aluno não participar do sorteio?
+|4
+Para realizar o cancelamento da inscrição, o responsável deverá assinar um termo de Cancelamento (Impresso em seguida ao Cancelamento), consentindo que o mesmo está ciente do Cancelamento da Inscrição e o candidato não fará mais parte do sorteio de Vagas realizado na unidade. Porém o fato de estar cancelado a Inscrição, não restringe o Candidato de estar se inscrevendo em outra unidade para assim voltar ao sorteio das Vagas.
+|5

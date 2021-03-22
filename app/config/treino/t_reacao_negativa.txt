@@ -1,0 +1,53 @@
+
+|1
+t_reacao_negativa
+|2
+Reação negativa
+|3
+você me irrita
+você é um desperdício
+você é uma perda de tempo
+Você é estranho
+Você é irritante
+você está me incomodando
+você está me irritando muito
+você é mau
+você é chato
+você está me entediando
+Você está me incomodando
+você é louco
+você é horrível
+você é insano
+você não é bom
+você não é legal
+você é tão inútil
+você é estúpido
+você é tão irritante
+você é terrível
+você é totalmente inútil
+você é inútil
+você é muito chato
+tu és muito mau
+Você está errado
+você precisa consertar isso
+você precisa aprender mais
+você é um merda
+você enlouqueceu
+você é um robô burro
+você esta mal
+você é incrivelmente irritante
+você é incrivelmente chato
+você não está me ajudando
+você não é muito bom
+Você está louco
+você está fora de si
+você é muito ruim
+você é realmente chato
+você é tão chato
+Você é tão louco
+você é estupido
+você é o pior
+sua IA é uma merda
+|4
+Você parece triste. Deixe-me tentar ajudá-lo.
+|5

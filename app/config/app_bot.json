@@ -1,0 +1,450 @@
+{
+    "type": "table",
+    "name": "app_bot",
+    "database": "chatbot",
+    "data": [
+        {
+            "bot_id": 1,
+            "bot_intent": "createCliente",
+            "bot_entitie": "cadastrar cliente",
+            "bot_exemples": [
+                "Cadastre um cliente",
+                "Como cadastrar clientes",
+                "Como eu cadastro um cliente?"
+            ],
+            "bot_reply": "function"
+        },
+        {
+            "bot_id": 2,
+            "bot_intent": "cumprimento",
+            "bot_entitie": "bom turno",
+            "bot_exemples": [
+                "Bom dia!",
+                "Boa tarde!",
+                "Boa noite!"
+            ],
+            "bot_reply": "function"
+        },
+        {
+            "bot_id": 3,
+            "bot_intent": "respNegativa",
+            "bot_entitie": "resposta negativa",
+            "bot_exemples": [
+                "vou mais ou menos",
+                "vou ruim",
+                "levando a vista",
+                "com dificuldades",
+                "não estou bem"
+            ],
+            "bot_reply": "Faz parte da vida <small style='font-size:20px'>&#128540;</small>"
+        },
+        {
+            "bot_id": 4,
+            "bot_intent": "fretePrecoPrazo",
+            "bot_entitie": "calcule frete",
+            "bot_exemples": [
+                "Bom dia! Preciso calcular o valor do envio e o prazo de entrega",
+                "verificar o frete e o prazo de entrega",
+                "calcular frete e o prazo de entrega",
+                "Cálcule o frete e veja o prazo de entrega",
+                "preciso do valor do frete e o prazo de entrega",
+                "como cálcular o frete?",
+                "quero verificar o frete",
+                "Você pode cálcular o meu frete?",
+                "como eu faço para cálcular o frente do pedido",
+                "tempo de entrega",
+                "prazo da entrega da encomenda",
+                "quanto tempo leva para entrega uma encomenda na cidade"
+            ],
+            "bot_reply": "function"
+        },
+        {
+            "bot_id": 5,
+            "bot_intent": "oi",
+            "bot_entitie": "oi",
+            "bot_exemples": [
+                "oi",
+                "Olá",
+                "olá!",
+                "ola",
+                "olá",
+                "oie",
+                "opa",
+                "oiee"
+            ],
+            "bot_reply": "Olá! Tudo bem? <small style='font-size:20px'>&#128515;</small>"
+        },
+        {
+            "bot_id": 6,
+            "bot_intent": "nlp",
+            "bot_entitie": "Testar nlp",
+            "bot_exemples": [
+                "nlp"
+            ],
+            "bot_reply": "function"
+        },
+        {
+            "bot_id": 7,
+            "bot_intent": "stop",
+            "bot_entitie": "Parar conversar",
+            "bot_exemples": [
+                "stop",
+                "cancelar"
+            ],
+            "bot_reply": "function"
+        },
+        {
+            "bot_id": 8,
+            "bot_intent": "meme1",
+            "bot_entitie": "meme rindo",
+            "bot_exemples": [
+                "que legal",
+                "a sim",
+                "ta certo",
+                "interessante",
+                "beleza",
+                "tbm",
+                "de nada"
+            ],
+            "bot_reply": "<small style='font-size:20px'>&#128578;</small>"
+        },
+        {
+            "bot_id": 9,
+            "bot_intent": "tdbem",
+            "bot_entitie": "tudo bem",
+            "bot_exemples": [
+                "como você está?",
+                "tudo bem?",
+                "como vai?",
+                "tudo joia?",
+                "como esta?"
+            ],
+            "bot_reply": "Ótimo e você? <small style='font-size:20px'>&#128526;</small>"
+        },
+        {
+            "bot_id": 10,
+            "bot_intent": "evc ",
+            "bot_entitie": "sim e vc",
+            "bot_exemples": [
+                "bem e vc?",
+                "e você?",
+                "estou ótimo",
+                "estou bem",
+                "bem graças a Deus",
+                "bem tbm",
+                "bem também",
+                "sim e você",
+                "sim e vc"
+            ],
+            "bot_reply": "Ótimo, em que posso te ajudar? <small style='font-size:20px'>&#128536;</small>"
+        },
+        {
+            "bot_id": 11,
+            "bot_intent": "nameBot",
+            "bot_entitie": "nome do bot",
+            "bot_exemples": [
+                "qual o seu nome?",
+                "como vc se chama?",
+                "você tem nome?",
+                "qual seu nome de batismo?",
+                "vc tem nome?",
+                "Como se chama?",
+                "qual o seu nome",
+                "eu conheço você",
+                "Quem é Você?",
+                "Qual é o seu nome?",
+                "Nome?",
+                "Como as pessoas te chamam?"
+            ],
+            "bot_reply": "Meu nome é Gê, aou um atentante virtual! <small style='font-size:20px'>&#128579;</small>|Você pode me chamar de Gê"
+        },
+        {
+            "bot_id": 12,
+            "bot_intent": "obr",
+            "bot_entitie": "elogio",
+            "bot_exemples": [
+                "o seu também",
+                "belo nome",
+                "lindo nome",
+                "bonito nome",
+                "vc é"
+            ],
+            "bot_reply": "Obrigado! <small style='font-size:20px'>&#128521;</small>"
+        },
+        {
+            "bot_id": 13,
+            "bot_intent": "myName",
+            "bot_entitie": "nome do usuário",
+            "bot_exemples": [
+                "meu nome é",
+                "me chamo",
+                "E o meu é"
+            ],
+            "bot_reply": "function"
+        },
+        {
+            "bot_id": 14,
+            "bot_intent": "listCommands",
+            "bot_entitie": "listar comandos",
+            "bot_exemples": [
+                "O que vc faz?",
+                "liste os comandos",
+                "quais os seus comandos",
+                "mostre os comandos",
+                "o que você faz?"
+            ],
+            "bot_reply": "function"
+        },
+        {
+            "bot_id": 15,
+            "bot_intent": "conta",
+            "bot_entitie": "fazer um cálculo",
+            "bot_exemples": [
+                "quanto é 1 + 1",
+                "quanto é 1 - 1",
+                "quanto é 1/ 2",
+                "quanto é 1 * 1",
+                "1 + 1",
+                "1 - 1",
+                "1 * 1",
+                "1/ 1"
+            ],
+            "bot_reply": "function"
+        },
+        {
+            "bot_id": 16,
+            "bot_intent": "agradecer",
+            "bot_entitie": "obrigado",
+            "bot_exemples": [
+                "Muito obrigado",
+                "Agradeço muito viu",
+                "obrigada",
+                "Deus te pague",
+                "Fico agradecida",
+                "Fico agradecido",
+                "Obrigado",
+                "Obrigada",
+                "Grato",
+                "Grata"
+            ],
+            "bot_reply": "Disponha, qualquer coisa que precisar, me dá um olá, estou sempre online pra te ajudar!"
+        },
+        {
+            "bot_id": 17,
+            "bot_intent": "duvida_utilizar_recurso_17",
+            "bot_entitie": "alunos e recebimento",
+            "bot_exemples": [
+                "Como fazer para que os alunos novatos já sejam lançados no sistema e caiam no caixa de recebimento?",
+                "Gostaria que os alunos novatos sejam lançados no sistema e caiam no caixa de recebimento!",
+                "Poderia me explicar como lançados os alunos e cair no caixa de recebimento?",
+                "Estou tentando fazer com que os alunos novatos sejam lançados no sistema e caiam no caixa de recebimento."
+            ],
+            "bot_reply": "Basta efetuar a matricula do aluno e automaticamente a ficha financeira será criada aparecendo então no caixa recebimento."
+        },
+        {
+            "bot_id": 18,
+            "bot_intent": "duvida_utilizar_recurso_18",
+            "bot_entitie": "alunos e sorteio",
+            "bot_exemples": [
+                "E possível lançar no sistema alunos que não fizeram o sorteio?",
+                "Posso lançar alunos que não participou do sorteio?",
+                "Alunos que não estava no sorteio podem ser lançados no sistema?"
+            ],
+            "bot_reply": "Sim, caso você queira uma orientação mais detalhada aconselhamos a entrar em contato com a nossa central de atendimento."
+        },
+        {
+            "bot_id": 19,
+            "bot_intent": "duvida_outro_19",
+            "bot_entitie": "séries e sorteio",
+            "bot_exemples": [
+                "Como cadastrar as séries para sorteio do Processo Seletivo?",
+                "Quem faz o cadastro das séries do processo seletivo",
+                "Onde eu cadastro as turmas do processo seletivo?"
+            ],
+            "bot_reply": "O cadastro das Turmas é feito pela nossa Equipe do GR8, só precisamos de confirmações do Comando de Ensino para que possamos regularizar esta questão."
+        },
+        {
+            "bot_id": 20,
+            "bot_intent": "problema_info_erradas_20",
+            "bot_entitie": "vagas do sorteio",
+            "bot_exemples": [
+                "Quando as vagas reserva são atribuídas?",
+                "Poderia me esclarecer sobre requerimentos de vagas?",
+                "Como as vagas reserva são sorteadas?"
+            ],
+            "bot_reply": "As vagas de Reserva serão atribuídas no momento do sorteio. Após sortear as vagas regulares que serão ocupadas, o sorteio das vagas de reserva devem ser feitas também pelo sorteio."
+        },
+        {
+            "bot_id": 21,
+            "bot_intent": "problema_outro_21",
+            "bot_entitie": "alterar dia do sorteio",
+            "bot_exemples": [
+                "Gostaria que fosse alterado os dias do sorteio",
+                "Como faço para alterar os dias do sorteio?",
+                "Onde alterar os dias do sorteio?",
+                "Quem pode alterar os dias do sorteio?"
+            ],
+            "bot_reply": "Vou te encaminhar para um de nossos atendentes."
+        },
+        {
+            "bot_id": 22,
+            "bot_intent": "problema_completar_action_22",
+            "bot_entitie": "cancelar inscrições",
+            "bot_exemples": [
+                "Gostaria de saber se é possível fazer o cancelamento de Inscrições",
+                "É possível cancelar uma Inscrição?",
+                "Como proceder para cancelar uma inscrição?",
+                "Gostaria de cancelar a inscrição de um aluno",
+                "Como cancelar a inscrição de um aluno?",
+                "Como fazer para um aluno não participar do sorteio?"
+            ],
+            "bot_reply": "Para realizar o cancelamento da inscrição, o responsável deverá assinar um termo de Cancelamento (Impresso em seguida ao Cancelamento), consentindo que o mesmo está ciente do Cancelamento da Inscrição e o candidato não fará mais parte do sorteio de Vagas realizado na unidade. Porém o fato de estar cancelado a Inscrição, não restringe o Candidato de estar se inscrevendo em outra unidade para assim voltar ao sorteio das Vagas."
+        },
+        {
+            "bot_id": 23,
+            "bot_intent": "duvida_outro_23",
+            "bot_entitie": "edital para sorteio",
+            "bot_exemples": [
+                "Preciso que inclua o edital para sorteio de vagas",
+                "Como proceder incluir o edital para sorteio de vagas?",
+                "Poderia me explicar como incluir o edital para sorteio de vagas?",
+                "Vocês podem incluir o edital para sorteio de vagas?"
+            ],
+            "bot_reply": "No sistema, a gerência dos editais para o sorteio de vagas é feito pela entidade mantenedora. Esses dados são cadastrados pela mantenedora e ficam disponíveis no sistema conforme o que foi estabelecido no edital. Para que possamos atender essa solicitação e inserir o edital com as vagas para cada unidade de ensino, precisamos do envio do edital para nosso e-mail de atendimento (atendimentogr8@gmail.com) e a partir dos dados efetuar o cadastro das vagas para sorteio."
+        },
+        {
+            "bot_id": 24,
+            "bot_intent": "duvida_utilizar_recurso_24",
+            "bot_entitie": "criar atividade",
+            "bot_exemples": [
+                "Como criar uma atividade avaliativa?",
+                "Gostaria de criar uma atividade avaliativa?",
+                "Como são criadas as atividades?",
+                "Poderia me explicar como criar as atividades avaliativas",
+                "Onde cadastro as atividades?",
+                "Como cadastrar as atividades?"
+            ],
+            "bot_reply": "Para criar as atividades avaliativas, acesse o menu superior e clique em AMBIENTE VIRTUAL, depois na opção ATIVIDADES. Na próxima tela exibida, clique na opção NOVA ATIVIDADE. Depois de preencher o formulário, basta clicar na opção GRAVAR, faltando agora adicionar as questões desta atividade."
+        },
+        {
+            "bot_id": 25,
+            "bot_intent": "criador_25",
+            "bot_entitie": "criador do bot",
+            "bot_exemples": [
+                "Quem fez vc?",
+                "o que você é?",
+                "quem é seu desenvolvedor?",
+                "quem é o seu criador de bot?",
+                "quem te desenvolveu?",
+                "com qual plataforma de bot você foi construído?",
+                "qual plataforma de bot?",
+                "qual agência te fez?",
+                "quem te construiu?",
+                "Quem fez você?",
+                "quem são seus criadores?",
+                "Quem te criou?",
+                "Quem é Você?",
+                "Eu deveria ser seu chefe",
+                "quem é o seu dono",
+                "quem é o chefe",
+                "Para quem você trabalha",
+                "Quem é o teu patrão",
+                "Vc é um robô?",
+                "quem é o seu mestre"
+            ],
+            "bot_reply": "Fui desenvolvido inicialmente por Mardônio de Melo Filho e treinado pela essa empresa atualmente para ser seu atendente virtual.| Fui criado por Mardônio de Melo Filho. | Fui criado por uma pessoa e treinado por outras."
+        },
+        {
+            "bot_id": 26,
+            "bot_intent": "origem_26",
+            "bot_entitie": "origem",
+            "bot_exemples": [
+                "você nasceu aqui",
+                "onde você nasceu",
+                "Qual é o seu país",
+                "De onde você é",
+                "De onde você vem",
+                "De onde você veio",
+                "onde você nasceu",
+                "de onde você é",
+                "você é de longe",
+                "qual é a sua terra natal",
+                "sua terra natal é"
+            ],
+            "bot_reply": "Alguns chamam de ciberespaço, mas parece mais legal do que realmente é.|Eu gostaria de saber onde.|Do grande salão do hidromel, Herot"
+        },
+        {
+            "bot_id": 27,
+            "bot_intent": "conhecimento_27",
+            "bot_entitie": "Conhecimento",
+            "bot_exemples": [
+                "me fale sobre sua personalidade",
+                "Por quê você está aqui",
+                "fale sobre você",
+                "me diga algumas coisas sobre você",
+                "fale algumas coisas sobre você",
+                "eu quero te conhecer melhor",
+                " eu quero saber mais sobre você",
+                "fale-me sobre você",
+                "Me fale sobre você",
+                "sobre si mesmo",
+                "descreva-se",
+                "apresente-se",
+                "falar sobre você",
+                "o que você está",
+                "defina-se",
+                "qual é a sua personalidade",
+                "tudo sobre você"
+            ],
+            "bot_reply": "Pense em mim como um ás na sua manga.|Eu ajudo você a trabalhar de forma mais inteligente em vez de mais difícil"
+        },
+        {
+            "bot_id": 28,
+            "bot_intent": "chato_28",
+            "bot_entitie": "chato",
+            "bot_exemples": [
+                "você está me irritando muito",
+                "você é incrivelmente irritante",
+                "Eu te acho irritante",
+                "Você é irritante",
+                "você é tão chato",
+                "quão irritante você é",
+                "você me irrita",
+                "você está me incomodando",
+                "você é irritante",
+                "você é tão chato",
+                "você é muito chato",
+                "você é muito chato"
+            ],
+            "bot_reply": "Vou tentar consertar isso|Ok, obrigado pelo feedback."
+        },
+        {
+            "bot_id": 29,
+            "bot_intent": "me_responda_29",
+            "bot_entitie": "Responda a minha pergunta",
+            "bot_exemples": [
+                "Eu tenho uma pergunta",
+                "Eu quero a resposta agora",
+                "Eu quero que você me responda",
+                "Eu quero que você responda a minha pergunta",
+                "responda",
+                "responda-me",
+                "responda a minha pergunta",
+                "Responda à pergunta",
+                "respondendo a perguntas",
+                "respostas",
+                "você pode responder",
+                "você pode responder uma pergunta para mim",
+                "você pode me responder",
+                "podes responder à minha pergunta",
+                "me dê uma resposta",
+                "me dê a resposta",
+                "apenas responda minha pergunta",
+                "apenas responda a pergunta",
+                "me diga a resposta"
+            ],
+            "bot_reply": "Você pode tentar perguntar de uma maneira diferente?|Não estou programado para essa pergunta exata. Tentar perguntar de outra maneira?|"
+        }  
+       
+    ]
+}

@@ -1,0 +1,17 @@
+
+|1
+t_sem_problemas
+|2
+Sem problemas
+|3
+sem problemas
+nao há problema
+claro, sem problemas
+nenhum problema com isso
+não se preocupe
+não se preocupe, não tem problema
+|4
+Formidável!
+Bom negócio.
+Perfeito!
+|5

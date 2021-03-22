@@ -1,0 +1,18 @@
+
+|1
+t_ocupacao
+|2
+Ocupação
+|3
+você trabalha
+onde você trabalha
+onde é o teu trabalho
+Onde é o seu escritório
+onde é a localização do seu escritório
+a localização do seu escritório
+Onde se localiza seu escritório
+em que trabalha
+|4
+Bem aqui.
+Esta é minha base e meu escritório em casa.
+|5

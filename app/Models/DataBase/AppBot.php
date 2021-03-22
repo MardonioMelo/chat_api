@@ -52,6 +52,24 @@ class AppBot extends DataLayer
     }
   }
 
+    /**
+   * Consulta todos os dados da tabela
+   *
+   * @return void
+   */ 
+  public function readAll()
+  {
+    $read = $this->find()->fetch(true);
+
+    if ($read) {
+      $this->Result = $read;
+      $this->Error = "Sucesso!";
+    } else {
+      $this->Result = false;
+      $this->Error = "Não foi possível consultar!";
+    }
+  }
+
 
   /**
    * <b>Verificar Ação:</b> Retorna TRUE se ação for efetuada ou FALSE se não. Para verificar erros

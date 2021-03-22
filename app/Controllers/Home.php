@@ -30,9 +30,9 @@ class Home
      */
     public function home(Request $request, Response $response, array $args)
     {
-        $payload = $this->processData();
+        //$payload = $this->processData();
 
-        //$payload = "API para consulta para chatbot de atendimento";
+        $payload = "<br> API para chatbot de atendimento!";
         $response->getBody()->write($payload);
         return $response;
     }
@@ -109,7 +109,7 @@ class Home
         }
 
         //Salvar os dados processados
-       // $this->saveProcessData($cham_bot);
+        $this->saveProcessData($cham_bot);
 
         return $payload;
     }
@@ -129,20 +129,19 @@ class Home
      */
     public function saveProcessData($arr)
     {
-        die("Se vc deseja cadastrar novos dados nesse loop, remova essa linha para continuar!");
+        // die("Se vc deseja cadastrar novos dados nesse loop, remova essa linha para continuar!");
 
         foreach ($arr as $key => $item) {
-                   
 
             $this->BotModel->createExemple(
-                $item["bot_intent"],
+                $item["bot_intent"] . "_" . $key,
                 $item["bot_entitie"],
                 $item["bot_exemples"],
                 $item["bot_reply"]
-            );          
+            );
 
-            echo  $key ." - ". $this->BotModel->getError(). "<br>";   
-        };   
+            echo  $key . " - " . $this->BotModel->getError() . "<br>";
+        };
     }
 
     /**

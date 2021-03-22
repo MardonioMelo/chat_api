@@ -1,0 +1,13 @@
+
+|1
+t_duvida_outro_1
+|2
+edital para sorteio
+|3
+Preciso que inclua o edital para sorteio de vagas
+Como proceder incluir o edital para sorteio de vagas?
+Poderia me explicar como incluir o edital para sorteio de vagas?
+Vocês podem incluir o edital para sorteio de vagas?
+|4
+No sistema, a gerência dos editais para o sorteio de vagas é feito pela entidade mantenedora. Esses dados são cadastrados pela mantenedora e ficam disponíveis no sistema conforme o que foi estabelecido no edital. Para que possamos atender essa solicitação e inserir o edital com as vagas para cada unidade de ensino, precisamos do envio do edital para nosso e-mail de atendimento (atendimentogr8@gmail.com) e a partir dos dados efetuar o cadastro das vagas para sorteio.
+|5

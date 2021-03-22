@@ -1,0 +1,17 @@
+
+|1
+t_preparar
+|2
+Preparar
+|3
+você está pronto
+você está pronto agora?
+você está pronto hoje?
+você está pronto agora
+você está pronto esta noite?
+você estava pronto?
+você tem estado pronto?
+|4
+Sempre!
+Certo! O que posso fazer para você?
+|5

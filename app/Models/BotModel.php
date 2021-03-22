@@ -8,6 +8,7 @@ namespace App\Models;
 
 use App\Models\DataBase\AppBot;
 use Requests;
+use CoffeeCode\DataLayer\Connect;
 
 
 /**
@@ -16,7 +17,7 @@ use Requests;
  */
 class BotModel
 {
-    private $Query;
+
     private $Error;
     private $Result;
     /** @var AppBot */
@@ -124,26 +125,36 @@ class BotModel
     }
 
     /**
+     * Executar consulta de todos de todos os exemplos cadastrados
+     *
+     * @return void
+     */
+    public function exeReadAllExemples()
+    {
+        $this->readAllExemples();
+    }
+
+    /**
      * Função para cadastrar novo exemplo para treinamento
      *
      * @param string $bot_intent = Intenção do exemplo
      * @param string $bot_entitie = Entidades do exemplo
-     * @param array $bot_exemples = Exemplos
+     * @param array $bot_exemples = Exemplos com essa estrutura ["ok1","ok2","ok3"]
      * @param string $bot_reply = Resposta ou Ação
      * @return void
      */
     public function createExemple($bot_intent, $bot_entitie, $bot_exemples, $bot_reply)
     {
-        if (!empty($bot_intent) || !empty($bot_entitie) || !empty($bot_exemples) || !empty($bot_reply)) {
+        if (!empty($bot_intent) && !empty($bot_entitie) && !empty($bot_exemples) && !empty($bot_reply)) {
 
             $create = new AppBot;
             $create->bot_intent = $bot_intent;
             $create->bot_entitie = $bot_entitie;
-            $create->bot_exemples = '{"exemples": ["' . implode('","', $bot_exemples) . '"]}';
+            $create->bot_exemples = json_encode($bot_exemples);
             $create->bot_reply = $bot_reply;
 
-           $result = $create->save();           
-          
+            $result = $create->save();
+
             if (!$result) {
                 $this->Result = false;
                 $this->Error = $create->fail()->getMessage();
@@ -155,6 +166,357 @@ class BotModel
             $this->Result = false;
             $this->Error = "Não foi possível cadastrar, informe todos os parâmetros!";
         }
+    }
+
+    /**
+     * Cadastra dados no banco de dados obtidos de um arquivo json  
+     * 
+     * @param string $url = URL onde está o arquivo json com os dados na estrutura predefinida.
+     * @param bool $log = Opcional - informe true para imprimir os log de cada cadastro.
+     * @param string $destino = informe txt para salvar em aquivo de texto ou db para cadastrar no banco de dados
+     * @return void
+     */
+    public function createExemplesJsonFile($url, $log = false, $destino)
+    {
+        if (is_file($url)) {
+
+            //Consultar todos de um arquivo json
+            $getJson = json_decode(file_get_contents($url));
+
+            if ($destino === 'db') {
+                //Consultar registros
+                foreach ($getJson->data as $item) {
+                    $this->createExemple(
+                        $item->bot_intent,
+                        $item->bot_entitie,
+                        $item->bot_exemples,
+                        $item->bot_reply
+                    );
+
+                    if ($log) {
+                        echo "\n" . $this->getError();
+                    }
+                };
+            } else {
+                //Consultar registros
+                foreach ($getJson->data as $item) {
+
+                    $texto =  "|1 \n";
+                    $texto .= $item->bot_intent;
+                    $texto .= "\n|2\n";
+                    $texto .= $item->bot_entitie;
+                    $texto .= "\n|3\n";
+                    $texto .= implode("\n", $item->bot_exemples);
+                    $texto .= "\n|4\n";
+                    $texto .= implode("\n", explode("|", $item->bot_reply));
+                    $texto .= "\n|5";
+
+                    //criamos o arquivo
+                    $arquivo = fopen('treino/' . $item->bot_intent . '.txt', 'w');
+                    //verificamos se foi criado
+                    if ($arquivo == false) die('Não foi possível criar o arquivo.');
+                    //escrevemos no arquivo                   
+                    fwrite($arquivo, $texto);
+                    //Fechamos o arquivo após escrever nele
+                    fclose($arquivo);
+
+                    if ($log) {
+                        echo "\nArquivo de treino criado: " .  $item->bot_intent, ".txt";
+                    };
+                };
+            };
+
+            $this->Result = false;
+            $this->Error = "Sucesso!";
+        } else {
+            $this->Result = false;
+            $this->Error = "O arquivo json não existe ou o caminho está errado!";
+        }
+    }
+
+    /**
+     * Cadastra dados no banco de dados obtidos de uma pasta com arquivos txt nomeados
+     * 
+     * @param string $url = URL da pasta onde estão os arquivos txt com os dados na estrutura predefinida para este formato.
+     * @param bool $log = Opcional - informe true para imprimir os log de cada cadastro.
+     * @return void
+     */
+    public function createExemplesFolderTxt($url, $log = false)
+    {
+        if (is_dir($url)) {
+
+            //Consultar todos de um arquivo 
+            $getDir = dir($url);
+            $erros = 0;
+            $n_treinos = 0;
+
+            //Consultar registros
+            while ($file = $getDir->read()) {
+                if ($file !== '.' && $file !== '..' && $file !== 'exemplo.txt') {
+
+                    $lines = file($url . DIRECTORY_SEPARATOR . $file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+                    $input = '';
+                    $bot_intent = '';
+                    $bot_entitie = '';
+                    $bot_exemples = [];
+                    $bot_reply = [];
+
+                    foreach ($lines as $line) {
+
+                        switch (trim($line)) {
+
+                            case '|1':
+                                $input = 'intent';
+                                $line = '';
+                                break;
+                            case '|2':
+                                $input = 'entitie';
+                                $line = '';
+                                break;
+                            case '|3':
+                                $input = 'exemples';
+                                $line = '';
+                                break;
+                            case '|4':
+                                $input = 'reply';
+                                $line = '';
+                                break;
+                            case '|5':
+                                $input = 'send';
+                                $line = '';
+                                break;
+                        };
+
+                        switch ($input) {
+
+                            case 'intent':
+                                $bot_intent = trim($line);
+                                break;
+                            case 'entitie':
+                                $bot_entitie = trim($line);
+                                break;
+                            case 'exemples':
+                                if (!empty($line)) {
+                                    $bot_exemples[] = trim($line);
+                                };
+                                break;
+                            case 'reply':
+                                if (!empty($line)) {
+                                    $bot_reply[] = trim($line);
+                                }
+                                break;
+                            case 'send':
+                                if (count($bot_reply) > 1) {
+                                    $reply =  implode("|", $bot_reply);
+                                } else {
+                                    $reply = $bot_reply[0];
+                                };
+
+                                $this->createExemple($bot_intent, $bot_entitie, $bot_exemples, $reply);
+
+                                if ($this->getResult()) {
+                                    $result = "Sucesso!";
+                                    $n_treinos += 1;
+                                } else {
+                                    $result = "Erro!";
+                                    $erros += 1;
+                                }
+
+                                if ($log) {
+                                    echo "\nTreino: " . $bot_intent . " - " . $result;
+                                };
+
+                                $input = 'end';
+                                $bot_intent = '';
+                                $bot_entitie = '';
+                                $bot_exemples = [];
+                                $bot_reply = [];
+                                break;
+                        };
+                    };
+
+                    if ($input !== 'end') {
+                        echo "\n" . $bot_intent . " - não foi cadastrado porque faltou a instrução |5.";
+                    };
+                };
+            };
+            $getDir->close();
+
+            $this->Result = false;
+            $this->Error = "\nErros: " . $erros . "\nTreinos: " . $n_treinos;
+        } else {
+            $this->Result = false;
+            $this->Error = "O arquivo json não existe ou o caminho está errado!";
+        }
+    }
+
+    /**
+     * Cadastra dados no banco de dados obtidos de uma pasta com arquivos txt nomeados
+     * 
+     * @param string $url = URL da pasta onde estão os arquivos txt com os dados na estrutura predefinida para este formato.
+     * @param bool $log = Opcional - informe true para imprimir os log de cada cadastro.
+     * @return void
+     */
+    public function renameIntentExemples($url, $log = false)
+    {
+        if (is_dir($url)) {
+
+            //Consultar todos de um arquivo 
+            $getDir = dir($url);
+            $erros = 0;
+            $n_treinos = 0;
+
+            //Consultar registros
+            while ($file = $getDir->read()) {
+                if ($file !== '.' && $file !== '..' && $file !== 'exemplo.txt') {
+
+                    $arquivo = $url . DIRECTORY_SEPARATOR . $file;
+                    $lines = file($arquivo, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+                    $input = '';
+                    $bot_intent = '';
+                    $bot_entitie = '';
+                    $bot_exemples = [];
+                    $bot_reply = [];
+                    $texto = '';
+                    $n_intent = 1;
+
+                    foreach ($lines as $line) {
+
+                        switch (trim($line)) {
+
+                            case '|1':
+                                $input = 'intent';
+                                $line = '';
+                                break;
+                            case '|2':
+                                $input = 'entitie';
+                                $line = '';
+                                break;
+                            case '|3':
+                                $input = 'exemples';
+                                $line = '';
+                                break;
+                            case '|4':
+                                $input = 'reply';
+                                $line = '';
+                                break;
+                            case '|5':
+                                $input = 'send';
+                                $line = '';
+                                break;
+                        };
+
+                        switch ($input) {
+
+                            case 'intent':
+                                $bot_intent = trim($line);
+                                break;
+                            case 'entitie':
+                                $bot_entitie = trim($line);
+                                break;
+                            case 'exemples':
+                                if (!empty($line)) {
+                                    $bot_exemples[] = trim($line);
+                                };
+                                break;
+                            case 'reply':
+                                if (!empty($line)) {
+                                    $bot_reply[] = trim($line);
+                                }
+                                break;
+                            case 'send':
+                                if (count($bot_reply) > 1) {
+                                    $reply =  implode("|", $bot_reply);
+                                } else {
+                                    $reply = $bot_reply[0];
+                                };
+
+                                $name_file = explode(".", $file)[0];
+
+                                $texto .= "\n|1\n" . $name_file . ($n_intent === 1 ? '' : "_" . $n_intent);
+                                $texto .= "\n|2\n" . $bot_entitie;
+                                $texto .= "\n|3\n" . implode("\n", $bot_exemples);
+                                $texto .= "\n|4\n" . str_replace("|", "\n", $reply);
+                                $texto .= "\n|5\n";
+
+                                $result = "Sucesso!";
+                                $n_treinos += 1;
+
+                                if ($log) {
+                                    echo "\nTreino: " . $bot_intent . " - " . $result;
+                                };
+
+                                $n_intent += 1;
+                                $input = 'end';
+                                $bot_intent = '';
+                                $bot_entitie = '';
+                                $bot_exemples = [];
+                                $bot_reply = [];
+                                break;
+                        };
+                    };
+
+                    if ($input !== 'end') {
+                        echo "\n" . $bot_intent . " - não foi cadastrado porque faltou a instrução |5.";
+                    } else {
+                        $this->writeToFile($arquivo, $texto);
+                    };
+                };
+            };
+            $getDir->close();
+
+            $this->Result = false;
+            $this->Error = "\nErros: " . $erros . "\nTreinos: " . $n_treinos;
+        } else {
+            $this->Result = false;
+            $this->Error = "O arquivo json não existe ou o caminho está errado!";
+        }
+    }
+
+    /**
+     * Função que recebe um texto e salva em um caminho de arquivo informado.
+     *
+     * @param string $arquivo = caminho do arquivo com o nome e extensão.
+     * @param string $texto = conteúdo a ser gravado no arquivo.
+     * 
+     * @return void
+     */
+    public function writeToFile($arquivo, $texto)
+    {
+        //Variável $fp armazena a conexão com o arquivo e o tipo de ação.
+        $fp = fopen($arquivo, "w+");
+
+        //Escreve no arquivo aberto.
+        fwrite($fp, $texto);
+
+        //Fecha o arquivo.
+        fclose($fp);
+    }
+
+
+    /**
+     * Limpar dados de uma tabela   
+     *
+     * @param string $db
+     * @param string $tb
+     * @return void
+     */
+    public function clearTable(string $db, string $tb): void
+    {
+        /*
+        * GET PDO instance AND errors
+        */
+        $connect = Connect::getInstance();
+        $error = Connect::getError();
+
+        /*
+        * CHECK connection/errors
+        */
+        if ($error) {
+            echo $error->getMessage();
+        }
+
+        $connect->query("TRUNCATE {$db}.{$tb}");
     }
 
     /**
@@ -199,6 +561,18 @@ class BotModel
         $Query['col'] .= ')';
 
         $this->appbot->readCol($Query['col'], $Query['search']);
+        $this->Result = $this->appbot->getResult();
+        $this->Error = $this->appbot->getError();
+    }
+
+    /**
+     * Consultar todos os dados de exemplos cadastrados
+     *
+     * @return void
+     */
+    private function readAllExemples()
+    {
+        $this->appbot->readAll();
         $this->Result = $this->appbot->getResult();
         $this->Error = $this->appbot->getError();
     }

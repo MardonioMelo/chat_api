@@ -1,0 +1,14 @@
+
+|1
+t_fallback_padrao
+|2
+Fallback padrão
+|3
+...
+|4
+Peço desculpas, mas não entendo sua solicitação.
+Lamento que minha IA não reconheça essa solicitação.
+Minha IA ainda não cobre esse tópico. Se desejar, você pode solicitar que seja adicionado no servidor oficial do discord.
+Não entendo.
+Por favor, tente sua solicitação novamente.
+|5
