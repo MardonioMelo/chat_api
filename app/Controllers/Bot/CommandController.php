@@ -1,7 +1,4 @@
 <?php
-/**
- * Copyright (c) 2020.  Mardônio M. Filho STARTMELO DESENVOLVIMENTO WEB.
- */
 
 namespace App\Controllers\Bot;
 
@@ -42,10 +39,8 @@ class CommandController
         $CONTACT_WHATSAPP = "62000000000";
         $r = "<li>Stop - para cancelar;</li>";
         $r .= "<li>Cadastrar cliente;</li>";
-        $r .= "<li>Cálculos simples ex.: <br>2 + 2 ou 2 - 2 ou 2 * 2 ou 2 / 2;</li>";
-        $r .= "<li>Consultar CEP;</li>";
-        $r .= "<li>Cálcular frete e prazo;</li>";
-        $r .= "<li>Rastreio de encomendas.</li>";
+        $r .= "<li>Cálculos simples ex.: <br>2 + 2 ou 2 - 2 ou 2 * 2 ou 2 / 2;</li>";       
+        $r .= "<li>Cálcular frete e prazo;</li>";      
         $r .= "<p class='text-center'> - - - - - - - - - - - - - - - - - - - - - - -  - - - - - - - - - - </p>"
             . "Dúvidas ou sugestões?<br>" . '<a href="https://api.whatsapp.com/send?phone=' . $CONTACT_WHATSAPP . '"'
             . 'target="_blank" class="btn btn-flat bg-green">'
@@ -170,24 +165,6 @@ class CommandController
     }
 
     /**
-     * Consulta de endereço pelo CEP
-     */
-    public function consultCEP()
-    {
-        $this->botman->startConversation(new ConversationController(
-            'question', [
-            "question" => "Qual o número do <b>CEP</b>?<br> ex.: 12345678",
-            "name" => "cep",
-            "fallback" => [],
-            "tenant" => $this->tenant,
-            "pattern" => "App\Models\BotModel",
-            "pattern_metod" => "consultCEP"
-        ],
-            "pattern"
-        ));
-    }
-
-    /**
      * Cálculo de frete e prazo de entrega
      */
     public function fretePrecoPrazo()
@@ -240,24 +217,6 @@ class CommandController
             "tenant" => $this->tenant,
             "pattern" => "App\Models\BotModel",
             "pattern_metod" => "fretePrecoPrazo"
-        ],
-            "pattern"
-        ));
-    }
-
-    /**
-     * Fazendo o rastreio de encomendas online
-     */
-    public function rastreamento()
-    {
-        $this->botman->startConversation(new ConversationController(
-            'question', [
-            "question" => "Qual o <b>Código de Rastreio</b>?<br> ex.: SQ458226057BR",
-            "name" => "codRestreio",
-            "fallback" => [],
-            "tenant" => $this->tenant,
-            "pattern" => "App\Models\BotModel",
-            "pattern_metod" => "rastreamento"
         ],
             "pattern"
         ));

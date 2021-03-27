@@ -1,10 +1,6 @@
 <?php
-/**
- * Copyright (c) 2020.  Mardônio M. Filho STARTMELO DESENVOLVIMENTO WEB.
- */
 
 namespace App\Controllers\Bot;
-
 
 use BotMan\BotMan\BotMan;
 use BotMan\BotMan\Interfaces\Middleware\Captured;
@@ -34,9 +30,9 @@ class CustomMiddleware implements Captured, Sending, Received, Heard, Matching
         if ($this->nlp->getQuery() === null) {
             $this->nlp->setResponse("function", "notUnderstand", "null");
             $result = json_decode($this->nlp->getResponse());
-
         } else {
-            $this->nlp->start(); //Informe true para modo de teste ou deixe vazio pata produção 
+            $teste = $this->nlp->getQuery() === "nlp" ? true : false;
+            $this->nlp->start($teste); //Informe true para modo de teste ou deixe vazio pata produção 
             $result = json_decode($this->nlp->getResponse());
         }
 

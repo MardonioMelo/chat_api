@@ -1,7 +1,4 @@
 <?php
-/**
- * Copyright (c) 2020.  Mardônio M. Filho STARTMELO DESENVOLVIMENTO WEB.
- */
 
 namespace App\Controllers\Bot;
 
@@ -10,6 +7,9 @@ use BotMan\BotMan\Messages\Attachments\Audio;
 use BotMan\BotMan\Messages\Attachments\Image;
 use BotMan\BotMan\Messages\Outgoing\OutgoingMessage;
 
+/**
+ * Classe de utilidades do Bot
+ */
 class UtilitiesController
 {
 

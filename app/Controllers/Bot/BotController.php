@@ -1,7 +1,4 @@
 <?php
-/**
- * Copyright (c) 2020.  Mardônio M. Filho STARTMELO DESENVOLVIMENTO WEB.
- */
 
 namespace App\Controllers\Bot;
 
@@ -19,7 +16,7 @@ use Psr\Http\Message\ServerRequestInterface as Request;
  * Class BotController
  * @package App\Controllers\Bot
  */
-class BotController 
+class BotController
 {
     private $config;
     /** @var BotMan */
@@ -32,7 +29,7 @@ class BotController
      */
     public function __construct()
     {
-       // $this->authentication();
+        // $this->authentication();
 
         DriverManager::loadDriver(WebDriver::class);
         $this->setConfigWeb();
@@ -47,15 +44,15 @@ class BotController
     * ***************************************
     * **********       WEB         **********
     * ***************************************
-    */  
+    */
 
     /**
      * Widget do chat
      */
     public function widget(Request $request, Response $response, array $args)
     {
-      //  $View = new View;
-     //   $tpl = $View->Load('chatbot/index');
+        //  $View = new View;
+        //   $tpl = $View->Load('chatbot/index');
 
         $data = [
             "userid" => 1,
@@ -99,7 +96,7 @@ class BotController
         $this->botman->listen();
 
         //Executa Slim F.
-        $response->getBody();        
+        $response->getBody();
         return $response;
     }
 
@@ -137,5 +134,4 @@ class BotController
             ]
         ];
     }
-
 }

@@ -1,7 +1,4 @@
 <?php
-/**
- * Copyright (c) 2020.  Mardônio M. Filho STARTMELO DESENVOLVIMENTO WEB.
- */
 
 namespace App\Controllers\Bot;
 

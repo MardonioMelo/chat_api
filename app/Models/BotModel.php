@@ -1,9 +1,5 @@
 <?php
 
-/**
- * Copyright (c) 2020.  Mardônio M. Filho STARTMELO DESENVOLVIMENTO WEB.
- */
-
 namespace App\Models;
 
 use App\Models\DataBase\AppBot;
@@ -97,7 +93,7 @@ class BotModel
     }
 
     /**
-     * Enviar dados para uma api interna ou externa
+     * Enviar dados para uma api interna ou externa via método POST
      * @param $url
      * @param $data
      * @param array $options
@@ -252,7 +248,8 @@ class BotModel
 
             //Consultar registros
             while ($file = $getDir->read()) {
-                if ($file !== '.' && $file !== '..' && $file !== 'exemplo.txt') {
+
+                if (substr($file, -3) === 'txt' && $file !== 'exemplo.txt') {
 
                     $lines = file($url . DIRECTORY_SEPARATOR . $file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
                     $input = '';
@@ -514,7 +511,9 @@ class BotModel
         */
         if ($error) {
             echo $error->getMessage();
-        }
+        } else {
+            echo "\nTRUNCATE realizado com sucesso na tabela: " . $db . "." . $tb;
+        };
 
         $connect->query("TRUNCATE {$db}.{$tb}");
     }
