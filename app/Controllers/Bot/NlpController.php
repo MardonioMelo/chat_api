@@ -1,9 +1,5 @@
 <?php
 
-/**
- * Copyright (c) 2020.  Mardônio M. Filho STARTMELO DESENVOLVIMENTO WEB.
- */
-
 namespace App\Controllers\Bot;
 
 use App\Models\BotModel;
@@ -18,7 +14,9 @@ use NlpTools\Classifiers\MultinomialNBClassifier;
 use NlpTools\Utils\Normalizers\Normalizer;
 use NlpTools\Utils\StopWords;
 
-
+/**
+ * Classe de controle do NLP
+ */
 class NlpController
 {
     protected $tokP;
@@ -32,9 +30,9 @@ class NlpController
     protected $response = [];
     protected $stemmer;
     protected $stopWords;
-    protected $urlStopWords = '../app/config/stopwords.json';
+    protected $urlStopWords = '../treino/stopwords.json';
     protected $normalizer;
-    protected $urlTesting = '../app/config/testing.json';
+    protected $urlTesting = '../treino/testing.json';
     protected $botModel;
 
 
@@ -113,8 +111,21 @@ class NlpController
     protected function testProcessing()
     {
         // ---------- Dados ----------------
-        $training = $this->dataTraining(array_unique($this->stopW($this->tokP->tokenize($this->query))));
-
+        $training = $this->dataTraining(
+            array_unique(
+                array_map(
+                    function ($str) {
+                        return  $this->retirarAcentos($str);
+                    },
+                    $this->stopW(
+                        $this->tokP->tokenize(
+                            $this->query
+                        )
+                    )
+                )
+            )
+        );
+        
         if ($training) {
 
             // e outro para avaliar
@@ -129,7 +140,7 @@ class NlpController
             // ---------- Previsão ----------------
             $correct = 0;
             $intent = "";
-            $pre = "<br>";
+            $pre = "\n";
             $match = "";
 
             foreach ($testing as $d) {
@@ -144,10 +155,10 @@ class NlpController
                 else :
                     $match = "Erro.";
                 endif;
-                $pre .= "Teste " . $d[2] . " - Intent:  $intent - Resultado: $match<br>";
+                $pre .= "Teste " . $d[2] . " - Intent:  $intent - Resultado: $match\n";
             }
 
-            $pre .= "Acuracy: " . (100 * $correct) / count($testing) . "%<br>";
+            $pre .= "Acuracy: " . (100 * $correct) / count($testing) . "%\n";
 
             // ---------- Resposta ----------------
             $this->setResponse($pre, $intent, $this->data[$intent]['entitie'], (100 * $correct) / count($testing));
