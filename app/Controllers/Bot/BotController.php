@@ -51,19 +51,23 @@ class BotController
      */
     public function widget(Request $request, Response $response, array $args)
     {
-        //  $View = new View;
-        //   $tpl = $View->Load('chatbot/index');
-
         $data = [
-            "userid" => 1,
-            "username" => USER_NAME,
-            "userimg" => USER_IMG,
-            "botname" => BOT_NAME,
-            "botimg" => BOT_IMG
+            1,
+            USER_NAME,
+            USER_IMG,
+            BOT_NAME,
+            BOT_IMG
         ];
-        //$View->Show($data, $tpl);
+        $data_var = [
+            "#userid#",
+            "#username#",
+            "#userimg#",
+            "#botname#",
+            "#botimg#"
+        ];
 
         $payload = file_get_contents("../app/view/chatbot/index.tpl.html");
+        $payload = str_replace($data_var, $data, $payload);
         $response->getBody()->write($payload);
         return $response;
     }
