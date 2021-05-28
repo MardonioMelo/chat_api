@@ -47,7 +47,7 @@ class BotController
     */
 
     /**
-     * Widget do chat
+     * Widget do chat do bot
      */
     public function widget(Request $request, Response $response, array $args)
     {
@@ -71,6 +71,7 @@ class BotController
         $response->getBody()->write($payload);
         return $response;
     }
+
 
     /*
     * ***************************************

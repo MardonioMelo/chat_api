@@ -15,8 +15,7 @@ class Home
     private $BotModel;
 
     public function __construct()
-    {
-        set_time_limit(3600); // 60 minutos de execução máxima
+    {       
         $this->BotModel = new BotModel();
     }
 
