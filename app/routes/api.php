@@ -22,24 +22,18 @@ $app->add(function ($request, $handler) {
 // Inicio das rotas
 // --------------------------+
 
-
 //Rotas GET
 $app->get('/', Home::class . ":home");
+$app->get('/bot', BotController::class . ":widget");
 //$app->get(APP_CONFIG['api_v']. '/home/{id}', Api::class . ":home"); 
 
-
-/**
- * ChatBot * 
- */
-$app->get('/bot', BotController::class . ":widget");
+// Rotas GET
 $app->post('/bot', BotController::class . ":chatBot");
-
-  
-
 
 // --------------------------+
 // Fim rotas a partir daqui
 // --------------------------+
+
 
 /**
  * Catch-all route to serve a 404 Not Found page if none of the routes match
