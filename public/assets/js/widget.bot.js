@@ -7,6 +7,7 @@ const BOT_IMG = datachat[0].dataset.botimg;
 const PERSON_IMG = datachat[0].dataset.userimg;
 const PERSON_NAME = datachat[0].dataset.username;
 const PERSON_ID = datachat[0].dataset.userid;
+const url_websocket = datachat[0].dataset.urlwebsocket;
 const patch = baseUrl + "bot";
 const imgloading = baseUrl + 'public/assets/img/carregando.gif';
 const open = ".chatbox-open";
@@ -25,7 +26,7 @@ const text_popup = '.j_bot_text_popup';
 const send_panel = '.j_bot_send_panel';
 const text_panel = '.j_bot_text_panel';
 const bot_option = '.j_bot_option';
-const conn = new WebSocket('ws://localhost:8080');
+const conn = new WebSocket(url_websocket);
 var is_Bot = false;
 
 
