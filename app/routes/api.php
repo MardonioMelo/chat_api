@@ -1,6 +1,6 @@
 <?php
 
-use App\Controllers\Home;
+use App\Controllers\Home\Dashboard;
 use App\Controllers\Bot\BotController;
 use Slim\Exception\HttpNotFoundException;
 
@@ -23,7 +23,7 @@ $app->add(function ($request, $handler) {
 // --------------------------+
 
 //Rotas GET
-$app->get('/', Home::class . ":home");
+$app->get('/', Dashboard::class . ":home");
 $app->get('/bot', BotController::class . ":widget");
 //$app->get(APP_CONFIG['api_v']. '/home/{id}', Api::class . ":home"); 
 

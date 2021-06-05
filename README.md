@@ -19,8 +19,11 @@ Estilo do documento:
     * Use uma barra vertical '|' e um número de 1 a 5 nas instruções 1, 3, 5, 7 e 9. 
     * É possível incluir no mesmo arquivo mais de uma treinamento, basta reiniciar as instruções do n.1 a n.9.
 
-## Teste
+## Teste NLP
 - Informe no parâmetro message o texto "nlp" para modo de teste.
 - O teste vai consultar os dados do arquivo treino/testing.json.
 - Verifique o retorno da mensagem para analisar o resultado. 
 
+## Testes Automatizados - PHPUnit
+- Execute o comando para os testes automatizados com PHPUnit
+> php vendor/bin/phpunit --testdox --color tests
