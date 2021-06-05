@@ -8,9 +8,10 @@ use BotMan\BotMan\Drivers\DriverManager;
 use BotMan\Drivers\Web\WebDriver;
 use BotMan\BotMan\Cache\SymfonyCache;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
-
+use App\View\Chatbot\ChatbotWidgetView;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
+
 
 /**
  * Class BotController
@@ -38,6 +39,7 @@ class BotController
         $this->middleware = new CustomMiddleware();
         $this->botman->middleware->received($this->middleware);
         $this->botman->middleware->captured($this->middleware);
+        
     }
 
     /*
@@ -50,24 +52,9 @@ class BotController
      * Widget do chat do bot
      */
     public function widget(Request $request, Response $response, array $args)
-    {
-        $data = [
-            1,
-            USER_NAME,
-            USER_IMG,
-            BOT_NAME,
-            BOT_IMG
-        ];
-        $data_var = [
-            "#userid#",
-            "#username#",
-            "#userimg#",
-            "#botname#",
-            "#botimg#"
-        ];
-
-        $payload = file_get_contents("../app/view/chatbot/index.tpl.html");
-        $payload = str_replace($data_var, $data, $payload);
+    {     
+        $chatbotWidget = new ChatbotWidgetView();   
+        $payload = $chatbotWidget->tplView();
         $response->getBody()->write($payload);
         return $response;
     }
