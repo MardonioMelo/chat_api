@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controllers\Bot;
+namespace Src\Controllers\Bot;
 
 use BotMan\BotMan\BotMan;
 use BotMan\BotMan\Interfaces\Middleware\Captured;

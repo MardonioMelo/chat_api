@@ -1,7 +1,7 @@
 <?php
 
-use App\Controllers\Home\Dashboard;
-use App\Controllers\Bot\BotController;
+use Src\Controllers\Home\Dashboard;
+use Src\Controllers\Bot\BotController;
 use Slim\Exception\HttpNotFoundException;
 
 

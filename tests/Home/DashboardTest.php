@@ -3,7 +3,7 @@
 namespace Tests\Home;
 
 use PHPUnit\Framework\TestCase;
-use App\Controllers\Home\Dashboard;
+use Src\Controllers\Home\Dashboard;
 
 final class DashboardTest extends TestCase 
 {   

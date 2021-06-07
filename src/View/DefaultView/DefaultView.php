@@ -1,6 +1,6 @@
 <?php
 
-namespace App\View\DefaultView;
+namespace Src\View\DefaultView;
 
 /**
  * Class para administrar view do chatbot
@@ -21,20 +21,30 @@ class DefaultView
     public function setDirTpl(string $dir_tlp = ""): void
     {
         if (empty($dir_tlp)) {
-            $this->dir_tlp = "../app/resources/";
+            $this->dir_tlp = "../src/resources/";
         } else {
             $this->dir_tlp = $dir_tlp;
         }
     }
 
     /**
-     * Método para povoar e retornar conteúdo da página
+     * Método para escrever conteúdo povoado da página
      *
      * @return string
      */
-    public function write(): string
+    public function getWrite(): string
     {
         return str_replace($this->data_var, $this->data, $this->tpl);
+    }
+
+    /**
+     * Método para escrever tpl com conteúdo povoado
+     *
+     * @return void
+     */
+    public function write(): void
+    {
+       echo str_replace($this->data_var, $this->data, $this->tpl);
     }
 
     /**

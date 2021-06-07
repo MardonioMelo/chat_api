@@ -19,4 +19,4 @@ $app->setBasePath("/chatbot_api");
 //$chatbot->widget();
 
 # Rotas do App
-require '../app/routes/api.php';
+require '../src/routes/api.php';

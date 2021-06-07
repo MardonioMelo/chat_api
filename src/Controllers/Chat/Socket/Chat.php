@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controllers\Chat\Socket;
+namespace Src\Controllers\Chat\Socket;
 
 use Ratchet\MessageComponentInterface;
 use Ratchet\ConnectionInterface;

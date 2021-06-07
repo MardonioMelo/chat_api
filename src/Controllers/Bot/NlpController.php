@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Controllers\Bot;
+namespace Src\Controllers\Bot;
 
-use App\Models\BotModel;
+use Src\Models\BotModel;
 use NlpTools\Stemmers\PorterStemmer;
 use NlpTools\Tokenizers\WhitespaceAndPunctuationTokenizer;
 use NlpTools\Tokenizers\WhitespaceTokenizer;

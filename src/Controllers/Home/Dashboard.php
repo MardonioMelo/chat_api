@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Controllers\Home;
+namespace Src\Controllers\Home;
 
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
-use App\Models\BotModel;
-use App\View\PainelChat\PainelChatView;
+use Src\Models\BotModel;
+use Src\View\PainelChat\PainelChatView;
 
 /**
  * Classe controller principal da API

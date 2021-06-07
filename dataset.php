@@ -1,7 +1,7 @@
 <?php
 require __DIR__ . './vendor/autoload.php';
 
-use App\Models\BotModel;
+use Src\Models\BotModel;
 
 # **********************
 # Cadastrar Novos Dados
@@ -44,7 +44,7 @@ echo "\n 5 - Limpar todos os dados da tabela app_bot.";
 echo "\n 6 - Realizar teste do NLP.";
 echo "\n 0 - Sair.";
 echo "\n\nObs 1: os arquivos são consultados e salvos na pasta 'treino'.";
-echo "\nObs 2: os dados são salvos no db chatbot e tabela app_bot conforme arquivo app/config/db.sql";
+echo "\nObs 2: os dados são salvos no db chatbot e tabela app_bot conforme arquivo src/config/db.sql";
 echo "\n\nMétodo: ";
 
 $metodo = inputMetodo();

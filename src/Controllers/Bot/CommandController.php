@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Controllers\Bot;
+namespace Src\Controllers\Bot;
 
 use BotMan\BotMan\BotMan;
-use App\Models\BotModel;
+use Src\Models\BotModel;
 
 /**
  * Class CommandController

@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Controllers\Bot;
+namespace Src\Controllers\Bot;
 
-use App\Models\BotModel;
+use Src\Models\BotModel;
 use BotMan\BotMan\BotMan;
 use BotMan\BotMan\Messages\Conversations\Conversation;
 use BotMan\BotMan\Messages\Incoming\Answer;

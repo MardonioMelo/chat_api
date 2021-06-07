@@ -1,8 +1,8 @@
 <?php
 
-namespace App\View\Chatbot;
+namespace Src\View\Chatbot;
 
-use App\View\DefaultView\DefaultView;
+use Src\View\DefaultView\DefaultView;
 
 /**
  * Class para administrar view do chatbot

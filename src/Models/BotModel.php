@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Models;
+namespace Src\Models;
 
-use App\Models\DataBase\AppBot;
+use Src\Models\DataBase\AppBot;
 use Requests;
 use CoffeeCode\DataLayer\Connect;
 

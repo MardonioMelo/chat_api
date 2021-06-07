@@ -1,8 +1,8 @@
 <?php
 
-namespace App\View\PainelChat;
+namespace Src\View\PainelChat;
 
-use App\View\DefaultView\DefaultView;
+use Src\View\DefaultView\DefaultView;
 
 /**
  * Class para administrar view do chatbot
@@ -29,7 +29,7 @@ class PainelChatView extends DefaultView
         $this->setDataName($name);
         $this->setData($data);
         $this->setTplHtml("painelchat/painel");  
-        return $this->write();       
+        return $this->getWrite();       
     }
 
 }

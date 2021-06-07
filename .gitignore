@@ -1,7 +1,7 @@
 composer.phar
 vendor/
-app/config/refinar_dados
+src/config/refinar_dados
 Chatbot.session.sql
 .vscode
-app/config/app.php
+src/config/app.php
 

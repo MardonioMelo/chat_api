@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controllers\Bot;
+namespace Src\Controllers\Bot;
 
 use BotMan\BotMan\BotMan;
 use BotMan\BotMan\BotManFactory;
@@ -8,7 +8,7 @@ use BotMan\BotMan\Drivers\DriverManager;
 use BotMan\Drivers\Web\WebDriver;
 use BotMan\BotMan\Cache\SymfonyCache;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
-use App\View\Chatbot\ChatbotWidgetView;
+use Src\View\Chatbot\ChatbotWidgetView;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
