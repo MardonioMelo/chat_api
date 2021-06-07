@@ -5,6 +5,7 @@ namespace App\Controllers\Home;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use App\Models\BotModel;
+use App\View\PainelChat\PainelChatView;
 
 /**
  * Classe controller principal da API
@@ -17,6 +18,7 @@ class Dashboard
     public function __construct()
     {
         $this->BotModel = new BotModel();
+        $this->PainelChatView = new PainelChatView();
     }
 
     /**
@@ -25,12 +27,11 @@ class Dashboard
      * @param Request $request
      * @param Response $response
      * @param array $args
-     * @return object
+     * @return void
      */
-    public function home(Request $request, Response $response, array $args): object
-    {
-
-        $payload = "<br> API para chatbot de atendimento!";
+    public function home(Request $request, Response $response, array $args)
+    {      
+        $payload = $this->PainelChatView->tplPainelView(["Painel de Chat"]);
         $response->getBody()->write($payload);
         return $response;
     }

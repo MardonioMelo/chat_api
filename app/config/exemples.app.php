@@ -35,3 +35,5 @@ define("USER_IMG", "");
 define("BOT_NAME", "Zé");
 define("BOT_IMG", "");
 
+define("SERVER_CHAT_PORT", "8081");
+define("SERVER_CHAT_URL", "ws://localhost:" . SERVER_CHAT_PORT);

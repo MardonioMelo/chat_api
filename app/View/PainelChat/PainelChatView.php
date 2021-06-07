@@ -2,19 +2,16 @@
 
 namespace App\View\PainelChat;
 
+use App\View\DefaultView\DefaultView;
+
 /**
  * Class para administrar view do chatbot
  */
-class PainelChatView
-{
-    private $dirtlp;
-
-    /**
-     * Inicia constantenses
-     */
+class PainelChatView extends DefaultView
+{  
     public function __construct()
     {
-        $this->dirtlp = "../app/resources";
+        $this->setDirTpl();
     }
 
     /**
@@ -23,16 +20,16 @@ class PainelChatView
      * @param array $data
      * @return string
      */
-    public function tplPainelView(array  $data): string
+    public function tplPainelView(array $data): string
     {
-        $data_var = [
+        $name = [
             "{{title}}"   
         ];
-        $tpl = file_get_contents($this->dirtlp . "/painelchat/painel.html");
-        return str_replace($data_var, $data, $tpl);
+
+        $this->setDataName($name);
+        $this->setData($data);
+        $this->setTplHtml("painelchat/painel");  
+        return $this->write();       
     }
-
-
-
 
 }

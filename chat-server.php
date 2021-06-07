@@ -13,7 +13,7 @@ $server = IoServer::factory(
             new Chat()
         )
     ),
-    8081
+    SERVER_CHAT_PORT
 );
 
 $server->run();
