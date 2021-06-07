@@ -136,8 +136,11 @@ class DefaultView
      * @param string $footer
      * @return string
      */
-    public function mountPage(string $head, string $body, string $footer = ""): string
+    public function mountPage(string $head = "", string $body ="", string $footer = ""): string
     {
-        return '<!DOCTYPE html><html lang="pt-br">' . $head . $body . $footer . '</html>';
+        $head = empty($this->head) ? $head : $this->head;
+        $body = empty($this->body) ? $body : $this->body;
+        $footer = empty($this->footer) ? $footer : $this->footer;
+        return '<!DOCTYPE html><html lang="pt-br">' . $head .$head . $footer . '</html>';
     }
 }

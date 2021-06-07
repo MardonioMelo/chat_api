@@ -39,6 +39,6 @@ class ChatbotWidgetView extends DefaultView
         $this->setDataName($data_var);
         $this->setData($data);
         $this->setTplHtml("chatbot/index");  
-        return $this->write();       
+        return $this->getWrite();       
     }
 }

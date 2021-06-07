@@ -31,52 +31,8 @@ class Dashboard
      */
     public function home(Request $request, Response $response, array $args)
     {      
-        $payload = $this->PainelChatView->tplPainelView(["Painel de Chat"]);
+        $payload = $this->PainelChatView->tplPainelView();
         $response->getBody()->write($payload);
         return $response;
-    }
-
-    /**
-     * Paragrafo
-     *
-     * @param string $text
-     * @return string
-     */
-    public function printContent(string $text): string
-    {
-        return "<p>{$text}</p>";
-    }
-
-    /**
-     * Cabeçalho da página
-     *
-     * @param string $text
-     * @return string
-     */
-    public function printHead(string $text): string
-    {
-        return "<p>{$text}</p>";
-    }
-
-    /**
-     * Corpo da página
-     *
-     * @param string $text
-     * @return string
-     */
-    public function printBody(string $text): string
-    {
-        return "<p>{$text}</p>";
-    }
-
-    /**
-     * Rodapé da página
-     *
-     * @param string $text
-     * @return string
-     */
-    public function printFooter(string $text): string
-    {
-        return "<p>{$text}</p>";
     }
 }
