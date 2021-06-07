@@ -583,3 +583,18 @@ body {
     font-size: 1.8em !important;
   }
 }
+
+.online,
+.offline {
+    margin-right: 2px;
+    font-size: 8px;
+    vertical-align: middle
+}
+
+.online {
+    color: #86c541
+}
+
+.offline {
+    color: #e47297
+}

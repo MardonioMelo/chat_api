@@ -11,6 +11,9 @@ class DefaultView
     private $tpl;
     private $data;
     private $data_var;
+    private $head;
+    private $body;
+    private $footer;
 
     /**
      * Set diretório principal dos templates
@@ -44,7 +47,7 @@ class DefaultView
      */
     public function write(): void
     {
-       echo str_replace($this->data_var, $this->data, $this->tpl);
+        echo str_replace($this->data_var, $this->data, $this->tpl);
     }
 
     /**
@@ -77,8 +80,64 @@ class DefaultView
      * @return void
      */
     public function setTplHtml($tpl, $ext = ".html"): void
-    {              
+    {
         $this->tpl = file_get_contents($this->dir_tlp . $tpl . $ext);
-    }   
+    }
 
+    /**
+     * Motar HEAD da página
+     *
+     * @param string $title
+     * @param string $other
+     * @return void
+     */
+    public function mountHead(string $title, string $other = ""): void
+    {
+        $head = '<head>';
+        $head .= '<meta charset="UTF-8">';
+        $head .= '<meta http-equiv="X-UA-Compatible" content="IE=edge">';
+        $head .= '<meta name="viewport" content="width=device-width, initial-scale=1.0">';
+        $head .= '<title>' . $title . '</title>';
+        $head .= $other;
+        $head .= '</head>';
+
+        $this->head = $head;
+    }
+
+    /**
+     * Motar BODY da página
+     *
+     * @param string $body
+     * @param string $att
+     * @return void
+     */
+    public function mountBody(string $body, string $att = ""): void
+    {
+        $this->body = '<body' . $att . '>' . $body . '</body>';
+    }
+
+    /**
+     * Motar FOOTER da página
+     *
+     * @param [type] $footer
+     * @param string $att
+     * @return void
+     */
+    public function mountFooter($footer, $att = ""): void
+    {
+        $this->footer = '<footer ' . $att . '>' . $footer . '</footer>';
+    }
+
+    /**
+     * Motar e retornar página HTML5 
+     *
+     * @param string $head
+     * @param string $body
+     * @param string $footer
+     * @return string
+     */
+    public function mountPage(string $head, string $body, string $footer = ""): string
+    {
+        return '<!DOCTYPE html><html lang="pt-br">' . $head . $body . $footer . '</html>';
+    }
 }
