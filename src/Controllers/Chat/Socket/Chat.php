@@ -10,35 +10,47 @@ class Chat implements MessageComponentInterface
 {
     protected $clients;
     private $session;
+    private $key_session;
 
     public function __construct()
     {
         $this->clients = new \SplObjectStorage;
-
         $this->session = new Session();
-        $this->session->start();
-
-        // set and get session attributes
-        //$this->session->set('name', 'Drak');
-        //$this->session->get('name');        
+        $this->session->start();      
     }
 
     public function onOpen(ConnectionInterface $conn)
     {
         // Armazene a nova conexão para enviar mensagens mais tarde      
         $this->clients->attach($conn);
+        $this->key_session = 'resourceId_' . $conn->resourceId;
+        $this->session->set($this->key_session, 0);
 
-        echo "New connection! ({$conn->resourceId})\n";
-        // $conn->send('Hello ' . $conn->Session->get('name'));
-        $this->session->set('resourceId_' . $conn->resourceId, []);
+        echo "New connection! ({$conn->resourceId})\n";       
     }
 
     public function onMessage(ConnectionInterface $from, $msg)
     {
-        $numRecv = count($this->clients) - 1;
-        echo "Connection $from->resourceId sending message '$msg' to $numRecv other connection" . ($numRecv == 1 ? '' : 's');
-        $this->session->get('resourceId_' . $from->resourceId)['test'] = 'Jesus';
-        var_dump($this->session->get('resourceId_' . $from->resourceId));
+        // $numRecv = count($this->clients) - 1;
+        // echo "Connection $from->resourceId sending message '$msg' to $numRecv other connection" . ($numRecv == 1 ? '' : 's');
+
+        $data_user = $this->session->get($this->key_session);
+
+               
+        if($data_user === 0){
+            echo "\n User novo";
+
+            $data_json = json_decode($msg);
+            $this->session->set($this->key_session,  $data_json);   
+
+        }else{
+            echo "\n User já existe!";            
+        } 
+
+        echo "\n"; 
+        $data_user = $this->session->get($this->key_session); 
+        var_dump($data_user);       
+        echo "\n";           
 
 
         foreach ($this->clients as $client) {
