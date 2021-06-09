@@ -25,7 +25,7 @@ Estilo do documento:
 - Verifique o retorno da mensagem para analisar o resultado. 
 
 ## Iniciar servidor WebSocket do chat
-> php chat-server.php
+> php server.php
 
 ## Testes Automatizados - PHPUnit
 - Execute o comando para os testes automatizados com PHPUnit

@@ -9,7 +9,7 @@ use Src\View\DefaultView\DefaultView;
  */
 class ChatbotWidgetView extends DefaultView
 {
-    
+
     /**
      * Inicia constantenses
      */
@@ -20,13 +20,25 @@ class ChatbotWidgetView extends DefaultView
 
     /**
      * Método para povoar e retornar conteúdo da página
+     * 
+     *  URL para abrir conexão (substitua o user_id pelo id do usuário): ws://localhost:8081/user_id
+     *  Exemplar da estrutura dos dados para envio das mensagens:
+     *   data : {
+     *      "driver": "web",
+     *      "userId": 2,
+     *      "userDestId": 3,
+     *      "text": "ola",
+     *      "type": "text",
+     *      "time": "10:30",
+     *      "attachment":null
+     *    }
      *
      * @param array $data
      * @return string
      */
     public function tplView(array  $data = [USER_ID, USER_DEST_ID, USER_NAME, USER_IMG, BOT_NAME, BOT_IMG]): string
     {
-        $data['url'] = SERVER_CHAT_URL;
+        $data['url'] = SERVER_CHAT_URL . '/' . USER_ID;
         $data_var = [
             "{{userid}}",
             "{{userdestid}}",
@@ -35,11 +47,11 @@ class ChatbotWidgetView extends DefaultView
             "{{botname}}",
             "{{botimg}}",
             "{{url}}"
-        ];      
+        ];       
 
         $this->setDataName($data_var);
         $this->setData($data);
-        $this->setTplHtml("chatbot/index");  
-        return $this->getWrite();       
+        $this->setTplHtml("chatbot/index");
+        return $this->getWrite();
     }
 }
