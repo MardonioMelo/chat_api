@@ -16,7 +16,7 @@ class Chat implements MessageComponentInterface
     {
         $this->clients = new \SplObjectStorage;
         $this->session = new Session();
-        $this->session->start();      
+        $this->session->start();
     }
 
     public function onOpen(ConnectionInterface $conn)
@@ -26,7 +26,7 @@ class Chat implements MessageComponentInterface
         $this->key_session = 'resourceId_' . $conn->resourceId;
         $this->session->set($this->key_session, 0);
 
-        echo "New connection! ({$conn->resourceId})\n";       
+        echo "New connection! ({$conn->resourceId})\n";
     }
 
     public function onMessage(ConnectionInterface $from, $msg)
@@ -35,32 +35,43 @@ class Chat implements MessageComponentInterface
         // echo "Connection $from->resourceId sending message '$msg' to $numRecv other connection" . ($numRecv == 1 ? '' : 's');
 
         $data_user = $this->session->get($this->key_session);
+        $msg_arr = json_decode($msg);
 
-               
-        if($data_user === 0){
+        if ($data_user === 0) {
+
+            //Salvar dados na sessão              
+            $this->session->set($this->key_session, $msg_arr->userId);
+
             echo "\n User novo";
+        } else {
+            echo "\n User já existe!";
+        }
 
-            $data_json = json_decode($msg);
-            $this->session->set($this->key_session,  $data_json);   
-
-        }else{
-            echo "\n User já existe!";            
-        } 
-
-        echo "\n"; 
-        $data_user = $this->session->get($this->key_session); 
-        var_dump($data_user);       
-        echo "\n";           
-
-
+        $result = false;
         foreach ($this->clients as $client) {
 
             if ($from !== $client) {
 
-                //var_dump($this->clients[$client]);
-                // O remetente não é o destinatário, envie para cada cliente conectado
-                $client->send($msg);
+                $destinations = $this->session->get('resourceId_' . $client->resourceId);
+
+                var_dump($destinations);
+
+                if (!empty($destinations)) {
+                    if ($msg_arr->userDestId === $destinations['userId']) {
+
+                        // O remetente não é o destinatário 
+                        // O destinatária corresponde ao USER_ID informado
+                        // Envie para o cliente correspondente
+                        $client->send($msg);
+                        $result = true;
+                    }
+                }
             }
+        }
+
+        if ($result === false) {
+            $msg_arr->text = "A mensagem foi enviada mas o usuário está offline.";
+            $from->send(json_encode($msg_arr));
         }
     }
 

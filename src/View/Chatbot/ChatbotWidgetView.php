@@ -24,11 +24,12 @@ class ChatbotWidgetView extends DefaultView
      * @param array $data
      * @return string
      */
-    public function tplView(array  $data = [1, USER_NAME, USER_IMG, BOT_NAME, BOT_IMG]): string
+    public function tplView(array  $data = [USER_ID, USER_DEST_ID, USER_NAME, USER_IMG, BOT_NAME, BOT_IMG]): string
     {
         $data['url'] = SERVER_CHAT_URL;
         $data_var = [
             "{{userid}}",
+            "{{userdestid}}",
             "{{username}}",
             "{{userimg}}",
             "{{botname}}",

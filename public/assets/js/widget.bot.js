@@ -7,6 +7,7 @@ const BOT_IMG = datachat[0].dataset.botimg;
 const PERSON_IMG = datachat[0].dataset.userimg;
 const PERSON_NAME = datachat[0].dataset.username;
 const PERSON_ID = datachat[0].dataset.userid;
+const DEST_ID = datachat[0].dataset.userdestid;
 const url_websocket = datachat[0].dataset.urlwebsocket;
 const patch = baseUrl + "bot";
 const imgloading = baseUrl + 'public/assets/img/carregando.gif';
@@ -43,6 +44,7 @@ function send_bot(classe_input) {
     let data = {
         "driver": "web",
         "userId": PERSON_ID,
+        "userDestId": DEST_ID,
         "message": personMsg,
         "type": "text",
         "time": time
@@ -91,6 +93,7 @@ function send_bot_option(text) {
     let data = {
         "driver": "web",
         "userId": PERSON_ID,
+        "userDestId": DEST_ID,
         "message": text.value,
         "type": "text",
         "time": time

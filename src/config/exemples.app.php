@@ -29,7 +29,8 @@ define("DATA_LAYER_CONFIG", [
 
 define("TELEGRAM_TOKEN", "");
 
-define("USER_ID", 1);
+define("USER_ID", md5(uniqid())); // implemente aqui o id do login do usuário
+define("USER_DEST_ID", "3"); // implementar id do usuário de destino
 define("USER_NAME", "João");
 define("USER_IMG", "");
 define("BOT_NAME", "Zé");

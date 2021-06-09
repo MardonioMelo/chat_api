@@ -24,6 +24,9 @@ Estilo do documento:
 - O teste vai consultar os dados do arquivo treino/testing.json.
 - Verifique o retorno da mensagem para analisar o resultado. 
 
+## Iniciar servidor WebSocket do chat
+> php chat-server.php
+
 ## Testes Automatizados - PHPUnit
 - Execute o comando para os testes automatizados com PHPUnit
 > php vendor/bin/phpunit --testdox --color tests
