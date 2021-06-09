@@ -104,7 +104,7 @@ class Chat implements MessageComponentInterface
         $this->clients->detach($conn);
         $this->session->remove('resourceId_' . $conn->resourceId);
 
-        //print_r($_SESSION);
+        print_r($_SESSION);
         echo "Connection {$conn->resourceId} has disconnected\n";
     }
 
