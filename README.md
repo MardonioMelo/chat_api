@@ -8,8 +8,13 @@ Este repositório contém apenas o back-end de todo o projeto. O front-end está
 A primeira etapa do back-end será o desenvolvimento do chat e a segunda será o desenvolvimento do chatbot com NLP. 
 
 ## Dinâmica e Regras de Negócio
-<p>Essa aplicação terá dois ambientes sendo o <b>Panel Chat</b> dos atendentes e o <b>Box Chat</b> dos clientes.</p>
+Essa aplicação terá dois ambientes sendo o <b>Panel Chat</b> dos atendentes e o <b>Box Chat</b> dos clientes.<br>
 <p><b>Atenção:</b> Os clientes já devem estar cadastrados previamente, pois os dados de identificação do cliente serão consultados a partir de um ID informado.</p>
+
+## WebSocket
+A conexão WebSocket com o servidor de chat será aberta apenas quando o cliente enviar o fomulário de abertura de atendimento e será encerrada nas seguintes situações:
+- Cliente ou atendente fechou o navegador - um será informado com uma mensagem padrão que o outro perdeu a conexão, isto também pode ocorrer se não houver conexão com a internet.
+- Atendente encerrou o atendimento - apenas a conexão do cliente e fechada.
 
 ### Box Chat
 O cliente ao clicar para abrir a caixa de chat, será exibido um formulário da abertura do atendimento com os campos:
@@ -19,9 +24,7 @@ O cliente ao clicar para abrir a caixa de chat, será exibido um formulário da 
 Outras informações serão enviadas automaticamente como o id do cliente para consulta no banco de dados.
 
 Quando o cliente enviar dos dados da abertura do atendimento o Bot previamente configurado deverá responder caso for uma dúvida do seu conhecimento, caso contrário, dever encaminhar para um atendente. <br>
-Após o encaminhamento, o cliente ficará na fila de espera até um estiver com status de livre para atender, até lá, o cliente receberá em realtime no seu Box Chat o status da fila em número decrescente até chegar sua vez para ser atendido.
-
-Quando o atendente estiver com o status disponível/livre, poderá clicar em um dos clientes da lista de espera e iniciar o atendimento.
+Após o encaminhamento, o cliente ficará na fila de espera até um estiver com status de livre para atender, até lá, o cliente receberá em realtime no seu Box Chat o status da fila em número decrescente até chegar sua vez para ser atendido. Quando o atendente estiver com o status disponível/livre, poderá clicar em um dos clientes da lista de espera e iniciar o atendimento.
 
 <b>Nota:</b> O número de espera minimo que aparecerá para o cliente será de "1", nunca será "0" mesmo que todos dos atendentes estejam com status de disponível/livre. Assim, os tendentes não precisarão mudar seu status de atendimento.
 
@@ -31,16 +34,18 @@ O Painel de Chat será a tela de atendimento, nela terá:
 - Botão para mudar o status do atendimento (Em atendimento, em espera, Encerrado).
 - Visualização da área de espera - lista de clientes que estão na espera do atendimento por ordem de chegada.
 - Lista de clientes com conversa finalizada por status, clientes, escola, assunto e data.
-- Terá configuração dos horários de atendimento com respostas automáticas. Por ex.: Horário de Almoço.
+- Configuração dos horários de atendimento com respostas automáticas. Por ex.: Horário de Almoço.
+- Alerta e contagem de novos clientes em espera.
+- Botão de envio de avaliação
 
-O chatbot também deverá ser implementado no chat de atendimento par respostas mais simples e solução de problemas comuns.
+<p><b>Atenção:</b> Os atendentes devem estar cadastrados previamente. Essa necessidade será apenas para identificação no Painel de Chat através de um ID que vincula a configuração do perfíl, já para o cliente, a identificação do atendente não será mostrada.</p>
 
-Os atendentes devem estar cadastrados previamente de atendentes com nome genéricos como Atendente 01.
-
-### Tela Config
-
+### Avaliação do Atendimento
+Apos atendente encerrar o atendimento, será enviado por padrão, um formulário de avaliação contendo um campo com 5 opções de nota (1-5 obrigatório) e um campo para comentário (opcional).
 
 ## ChatBot
+O chatbot deverá ser implementado no atendimento par respostas mais simples e solução de problemas comuns.
+
 ### Arquivos de Treino do Bot
 Estilo do documento:
 
