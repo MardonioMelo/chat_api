@@ -67,6 +67,31 @@ Estilo do documento:
 - O teste vai consultar os dados do arquivo treino/testing.json.
 - Verifique o retorno da mensagem para analisar o resultado. 
 
+
+## Integração
+
+### Rotas
+As rotas são URL's para troca de dados e integração com outras aplicações front-end.
+
+<b>WebSocket</b><br>
+Variáveis: 
+ - SERVER_CHAT_PORT = porta de conexão com o servidor websocket. Ess porta pode ser configurada no arquivo src\config\app.php
+ - ID = id do usuário que deseja fazer conexão.
+
+> ws://localhost:SERVER_CHAT_PORT/ID
+
+Dados de envio ex.: 
+  >  {
+        "driver": "web",
+        "userId": 2,
+        "userDestId": 3,
+        "text": "ola",
+        "type": "text",
+        "time": "10:30",
+        "attachment":null
+  >  }
+
+
 ## Comandos
 
 ### Iniciar servidor WebSocket do chat
