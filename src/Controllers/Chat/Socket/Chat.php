@@ -28,14 +28,20 @@ class Chat implements MessageComponentInterface
      */
     public function onOpen(ConnectionInterface $conn): void
     {
-        // Armazene a nova conexão para enviar mensagens mais tarde      
-        $this->clients->attach($conn);
-        $this->key_session = 'resourceId_' . $conn->resourceId;
-        $user_id = str_replace("/", "", $conn->httpRequest->getRequestTarget());
+        $user_id = (int) str_replace("/", "", $conn->httpRequest->getRequestTarget());
 
-        $this->session->set($this->key_session, $user_id);
+        if (empty($user_id) || $user_id === 0) {
+            
+            echo "Opss! O ID do user não foi informado ou ID inválido.\n";           
+            $conn->close();
+        } else {
 
-        echo "New connection! ({$conn->resourceId}) user_id ({$user_id})\n";
+            // Armazene a nova conexão para enviar mensagens mais tarde      
+            $this->clients->attach($conn);
+            $this->key_session = 'resourceId_' . $conn->resourceId;
+            $this->session->set($this->key_session, $user_id);
+            echo "New connection! ({$conn->resourceId}) user_id ({$user_id})\n";
+        }
     }
 
     /**

@@ -9,7 +9,7 @@ A primeira etapa do back-end será o desenvolvimento do chat e a segunda será o
 
 ## Dinâmica e Regras de Negócio
 Essa aplicação terá dois ambientes sendo o <b>Panel Chat</b> dos atendentes e o <b>Box Chat</b> dos clientes.<br>
-<p><b>Atenção:</b> Os clientes já devem estar cadastrados previamente, pois os dados de identificação do cliente serão consultados a partir de um ID informado.</p>
+<p><b>Atenção:</b> Os clientes já devem estar cadastrados previamente assim como os atendentes, pois os dados de identificação do cliente serão consultados a partir de um ID informado.</p>
 
 ## WebSocket
 A conexão WebSocket com o servidor de chat será aberta apenas quando o cliente enviar o fomulário de abertura de atendimento e será encerrada nas seguintes situações:
@@ -80,7 +80,7 @@ Variáveis:
 
 > ws://localhost:SERVER_CHAT_PORT/ID
 
-Dados de envio ex.: 
+Dados de envio JSON ex.: 
   >  {
         "driver": "web",
         "userId": 2,
