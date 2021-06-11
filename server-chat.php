@@ -10,7 +10,7 @@ use Src\Controllers\Chat\Socket\Chat;
 $server = IoServer::factory(
     new HttpServer(
         new WsServer(
-            new Chat()
+            new Chat(true)
         )
     ),
     SERVER_CHAT_PORT
