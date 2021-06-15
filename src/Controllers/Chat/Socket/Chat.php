@@ -91,11 +91,13 @@ class Chat implements MessageComponentInterface
             //Histórico de mensagens
             $dt_start = '2021-06-15 02:00:00';
             $dt_end = '2021-06-15 03:00:00';
-            $this->chat_model->hitoryMsg($msg_arr['userId'], $msg_arr['userDestId'], $dt_start, $dt_end);
+            $history = $this->chat_model->hitoryMsg($msg_arr['userId'], $msg_arr['userDestId'], $dt_start, $dt_end);
             // $history[''] = [];
             // $history['result'] = json_decode($this->chat_model->getResult());
             // $history['error'] = json_decode($this->chat_model->getResult());
         }
+
+        print_r($this->chat_model->data());
 
         foreach ($this->clients as $client) {
 
@@ -108,7 +110,7 @@ class Chat implements MessageComponentInterface
                     // O destinatária corresponde ao USER_ID informado em USER_DEST_ID
                     // Envie para o cliente correspondente
                     if ($msg_arr['action'] === "history") {
-                        $client->send(json_encode($this->chat_model->getResult()));
+                        $client->send(json_encode($history));
                     }
                     $client->send($msg);
                     $result = true;

@@ -53,25 +53,24 @@ class  ChatModel
      * @param integer $user_dest_id
      * @param string $dt_start = data inicio
      * @param string $dt_end = data fim
-     * @return void
+     * @return null|Object
      */
-    public function hitoryMsg(int $user_id, int $user_dest_id, string $dt_start, string $dt_end): void
+    public function hitoryMsg(int $user_id, int $user_dest_id, string $dt_start, string $dt_end)
     {
         $query_col = "(chat_user_id = :a AND chat_user_dest_id = :b OR chat_user_id = :c AND chat_user_dest_id = :d) AND chat_date BETWEEN :e AND :f";
         $query_value = "a={$user_id}&b={$user_dest_id}&c={$user_id}&d={$user_dest_id}&e={$dt_start}&f={$dt_end}";
 
-        $this->tab_app_chat->readCol($query_col, $query_value);
+        $this->tab_app_chat->readCol($query_col, $query_value);       
 
-        $this->Result = $this->tab_app_chat->getResult();
-        $this->Error = $this->tab_app_chat->getError();
+        return $this->tab_app_chat->data();       
     }
 
     /**
      * <b>Verificar Ação:</b> Retorna TRUE se ação for efetuada ou FALSE se não. Para verificar erros
      * execute um getError();
-     * @return bool|int $Var = True(com o id) or False
+     * @return string $Var = True(com o id) or False
      */
-    public function getResult(): bool
+    public function getResult(): string
     {
         return $this->Result;
     }
