@@ -25,10 +25,8 @@ class Chat implements MessageComponentInterface
     public function __construct(bool $on_log = false)
     {
         $this->clients = new \SplObjectStorage;
-        $this->chat_model = new ChatModel();
         $this->session = new Session();
         $this->session->start();
-        $this->log = "";
         $this->on_log = (bool) $on_log;
     }
 
@@ -40,6 +38,7 @@ class Chat implements MessageComponentInterface
      */
     public function onOpen(ConnectionInterface $conn): void
     {
+        $this->log = "";
         $user_id = (int) str_replace("/", "", $conn->httpRequest->getRequestTarget());
 
         if (empty($user_id) || $user_id === 0) {
@@ -52,9 +51,9 @@ class Chat implements MessageComponentInterface
             $this->clients->attach($conn);
             $this->key_session = 'resourceId_' . $conn->resourceId;
             $this->session->set($this->key_session, $user_id);
-            $this->setLog("Conexão ({$conn->resourceId}) user_id ({$user_id}).\n");
+            $this->setLog("New Connection ({$conn->resourceId}) user_id ({$user_id}).\n");
         }
-
+        $this->setLog("Total Online: {$this->qtdUsersOn()} \n");
         $this->printLog();
     }
 
@@ -67,7 +66,8 @@ class Chat implements MessageComponentInterface
      */
     public function onMessage(ConnectionInterface $from, $msg): void
     {
-        // $numRecv = count($this->clients) - 1 //Qtd de usuários online;        
+        $this->chat_model = new ChatModel();
+        $this->log = "";
 
         $data_user = $this->session->get($this->key_session);
         $msg_arr = json_decode($msg, true);
@@ -77,14 +77,25 @@ class Chat implements MessageComponentInterface
             $this->session->remove($this->key_session);
             $this->session->set($this->key_session, $msg_arr['userId']);
 
-            $this->setLog("\nUser novo\n");
+            $this->setLog("\nNew user logged in!\n");
         } else {
-            $this->setLog("\nUser existe!\n");
+            $this->setLog("\nLogged in user!\n");
         }
+
+        $this->setLog("Total Online: {$this->qtdUsersOn()} \n");
 
         $result = false;
         $this->setLog("Origem user: " . $msg_arr['userId'] . " | Destino user: " . $msg_arr['userDestId'] . " \n");
-        $this->setLog("User Online: \n");
+
+        if ($msg_arr['action'] = "history") {
+            //Histórico de mensagens
+            $dt_start = '2021-06-15 02:00:00';
+            $dt_end = '2021-06-15 03:00:00';
+            $this->chat_model->hitoryMsg($msg_arr['userId'], $msg_arr['userDestId'], $dt_start, $dt_end);
+            // $history[''] = [];
+            // $history['result'] = json_decode($this->chat_model->getResult());
+            // $history['error'] = json_decode($this->chat_model->getResult());
+        }
 
         foreach ($this->clients as $client) {
 
@@ -96,6 +107,9 @@ class Chat implements MessageComponentInterface
                     // O remetente não é o destinatário 
                     // O destinatária corresponde ao USER_ID informado em USER_DEST_ID
                     // Envie para o cliente correspondente
+                    if ($msg_arr['action'] === "history") {
+                        $client->send(json_encode($this->chat_model->getResult()));
+                    }
                     $client->send($msg);
                     $result = true;
                     $this->setLog("Origem resourceId " . $from->resourceId . " | Destino resourceId: " . $client->resourceId  . "\n");
@@ -110,8 +124,9 @@ class Chat implements MessageComponentInterface
             $from->send(json_encode($msg_arr));
             $this->setLog("User offline\n");
         }
-       
-        $this->setLog($this->chat_model->getError());
+
+        $this->setLog("Mensagem: " . $msg_arr['text'] . "\n");
+        $this->setLog("Status da Mensagem: " . $this->chat_model->getError());
         $this->printLog();
     }
 
@@ -123,10 +138,10 @@ class Chat implements MessageComponentInterface
      */
     public function onClose(ConnectionInterface $conn): void
     {
+        $this->log = "";
         // A conexão foi encerrada, remova-a, pois não podemos mais enviar mensagens para ela
         $this->clients->detach($conn);
         $this->session->remove('resourceId_' . $conn->resourceId);
-
         $this->setLog("A conexão {$conn->resourceId} foi desconectada.\n" . "Sessão:\n" . print_r($_SESSION, true) . "\n");
         $this->printLog();
     }
@@ -140,6 +155,7 @@ class Chat implements MessageComponentInterface
      */
     public function onError(ConnectionInterface $conn, \Exception $e): void
     {
+        $this->log = "";
         $this->setLog("Ocorreu um erro: {$e->getMessage()}\n");
         $this->session->remove('resourceId_' . $conn->resourceId);
         $conn->close();
@@ -167,9 +183,20 @@ class Chat implements MessageComponentInterface
     {
         $in = "\n---------" . date("d/m/Y h:i:s") . "------------\n";
         $out = "\n----------------------------------------\n";
-      
+
         if ($this->on_log) {
-            echo $in . $this->log . $out;
+            echo $in . $this->log . "\nMemory: " . memory_get_usage() . " bytes" . $out;
         }
+    }
+
+    /**
+     * Quantidade de usuários online
+     *
+     * @param int $sub informe uma quantidade para subtrair do total
+     * @return int
+     */
+    public function qtdUsersOn(int $sub = 1): int
+    {
+        return count($this->clients) - $sub; //Qtd de usuários online;           
     }
 }

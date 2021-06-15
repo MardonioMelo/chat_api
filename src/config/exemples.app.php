@@ -27,7 +27,6 @@ define("DATA_LAYER_CONFIG", [
     ]
 ]);
 
-define("TELEGRAM_TOKEN", "");
 
 define("USER_ID", "11"); // implemente aqui o id do login do usuário
 define("USER_DEST_ID", "1"); // implementar id do usuário de destino

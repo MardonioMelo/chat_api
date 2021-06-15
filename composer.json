@@ -1,6 +1,6 @@
 {
   "name": "mardoniomelo/chatbot_api",
-  "description": "API para chatbot",
+  "description": "API para chat e chatbot",
   "minimum-stability": "stable",
   "license": "proprietary",
   "authors": [
@@ -36,8 +36,7 @@
     "guzzlehttp/psr7": "^1.7",
     "http-interop/http-factory-guzzle": "^1.0",
     "laminas/laminas-diactoros": "^2.5", 
-    "botman/botman": "2.5.0",
-    "botman/driver-telegram": "1.5.2",
+    "botman/botman": "2.5.0",  
     "botman/driver-web": "1.5.1",
     "symfony/cache": "5.0.5",
     "nlp-tools/nlp-tools": "0.1.3",

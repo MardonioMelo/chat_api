@@ -112,18 +112,5 @@ class BotController
                 'conversation_cache_time' => 60
             ]
         ];
-    }
-
-    /**
-     * Configurações para Telegram
-     */
-    private function setConfigTelegram()
-    {
-
-        $this->config = [
-            "telegram" => [
-                "token" => !empty(TELEGRAM_TOKEN) ?: TELEGRAM_TOKEN
-            ]
-        ];
-    }
+    }    
 }
