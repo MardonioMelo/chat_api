@@ -80,16 +80,25 @@ Variáveis:
 
 > ws://localhost:SERVER_CHAT_PORT/ID
 
-Dados de envio JSON ex.: 
-  >  {
+Exemplo: 
+>   URL: ws://localhost:8081/1
+    Dados:  {
         "driver": "web",
-        "userId": 2,
-        "userDestId": 3,
-        "text": "ola",
+        "userId": 1,
+        "userDestId": 2,
+        "text": "ola 1",
         "type": "text",
         "time": "10:30",
-        "attachment":null
-  >  }
+        "attachment":null,
+        "history": {
+            "consult": true,  //Se este for true, será retornado o histórico conforme intervalo em start e end.
+            "start":"2021-06-16 12:00:00", 
+            "end":"2021-06-16 14:00:00",
+            "data": ""
+        }
+>  }
+
+
 
 
 ## Comandos

@@ -29,6 +29,7 @@ $app->get('/bot', BotController::class . ":widget");
 
 // Rotas GET
 $app->post('/bot', BotController::class . ":chatBot");
+$app->post('/history', Dashboard::class . ":msgHistory"); 
 
 // --------------------------+
 // Fim rotas a partir daqui

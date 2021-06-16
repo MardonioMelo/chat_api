@@ -43,26 +43,27 @@ class  ChatModel
         $this->tab_app_chat->chat_type = (string) $type;
         $this->tab_app_chat->chat_attachment = (string)$attachment;
 
+        print_r($this->tab_app_chat);
+
         $this->saveCreate();
     }
 
     /**
-     * Consultar histórico de mensagens.
+     * Consultar Histórico de mensagens de um intervalo de tempo.
      *
      * @param integer $user_id
      * @param integer $user_dest_id
      * @param string $dt_start = data inicio
      * @param string $dt_end = data fim
-     * @return null|Object
+     * @return array
      */
-    public function hitoryMsg(int $user_id, int $user_dest_id, string $dt_start, string $dt_end)
+    public function readHistory(int $user_id, int $user_dest_id, string $dt_start, string $dt_end):array
     {
         $query_col = "(chat_user_id = :a AND chat_user_dest_id = :b OR chat_user_id = :c AND chat_user_dest_id = :d) AND chat_date BETWEEN :e AND :f";
         $query_value = "a={$user_id}&b={$user_dest_id}&c={$user_id}&d={$user_dest_id}&e={$dt_start}&f={$dt_end}";
-
-        $this->tab_app_chat->readCol($query_col, $query_value);       
-
-        return $this->tab_app_chat->data();       
+        $this->tab_app_chat->readCol($query_col, $query_value);
+        
+        return $this->organizeHistory($this->tab_app_chat->data());
     }
 
     /**
@@ -94,12 +95,28 @@ class  ChatModel
         $this->tab_app_chat->chat_date = date("Y-m-d h:i:s");
         $id = $this->tab_app_chat->save();
 
-        if ($id > 0) {
+        if ((int)$id > 0) {
             $this->Result = $id;
             $this->Error = "Cadastro realizado com sucesso!";
         } else {
-            $this->Result = false;
+            $this->Result = $id;
             $this->Error = $this->tab_app_chat->fail()->getMessage();
         }
     }
+
+    /**
+     * Organizar dados do histórico para envio  
+     *
+     * @param Object $history
+     * @return array
+     */
+    private function organizeHistory($history): array
+    {
+        $result = [];
+        foreach ($history as $item) {
+            $result[] = $item->data();
+        }
+        return $result;
+    }   
+
 }

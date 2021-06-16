@@ -16,6 +16,7 @@ class Chat implements MessageComponentInterface
     private $chat_model;
     private $log;
     private $on_log;
+    private $msg_obj;
 
     /**
      * Construct - informe true na declaração para imprimir os logs no terminal do servidor websocket.
@@ -53,6 +54,7 @@ class Chat implements MessageComponentInterface
             $this->session->set($this->key_session, $user_id);
             $this->setLog("New Connection ({$conn->resourceId}) user_id ({$user_id}).\n");
         }
+        //Log
         $this->setLog("Total Online: {$this->qtdUsersOn()} \n");
         $this->printLog();
     }
@@ -66,69 +68,59 @@ class Chat implements MessageComponentInterface
      */
     public function onMessage(ConnectionInterface $from, $msg): void
     {
-        $this->chat_model = new ChatModel();
         $this->log = "";
-
         $data_user = $this->session->get($this->key_session);
-        $msg_arr = json_decode($msg, true);
+        $this->msg_obj = json_decode($msg);
 
         if ($data_user === 0) {
             //Salvar dados na sessão        
             $this->session->remove($this->key_session);
-            $this->session->set($this->key_session, $msg_arr['userId']);
-
+            $this->session->set($this->key_session, $this->msg_obj->userId);
+            //Log
             $this->setLog("\nNew user logged in!\n");
         } else {
+            //Log
             $this->setLog("\nLogged in user!\n");
-        }
+        }    
 
+        //Log
         $this->setLog("Total Online: {$this->qtdUsersOn()} \n");
+        $this->setLog("Origem user: " . $this->msg_obj->userId . " | Destino user: " . $this->msg_obj->userDestId . " \n");
 
+        //Salvar msg no banco de dados   
+        $this->chat_model = new ChatModel();
+        $this->chat_model->saveMsg($this->msg_obj->userId, $this->msg_obj->userDestId, $this->msg_obj->text);
+        $status_save = $this->chat_model->getError();        
+
+        //Liste os users alocados na memória e procure o destinatário
         $result = false;
-        $this->setLog("Origem user: " . $msg_arr['userId'] . " | Destino user: " . $msg_arr['userDestId'] . " \n");
-
-        if ($msg_arr['action'] = "history") {
-            //Histórico de mensagens
-            $dt_start = '2021-06-15 02:00:00';
-            $dt_end = '2021-06-15 03:00:00';
-            $history = $this->chat_model->hitoryMsg($msg_arr['userId'], $msg_arr['userDestId'], $dt_start, $dt_end);
-            // $history[''] = [];
-            // $history['result'] = json_decode($this->chat_model->getResult());
-            // $history['error'] = json_decode($this->chat_model->getResult());
-        }
-
-        print_r($this->chat_model->data());
-
         foreach ($this->clients as $client) {
 
+            // O remetente não é o destinatário 
             if ($from !== $client) {
                 $destiny_id = (int) $this->session->get('resourceId_' . $client->resourceId) + 0;
 
-                if ((int) $msg_arr['userDestId'] === $destiny_id) {
+                // O destinatária corresponde ao id informado do destinatário
+                if ((int) $this->msg_obj->userDestId === $destiny_id) {
 
-                    // O remetente não é o destinatário 
-                    // O destinatária corresponde ao USER_ID informado em USER_DEST_ID
-                    // Envie para o cliente correspondente
-                    if ($msg_arr['action'] === "history") {
-                        $client->send(json_encode($history));
-                    }
-                    $client->send($msg);
+                    // Envie msg para o destinatário   
+                    $client->send(json_encode($this->msg_obj));
                     $result = true;
                     $this->setLog("Origem resourceId " . $from->resourceId . " | Destino resourceId: " . $client->resourceId  . "\n");
                 }
             }
         }
 
-        $this->chat_model->saveMsg($msg_arr['userId'], $msg_arr['userDestId'], $msg_arr['text']);
-
+        //Resposta caso o destinatário esteja offline
         if ($result === false) {
-            $msg_arr['text'] = "A mensagem foi enviada mas o usuário está offline.";
-            $from->send(json_encode($msg_arr));
+            $this->msg_obj->text = "A mensagem foi enviada mas o usuário está offline.";
+            $from->send(json_encode($this->msg_obj));
             $this->setLog("User offline\n");
         }
 
-        $this->setLog("Mensagem: " . $msg_arr['text'] . "\n");
-        $this->setLog("Status da Mensagem: " . $this->chat_model->getError());
+        //Log
+        $this->setLog("Mensagem: " . $this->msg_obj->text . "\n");
+        $this->setLog("Status: " . $status_save);
         $this->printLog();
     }
 
@@ -200,5 +192,5 @@ class Chat implements MessageComponentInterface
     public function qtdUsersOn(int $sub = 1): int
     {
         return count($this->clients) - $sub; //Qtd de usuários online;           
-    }
+    }    
 }
