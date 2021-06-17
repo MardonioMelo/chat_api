@@ -41,9 +41,7 @@ class  ChatModel
         $this->tab_app_chat->chat_text = (string) $text;
         $this->tab_app_chat->chat_drive = (string) $drive;
         $this->tab_app_chat->chat_type = (string) $type;
-        $this->tab_app_chat->chat_attachment = (string)$attachment;
-
-        print_r($this->tab_app_chat);
+        $this->tab_app_chat->chat_attachment = (string)$attachment;    
 
         $this->saveCreate();
     }
@@ -53,17 +51,17 @@ class  ChatModel
      *
      * @param integer $user_id
      * @param integer $user_dest_id
-     * @param string $dt_start = data inicio
-     * @param string $dt_end = data fim
-     * @return array
+     * @param string $dt_start = data e hora inicio
+     * @param string $dt_end = data e hora fim
+     * @return object
      */
-    public function readHistory(int $user_id, int $user_dest_id, string $dt_start, string $dt_end):array
-    {
+    public function readHistory(int $user_id, int $user_dest_id, string $dt_start, string $dt_end)
+    {       
         $query_col = "(chat_user_id = :a AND chat_user_dest_id = :b OR chat_user_id = :c AND chat_user_dest_id = :d) AND chat_date BETWEEN :e AND :f";
-        $query_value = "a={$user_id}&b={$user_dest_id}&c={$user_id}&d={$user_dest_id}&e={$dt_start}&f={$dt_end}";
+        $query_value = "a={$user_id}&b={$user_dest_id}&c={$user_id}&d={$user_dest_id}&e={$dt_start}&f={$dt_end}";       
         $this->tab_app_chat->readCol($query_col, $query_value);
-        
-        return $this->organizeHistory($this->tab_app_chat->data());
+
+        return $this->tab_app_chat->getResult();
     }
 
     /**
@@ -86,6 +84,29 @@ class  ChatModel
     }
 
     /**
+     * Organizar dados do histórico para envio  
+     *
+     * @param Object $obj
+     * @return array
+     */
+    public function passeAllDataArrayHistory($obj): array
+    {
+        $result = [];
+
+        if ($obj) {
+            foreach ($obj as $key => $arr) {
+                $result[$key]['chat_user_id'] = $arr->data()->chat_user_id;
+                $result[$key]['chat_user_dest_id'] = $arr->data()->chat_user_dest_id;
+                $result[$key]['chat_text'] = $arr->data()->chat_text;
+                $result[$key]['chat_type'] = $arr->data()->chat_type;             
+                $result[$key]['chat_date'] = $arr->data()->chat_date;
+                $result[$key]['chat_attachment'] = $arr->data()->chat_attachment;
+            }
+        }
+        return $result;
+    }
+
+    /**
      * Salvar dados da mensagem no banco de dados
      *
      * @return string
@@ -103,20 +124,5 @@ class  ChatModel
             $this->Error = $this->tab_app_chat->fail()->getMessage();
         }
     }
-
-    /**
-     * Organizar dados do histórico para envio  
-     *
-     * @param Object $history
-     * @return array
-     */
-    private function organizeHistory($history): array
-    {
-        $result = [];
-        foreach ($history as $item) {
-            $result[] = $item->data();
-        }
-        return $result;
-    }   
-
+    
 }

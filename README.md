@@ -77,29 +77,77 @@ As rotas são URL's para troca de dados e integração com outras aplicações f
 Variáveis: 
  - SERVER_CHAT_PORT = porta de conexão com o servidor websocket. Ess porta pode ser configurada no arquivo src\config\app.php
  - ID = id do usuário que deseja fazer conexão.
+ - A conexão é aberta assim que a url com o id do user é acessada. Não precisa enviar outros parâmetros para abria a conexão.
 
 > ws://localhost:SERVER_CHAT_PORT/ID
 
-Exemplo: 
->   URL: ws://localhost:8081/1
-    Dados:  {
-        "driver": "web",
-        "userId": 1,
-        "userDestId": 2,
-        "text": "ola 1",
-        "type": "text",
-        "time": "10:30",
-        "attachment":null,
-        "history": {
-            "consult": true,  //Se este for true, será retornado o histórico conforme intervalo em start e end.
-            "start":"2021-06-16 12:00:00", 
-            "end":"2021-06-16 14:00:00",
-            "data": ""
-        }
->  }
+Exemplos para troca de mensagens:   
+URL: ws://localhost:8081/1  
 
+>    
+    Dados de envio: {  
+        "cmd": "msg",   
+        "driver": "web",  
+        "userId": 1,  
+        "userDestId": 2,    
+        "text": "ola 1",    
+        "type": "text", 
+        "time": "10:30",    
+        "attachment":null  
+    } 
 
+    Dados de retorno: N/A.    
+> 
 
+Exemplos para troca de mensagens:   
+URL: ws://localhost:8081/1  
+
+>    
+    Dados: {  
+        "cmd": "n_on",          
+        "userId": 1,          
+        "qtd": ""    
+    }   
+
+    Dados de retorno: {  
+        "cmd": "n_on",          
+        "userId": 1,          
+        "qtd": 16   
+    }     
+> 
+
+Os dados de retorno seguem a mesma estrutura de envio caso o outro user esteja offline.
+
+<b>Consultar Histórico de Mensagens</b><br>
+
+Exemplo de envio:   
+URL: http://localhost/history
+>   
+    Dados via POST:     
+        user_id: 1  
+        user_dest_id: 2     
+        dt_start: "2021-06-15 06:00"  
+        dt_end: "2021-06-16 18:00"  
+
+    Dados de retorno: [
+        {
+            "chat_user_id":"1",
+            "chat_user_dest_id":"2",
+            "chat_text":"Como vai?",
+            "chat_type":"text",
+            "chat_date":"2021-06-17 01:13:45",
+            "chat_attachment":""
+        },
+        {   "chat_user_id":"2",
+            "chat_user_dest_id":"1",
+            "chat_text":"Bem e vc?",
+            "chat_type":"text",
+            "chat_date":"2021-06-17 01:15:21",
+            "chat_attachment":""
+        },
+        ...
+    ]          
+> 
 
 ## Comandos
 

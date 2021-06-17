@@ -43,16 +43,11 @@ class Chat implements MessageComponentInterface
         $user_id = (int) str_replace("/", "", $conn->httpRequest->getRequestTarget());
 
         if (empty($user_id) || $user_id === 0) {
-
             $this->setLog("Opss! O ID do user não foi informado ou ID inválido.\n");
             $conn->close();
         } else {
-
-            // Armazene a nova conexão para enviar mensagens mais tarde      
-            $this->clients->attach($conn);
-            $this->key_session = 'resourceId_' . $conn->resourceId;
-            $this->session->set($this->key_session, $user_id);
-            $this->setLog("New Connection ({$conn->resourceId}) user_id ({$user_id}).\n");
+            //Armazene a nova conexão para enviar mensagens mais tarde      
+            $this->newConnection($conn, $user_id);
         }
         //Log
         $this->setLog("Total Online: {$this->qtdUsersOn()} \n");
@@ -69,58 +64,32 @@ class Chat implements MessageComponentInterface
     public function onMessage(ConnectionInterface $from, $msg): void
     {
         $this->log = "";
-        $data_user = $this->session->get($this->key_session);
         $this->msg_obj = json_decode($msg);
 
-        if ($data_user === 0) {
-            //Salvar dados na sessão        
-            $this->session->remove($this->key_session);
-            $this->session->set($this->key_session, $this->msg_obj->userId);
-            //Log
-            $this->setLog("\nNew user logged in!\n");
-        } else {
-            //Log
-            $this->setLog("\nLogged in user!\n");
-        }    
+        switch ($this->msg_obj->cmd) {
+            case 'msg':
+                //Check session
+                $this->checkUserSession();
+                //Log
+                $this->setLog("Total Online: {$this->qtdUsersOn()} \n");
+                $this->setLog("Origem user: " . $this->msg_obj->userId . " | Destino user: " . $this->msg_obj->userDestId . " \n");
+                //Send msg
+                $this->searchUserSendMsg($from);
+                break;
+            case 'n_on':
+                $this->msg_obj->qtd = $this->qtdUsersOn();
+                $from->send(json_encode($this->msg_obj));
+                $this->setLog("Total Online: {$this->qtdUsersOn()} \n");
+                break;
+            case 'n_':
 
-        //Log
-        $this->setLog("Total Online: {$this->qtdUsersOn()} \n");
-        $this->setLog("Origem user: " . $this->msg_obj->userId . " | Destino user: " . $this->msg_obj->userDestId . " \n");
-
-        //Salvar msg no banco de dados   
-        $this->chat_model = new ChatModel();
-        $this->chat_model->saveMsg($this->msg_obj->userId, $this->msg_obj->userDestId, $this->msg_obj->text);
-        $status_save = $this->chat_model->getError();        
-
-        //Liste os users alocados na memória e procure o destinatário
-        $result = false;
-        foreach ($this->clients as $client) {
-
-            // O remetente não é o destinatário 
-            if ($from !== $client) {
-                $destiny_id = (int) $this->session->get('resourceId_' . $client->resourceId) + 0;
-
-                // O destinatária corresponde ao id informado do destinatário
-                if ((int) $this->msg_obj->userDestId === $destiny_id) {
-
-                    // Envie msg para o destinatário   
-                    $client->send(json_encode($this->msg_obj));
-                    $result = true;
-                    $this->setLog("Origem resourceId " . $from->resourceId . " | Destino resourceId: " . $client->resourceId  . "\n");
-                }
-            }
+                break;
+            default:
+                $from->send("{Comando não reconhecido!}");
+                break;
         }
 
-        //Resposta caso o destinatário esteja offline
-        if ($result === false) {
-            $this->msg_obj->text = "A mensagem foi enviada mas o usuário está offline.";
-            $from->send(json_encode($this->msg_obj));
-            $this->setLog("User offline\n");
-        }
-
-        //Log
-        $this->setLog("Mensagem: " . $this->msg_obj->text . "\n");
-        $this->setLog("Status: " . $status_save);
+        //Log      
         $this->printLog();
     }
 
@@ -155,7 +124,6 @@ class Chat implements MessageComponentInterface
         $conn->close();
         $this->printLog();
     }
-
 
     /**
      * Inclui os dados na memória para serem exibidos ou salvos em db 
@@ -192,5 +160,93 @@ class Chat implements MessageComponentInterface
     public function qtdUsersOn(int $sub = 1): int
     {
         return count($this->clients) - $sub; //Qtd de usuários online;           
-    }    
+    }
+
+    /**
+     * Procurar destinatária na memoria e enviar a mensagem ao mesmo
+     *
+     * @param ConnectionInterface $from
+     * @return void
+     */
+    public function searchUserSendMsg(ConnectionInterface $from): void
+    {
+        $status_save = $this->saveMsgDB();
+
+        //Liste os users alocados na memória e procure o destinatário
+        $result = false;
+        foreach ($this->clients as $client) {
+
+            // O remetente não é o destinatário 
+            if ($from !== $client) {
+                $destiny_id = (int) $this->session->get('resourceId_' . $client->resourceId) + 0;
+
+                // O destinatária corresponde ao id informado do destinatário
+                if ((int) $this->msg_obj->userDestId === $destiny_id) {
+
+                    // Envie msg para o destinatário   
+                    $client->send(json_encode($this->msg_obj));
+                    $result = true;
+                    $this->setLog("Origem resourceId " . $from->resourceId . " | Destino resourceId: " . $client->resourceId  . "\n");
+                }
+            }
+        }
+
+        //Resposta caso o destinatário esteja offline
+        if ($result === false) {
+            $this->msg_obj->text = "A mensagem foi enviada mas o usuário está offline.";
+            $from->send(json_encode($this->msg_obj));
+            $this->setLog("User offline\n");
+        }
+
+        //Log
+        $this->setLog("Mensagem: " . $this->msg_obj->text . "\n");
+        $this->setLog("Status: " . $status_save);
+    }
+
+    /**
+     * Salvar mensagem no banco de dados
+     *
+     * @return string
+     */
+    public function saveMsgDB(): string
+    {
+        //Salvar msg no banco de dados   
+        $this->chat_model = new ChatModel();
+        $this->chat_model->saveMsg($this->msg_obj->userId, $this->msg_obj->userDestId, $this->msg_obj->text);
+        return $this->chat_model->getError();
+    }
+
+    /**
+     * Verificar se o user está na sessão, se não estiver, será adicionado.
+     *
+     * @return void
+     */
+    public function checkUserSession(): void
+    {
+        if ($this->session->get($this->key_session) === 0) {
+            //Salvar dados na sessão        
+            $this->session->remove($this->key_session);
+            $this->session->set($this->key_session, $this->msg_obj->userId);
+            //Log
+            $this->setLog("\nNew user logged in!\n");
+        } else {
+            //Log
+            $this->setLog("\nLogged in user!\n");
+        }
+    }
+
+    /**
+     * Armazene nova conexão para enviar mensagens mais tarde 
+     *
+     * @param ConnectionInterface $conn
+     * @param int $user_id
+     * @return void
+     */
+    public function newConnection(ConnectionInterface  $conn, int $user_id): void
+    {
+        $this->clients->attach($conn);
+        $this->key_session = 'resourceId_' . $conn->resourceId;
+        $this->session->set($this->key_session, $user_id);
+        $this->setLog("New Connection ({$conn->resourceId}) user_id ({$user_id}).\n");
+    }
 }

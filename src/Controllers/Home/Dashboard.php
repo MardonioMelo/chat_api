@@ -41,16 +41,25 @@ class Dashboard
 
     /**
      * Consulta e retorna histórico de mensagens em um intervalo de data
+     * Informe o id do remetente, id do destinatário, data de inicio e fim da troca de mensagens.
+     * As datas devem está no formato a americano ex.: 2021-06-16
      *
      * @param Request $request
      * @param Response $response
      * @param array $args
      * @return void
      */
-    public function msgHistory(Request $request, Response $response, array $args)
-    {       
-        $payload = $this->bot_model->readHistory($user_id, $user_dest_id, $dt_start, $dt_end);
-        $response->getBody()->write($payload);
+    public function msgHistory(Request $request, Response $response)
+    {
+        $params = (array)$request->getParsedBody();
+        $payload = $this->chat_model->readHistory(
+            (int)$params['user_id'],
+            (int)$params['user_dest_id'],
+            (string)$params['dt_start'],
+            (string)$params['dt_end']
+        );
+
+        $response->getBody()->write(json_encode($this->chat_model->passeAllDataArrayHistory($payload)));
         return $response;
     }
 }

@@ -51,7 +51,7 @@ class AppChat extends DataLayer
   /**
    * <b>Verificar Ação:</b> Retorna TRUE se ação for efetuada ou FALSE se não. Para verificar erros
    * execute um getError();
-   * @return BOOL $Var = True(com os dados) or False
+   * @return BOOL|array|object $Var = True(com os dados) or False
    */
   public function getResult()
   {
