@@ -1,26 +1,28 @@
 # Chatbot_api (Em desenvolvimento...)
 API para chat e chatbot de suporte, ainda em desenvolvimento.
 
-<ol><b>Andamento do Chat:</b>
-<li><input type="checkbox" checked> Criar servidor WebSocket para chat.</li>
-<li><input type="checkbox" checked> Criar tabela para salvar as conversas do chat/chatbot.</li>
-<li><input type="checkbox" checked> Estabelecer conexão reservada e troca de mensagens entre o atendente o cliente.</li>
-<li><input type="checkbox" checked> Consulta do histórico de conversas por atendente/cliente/data e hora de inicio e fim.</li>
-<li><input type="checkbox" checked> Consultar quantidade de usuários online no total (atendentes + clientes)</li>
-<li><input type="checkbox"> Receber e salvar dados da abertura do atendimento no db.</li>
-<li><input type="checkbox"> Criar sala de espera dos clientes para atendimento.</li>
-<li><input type="checkbox"> Listar clientes da sala de espera por ordem de chegada.</li>
-<li><input type="checkbox"> Retirar cliente da sala de espera ao iniciar o atendimento.</li>
-<li><input type="checkbox"> Receber dados de avaliação do atendimento, salvar e finalizar a sessão do cliente.</li>
-<li><input type="checkbox"> Consultar dados dos clientes.</li>
-<li><input type="checkbox"> Mudar status do atendimento.</li>
-<li><input type="checkbox"> Criar span de envio para o cliente da posição dele na fila de espera.</li>
-<li><input type="checkbox"> Criar tabela de atendimento [atendente|cliente|status|assunto|avaliação|data-hora-inicio|data-hora-fim]</li>
-<li><input type="checkbox"> Criar tabela de usuários [usuário|nome|imagem|instituição|email|]</li>
-<li><input type="checkbox"> Criar tabela de atendentes.</li>
-</ol>
 
-<i><b>E o andamento bot?</b> Algumas coisas do bot já foram feitas/iniciadas como a implementação das lib's PHP nlp-tools e botman, por hora, essa parte está aguardando o desenvolvimento do chat para dar continuidade o desenvolvimento do bot.</i>
+<b>Andamento do Chat:</b>
+
+- [x] Criar servidor WebSocket para chat.
+- [x] Criar tabela para salvar as conversas do chat/chatbot.
+- [x] Estabelecer conexão reservada e troca de mensagens entre o atendente o cliente.
+- [x] Consulta do histórico de conversas por atendente/cliente/data e hora de inicio e fim.
+- [x] Consultar quantidade de usuários online no total (atendentes + clientes)
+- [ ] Receber e salvar dados da abertura do atendimento no db.
+- [ ] Criar sala de espera dos clientes para atendimento.
+- [ ] Listar clientes da sala de espera por ordem de chegada.
+- [ ] Retirar cliente da sala de espera ao iniciar o atendimento.
+- [ ] Receber dados de avaliação do atendimento, salvar e finalizar a sessão do cliente.
+- [ ] Consultar dados dos clientes.
+- [ ] Mudar status do atendimento.
+- [ ] Criar span de envio para o cliente da posição dele na fila de espera.
+- [ ] Criar tabela de atendimento [atendente,cliente,status,assunto,avaliação,data-hora-inicio,data-hora-fim].
+- [ ] Criar tabela de usuários [usuário,nome,imagem,instituição,email].
+- [ ] Criar tabela de atendentes.
+
+
+<i><b>E o andamento do bot?</b> Algumas coisas do bot já foram feitas/iniciadas como a implementação das lib's PHP nlp-tools e botman, por hora, essa parte está aguardando o desenvolvimento do chat para dar continuidade o desenvolvimento do bot.</i>
 
 ## Etapas do Desenvolvimento
 O projeto foi separado entre o front-end e o back-end.<br>
