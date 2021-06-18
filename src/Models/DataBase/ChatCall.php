@@ -20,8 +20,7 @@ class ChatCall extends DataLayer
             "chat_call",
             [
                 "call_user_id",
-                "call_user_dest_id",
-                "call_objective",
+                "call_user_dest_id",             
                 "call_date_start"
             ],
             "call_id",

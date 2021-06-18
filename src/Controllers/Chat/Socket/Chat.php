@@ -5,7 +5,8 @@ namespace Src\Controllers\Chat\Socket;
 use Ratchet\MessageComponentInterface;
 use Ratchet\ConnectionInterface;
 use Symfony\Component\HttpFoundation\Session\Session;
-use Src\Models\ChatModel;
+use Src\Models\MsgModel;
+use Src\Models\CallModel;
 
 
 class Chat implements MessageComponentInterface
@@ -13,7 +14,8 @@ class Chat implements MessageComponentInterface
     protected $clients;
     private $session;
     private $key_session;
-    private $chat_model;
+    private $msg_model;
+    private $call_model;
     private $log;
     private $on_log;
     private $msg_obj;
@@ -29,6 +31,7 @@ class Chat implements MessageComponentInterface
         $this->session = new Session();
         $this->session->start();
         $this->on_log = (bool) $on_log;
+        $this->setRoom();
     }
 
     /**
@@ -48,6 +51,7 @@ class Chat implements MessageComponentInterface
         } else {
             //Armazene a nova conexão para enviar mensagens mais tarde      
             $this->newConnection($conn, $user_id);
+            $this->addUserRoom($user_id);
         }
         //Log
         $this->setLog("Total Online: {$this->qtdUsersOn()} \n");
@@ -84,8 +88,9 @@ class Chat implements MessageComponentInterface
             case 'n_':
 
                 break;
-            default:
-                $from->send("{Comando não reconhecido!}");
+            default:              
+                $from->send('{"text":"Comando não reconhecido!"}');
+                $this->setLog("Comando não reconhecido!\n");
                 break;
         }
 
@@ -143,7 +148,7 @@ class Chat implements MessageComponentInterface
      */
     public function printLog(): void
     {
-        $in = "\n---------" . date("d/m/Y h:i:s") . "------------\n";
+        $in = "\n---------" . date("d/m/Y H:i:s") . "------------\n";
         $out = "\n----------------------------------------\n";
 
         if ($this->on_log) {
@@ -211,9 +216,9 @@ class Chat implements MessageComponentInterface
     public function saveMsgDB(): string
     {
         //Salvar msg no banco de dados   
-        $this->chat_model = new ChatModel();
-        $this->chat_model->saveMsg($this->msg_obj->userId, $this->msg_obj->userDestId, $this->msg_obj->text);
-        return $this->chat_model->getError();
+        $this->msg_model = new MsgModel();
+        $this->msg_model->saveMsg($this->msg_obj->userId, $this->msg_obj->userDestId, $this->msg_obj->text);
+        return $this->msg_model->getError();
     }
 
     /**
@@ -248,5 +253,27 @@ class Chat implements MessageComponentInterface
         $this->key_session = 'resourceId_' . $conn->resourceId;
         $this->session->set($this->key_session, $user_id);
         $this->setLog("New Connection ({$conn->resourceId}) user_id ({$user_id}).\n");
+    }
+
+    /**
+     * Set sala de espera
+     *
+     * @return void
+     */
+    public function setRoom(): void
+    {
+        $this->session->set("waiting_room", []);
+    }
+
+    /**
+     * Adicionar user na sala de espera
+     *
+     * @return void
+     */
+    public function addUserRoom(int $user_id): void
+    {
+        $arr = $this->session->get("waiting_room");
+        $arr[$this->key_session] = $user_id;
+        $this->session->set("waiting_room", $arr);
     }
 }

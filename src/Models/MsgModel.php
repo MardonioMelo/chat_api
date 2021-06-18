@@ -2,7 +2,6 @@
 
 namespace Src\Models;
 
-use PHPUnit\Util\Json;
 use Src\Models\DataBase\ChatMsg;
 
 /**
@@ -113,7 +112,7 @@ class  MsgModel
      */
     private function saveCreate(): void
     {
-        $this->tab_chat_msg->chat_date = date("Y-m-d h:i:s");
+        $this->tab_chat_msg->chat_date = date("Y-m-d H:i:s");
         $id = $this->tab_chat_msg->save();
 
         if ((int)$id > 0) {
