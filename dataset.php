@@ -40,11 +40,11 @@ echo "\n 1 - Buscar dados de um arquivo json e salva no db.";
 echo "\n 2 - Buscar dados de um arquivo json e salva em arquivos de txt na pasta treino.";
 echo "\n 3 - Buscar dados de arquivos txt dentro de uma pasta e salvar no db.";
 echo "\n 4 - Renomear intent conforme nome dos arquivos quentão na pasta de treino;";
-echo "\n 5 - Limpar todos os dados da tabela app_bot.";
+echo "\n 5 - Limpar todos os dados da tabela chat_bot.";
 echo "\n 6 - Realizar teste do NLP.";
 echo "\n 0 - Sair.";
 echo "\n\nObs 1: os arquivos são consultados e salvos na pasta 'treino'.";
-echo "\nObs 2: os dados são salvos no db chatbot e tabela app_bot conforme arquivo src/config/db.sql";
+echo "\nObs 2: os dados são salvos no db chatbot e tabela chat_bot conforme arquivo src/db/chat_bot.sql";
 echo "\n\nMétodo: ";
 
 $metodo = inputMetodo();
@@ -88,7 +88,7 @@ switch (trim($metodo)) {
         clearTerminal();
         logInicio();
         # Limpar tabela
-        $BotModel->clearTable("chatbot", "app_bot");
+        $BotModel->clearTable("chatbot", "chat_bot");
         logFim();
         break;
     case 6:

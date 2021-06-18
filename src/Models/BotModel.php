@@ -2,7 +2,7 @@
 
 namespace Src\Models;
 
-use Src\Models\DataBase\AppBot;
+use Src\Models\DataBase\ChatBot;
 use Requests;
 use CoffeeCode\DataLayer\Connect;
 
@@ -16,13 +16,13 @@ class BotModel
 
     private $Error;
     private $Result;
-    /** @var AppBot */
-    private $appbot;
+    /** @var ChatBot */
+    private $chatbot;
 
 
     public function __construct()
     {
-        $this->appbot = new AppBot();
+        $this->chatbot = new ChatBot();
     }
 
     /**
@@ -143,7 +143,7 @@ class BotModel
     {
         if (!empty($bot_intent) && !empty($bot_entitie) && !empty($bot_exemples) && !empty($bot_reply)) {
 
-            $create = new AppBot;
+            $create = new ChatBot;
             $create->bot_intent = $bot_intent;
             $create->bot_entitie = $bot_entitie;
             $create->bot_exemples = json_encode($bot_exemples);
@@ -559,9 +559,9 @@ class BotModel
         }
         $Query['col'] .= ')';
 
-        $this->appbot->readCol($Query['col'], $Query['search']);
-        $this->Result = $this->appbot->getResult();
-        $this->Error = $this->appbot->getError();
+        $this->chatbot->readCol($Query['col'], $Query['search']);
+        $this->Result = $this->chatbot->getResult();
+        $this->Error = $this->chatbot->getError();
     }
 
     /**
@@ -571,8 +571,8 @@ class BotModel
      */
     private function readAllExemples()
     {
-        $this->appbot->readAll();
-        $this->Result = $this->appbot->getResult();
-        $this->Error = $this->appbot->getError();
+        $this->chatbot->readAll();
+        $this->Result = $this->chatbot->getResult();
+        $this->Error = $this->chatbot->getError();
     }
 }

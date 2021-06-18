@@ -1,6 +1,6 @@
 {
     "type": "table",
-    "name": "app_bot",
+    "name": "chat_bot",
     "database": "chatbot",
     "data": [
         {

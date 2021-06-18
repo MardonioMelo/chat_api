@@ -42,6 +42,7 @@ function send_bot(classe_input) {
     let msgerInput = $(classe_input);
     let personMsg = msgerInput.val();
     let data = {
+        "cmd": "msg",
         "driver": "web",
         "userId": PERSON_ID,
         "userDestId": DEST_ID,
@@ -91,6 +92,7 @@ function send_bot_option(text) {
 
     let time = hora();
     let data = {
+        "cmd": "msg", 
         "driver": "web",
         "userId": PERSON_ID,
         "userDestId": DEST_ID,

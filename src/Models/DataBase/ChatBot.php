@@ -5,10 +5,12 @@ namespace Src\Models\DataBase;
 use CoffeeCode\DataLayer\DataLayer;
 
 /**
- * Class responsável pela tabela app_chat
- */
-class AppChat extends DataLayer
+   * Class responsável pela tabela chat_bot
+   */
+class ChatBot extends DataLayer
 {
+  private $Error;
+  private $Result;
 
   /**
    * Constructor.
@@ -17,16 +19,18 @@ class AppChat extends DataLayer
   {
     //string "TABLE_NAME", array ["REQUIRED_FIELD_1", "REQUIRED_FIELD_2"], string "PRIMARY_KEY", bool "TIMESTAMPS"
     parent::__construct(
-      "app_chat",
-      [
-        "chat_user_id",
-        "chat_user_dest_id",
-        "chat_text"
+      "chat_bot",
+      [       
+        "bot_intent",
+        "bot_entitie",
+        "bot_exemples",
+        "bot_reply"
       ],
-      "chat_id",
+      "bot_id",
       false
     );
   }
+
 
   /**
    * Consulta com busca na tabela por coluna
@@ -34,7 +38,7 @@ class AppChat extends DataLayer
    * @param string $col
    * @param string $search
    * @return void
-   */
+   */ 
   public function readCol($col, $search)
   {
     $read = $this->find($col, $search)->fetch(true);
@@ -48,10 +52,29 @@ class AppChat extends DataLayer
     }
   }
 
+    /**
+   * Consulta todos os dados da tabela
+   *
+   * @return void
+   */ 
+  public function readAll()
+  {
+    $read = $this->find()->fetch(true);
+
+    if ($read) {
+      $this->Result = $read;
+      $this->Error = "Sucesso!";
+    } else {
+      $this->Result = false;
+      $this->Error = "Não foi possível consultar!";
+    }
+  }
+
+
   /**
    * <b>Verificar Ação:</b> Retorna TRUE se ação for efetuada ou FALSE se não. Para verificar erros
    * execute um getError();
-   * @return BOOL|array|object $Var = True(com os dados) or False
+   * @return BOOL $Var = True(com os dados) or False
    */
   public function getResult()
   {

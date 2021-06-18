@@ -6,7 +6,7 @@ use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Src\Models\BotModel;
 use Src\View\PainelChat\PainelChatView;
-use Src\Models\ChatModel;
+use Src\Models\MsgModel;
 
 /**
  * Classe controller principal da API
@@ -15,13 +15,13 @@ class Dashboard
 {
 
     private $bot_model;
-    private $chat_model;
+    private $msg_model;
 
     public function __construct()
     {
-        $this->BotModel = new BotModel();
+        $this->bot_model = new BotModel();
         $this->PainelChatView = new PainelChatView();
-        $this->chat_model = new ChatModel();
+        $this->msg_model = new MsgModel();
     }
 
     /**
@@ -52,14 +52,14 @@ class Dashboard
     public function msgHistory(Request $request, Response $response)
     {
         $params = (array)$request->getParsedBody();
-        $payload = $this->chat_model->readHistory(
+        $payload = $this->msg_model->readHistory(
             (int)$params['user_id'],
             (int)$params['user_dest_id'],
             (string)$params['dt_start'],
             (string)$params['dt_end']
         );
 
-        $response->getBody()->write(json_encode($this->chat_model->passeAllDataArrayHistory($payload)));
+        $response->getBody()->write(json_encode($this->msg_model->passeAllDataArrayHistory($payload)));
         return $response;
     }
 }

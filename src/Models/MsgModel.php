@@ -3,24 +3,24 @@
 namespace Src\Models;
 
 use PHPUnit\Util\Json;
-use Src\Models\DataBase\AppChat;
+use Src\Models\DataBase\ChatMsg;
 
 /**
  * Class responsável por gerenciar as mensagens do chat no banco de dados
  */
-class  ChatModel
+class  MsgModel
 {
 
-    private $tab_app_chat;
+    private $tab_chat_msg;
     private $Error;
     private $Result;
 
     /**
-     * Declara a classe AppChat na inicialização
+     * Declara a classe ChatMsg na inicialização
      */
     public function __construct()
     {
-        $this->tab_app_chat = new AppChat();
+        $this->tab_chat_msg = new ChatMsg();
     }
 
     /**
@@ -36,12 +36,12 @@ class  ChatModel
      */
     public function saveMsg(Int $user_id, Int $user_dest_id, String $text, String $drive = "web", String $type = "text", String $attachment = null): void
     {
-        $this->tab_app_chat->chat_user_id = (int) $user_id;
-        $this->tab_app_chat->chat_user_dest_id = (int) $user_dest_id;
-        $this->tab_app_chat->chat_text = (string) $text;
-        $this->tab_app_chat->chat_drive = (string) $drive;
-        $this->tab_app_chat->chat_type = (string) $type;
-        $this->tab_app_chat->chat_attachment = (string)$attachment;    
+        $this->tab_chat_msg->chat_user_id = (int) $user_id;
+        $this->tab_chat_msg->chat_user_dest_id = (int) $user_dest_id;
+        $this->tab_chat_msg->chat_text = (string) $text;
+        $this->tab_chat_msg->chat_drive = (string) $drive;
+        $this->tab_chat_msg->chat_type = (string) $type;
+        $this->tab_chat_msg->chat_attachment = (string)$attachment;    
 
         $this->saveCreate();
     }
@@ -59,9 +59,9 @@ class  ChatModel
     {       
         $query_col = "(chat_user_id = :a AND chat_user_dest_id = :b OR chat_user_id = :c AND chat_user_dest_id = :d) AND chat_date BETWEEN :e AND :f";
         $query_value = "a={$user_id}&b={$user_dest_id}&c={$user_id}&d={$user_dest_id}&e={$dt_start}&f={$dt_end}";       
-        $this->tab_app_chat->readCol($query_col, $query_value);
+        $this->tab_chat_msg->readCol($query_col, $query_value);
 
-        return $this->tab_app_chat->getResult();
+        return $this->tab_chat_msg->getResult();
     }
 
     /**
@@ -113,15 +113,15 @@ class  ChatModel
      */
     private function saveCreate(): void
     {
-        $this->tab_app_chat->chat_date = date("Y-m-d h:i:s");
-        $id = $this->tab_app_chat->save();
+        $this->tab_chat_msg->chat_date = date("Y-m-d h:i:s");
+        $id = $this->tab_chat_msg->save();
 
         if ((int)$id > 0) {
             $this->Result = $id;
             $this->Error = "Cadastro realizado com sucesso!";
         } else {
             $this->Result = $id;
-            $this->Error = $this->tab_app_chat->fail()->getMessage();
+            $this->Error = $this->tab_chat_msg->fail()->getMessage();
         }
     }
     

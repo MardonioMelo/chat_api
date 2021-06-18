@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Tempo de geração: 10-Jun-2021 às 22:04
+-- Tempo de geração: 18-Jun-2021 às 19:36
 -- Versão do servidor: 10.4.19-MariaDB
 -- versão do PHP: 7.4.19
 
@@ -24,17 +24,17 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
--- Estrutura da tabela `app_chat`
+-- Estrutura da tabela `chat_msg`
 --
 
-CREATE TABLE `app_chat` (
+CREATE TABLE `chat_msg` (
   `chat_id` int(20) NOT NULL,
   `chat_user_id` int(11) NOT NULL COMMENT 'Id do usuário que enviou a mensagem.',
   `chat_user_dest_id` int(11) NOT NULL COMMENT 'Id do usuário que recebeu a mensagem.',
   `chat_text` text NOT NULL COMMENT 'Mensagem ou texto do conteúdo enviado',
   `chat_drive` varchar(10) NOT NULL DEFAULT 'web' COMMENT 'Meio de comunicação para o componente BotMan.',
   `chat_type` varchar(10) NOT NULL DEFAULT 'text' COMMENT 'Tipo de mensagem.',
-  `chat_date` timestamp NOT NULL DEFAULT current_timestamp() COMMENT 'Data e hora da mensagem.',
+  `chat_date` timestamp NULL DEFAULT current_timestamp() COMMENT 'Data e hora da mensagem.',
   `chat_attachment` text DEFAULT NULL COMMENT 'Parâmetro para o Bot quando um arquivo é enviado.'
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='Tabela de mensagens do chat';
 
@@ -43,9 +43,9 @@ CREATE TABLE `app_chat` (
 --
 
 --
--- Índices para tabela `app_chat`
+-- Índices para tabela `chat_msg`
 --
-ALTER TABLE `app_chat`
+ALTER TABLE `chat_msg`
   ADD PRIMARY KEY (`chat_id`);
 
 --
@@ -53,9 +53,9 @@ ALTER TABLE `app_chat`
 --
 
 --
--- AUTO_INCREMENT de tabela `app_chat`
+-- AUTO_INCREMENT de tabela `chat_msg`
 --
-ALTER TABLE `app_chat`
+ALTER TABLE `chat_msg`
   MODIFY `chat_id` int(20) NOT NULL AUTO_INCREMENT;
 COMMIT;
 

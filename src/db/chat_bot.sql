@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.0.4
+-- version 5.1.0
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Tempo de geração: 07-Mar-2021 às 03:02
--- Versão do servidor: 10.4.17-MariaDB
--- versão do PHP: 7.3.27
+-- Tempo de geração: 18-Jun-2021 às 19:35
+-- Versão do servidor: 10.4.19-MariaDB
+-- versão do PHP: 7.4.19
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -24,10 +24,10 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
--- Estrutura da tabela `app_bot`
+-- Estrutura da tabela `chat_bot`
 --
 
-CREATE TABLE `app_bot` (
+CREATE TABLE `chat_bot` (
   `bot_id` int(11) NOT NULL,
   `bot_intent` varchar(255) NOT NULL COMMENT 'Intenção - nome da intenção em uma palavra',
   `bot_entitie` varchar(255) NOT NULL COMMENT 'Entidade - elementos de texto conhecidos',
@@ -40,9 +40,9 @@ CREATE TABLE `app_bot` (
 --
 
 --
--- Índices para tabela `app_bot`
+-- Índices para tabela `chat_bot`
 --
-ALTER TABLE `app_bot`
+ALTER TABLE `chat_bot`
   ADD PRIMARY KEY (`bot_id`);
 
 --
@@ -50,9 +50,9 @@ ALTER TABLE `app_bot`
 --
 
 --
--- AUTO_INCREMENT de tabela `app_bot`
+-- AUTO_INCREMENT de tabela `chat_bot`
 --
-ALTER TABLE `app_bot`
+ALTER TABLE `chat_bot`
   MODIFY `bot_id` int(11) NOT NULL AUTO_INCREMENT;
 COMMIT;
 

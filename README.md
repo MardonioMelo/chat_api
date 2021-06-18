@@ -17,8 +17,8 @@ API para chat e chatbot de suporte, ainda em desenvolvimento.
 - [ ] Consultar dados dos clientes.
 - [ ] Mudar status do atendimento.
 - [ ] Criar span de envio para o cliente da posição dele na fila de espera.
-- [ ] Criar tabela de atendimento [atendente,cliente,status,assunto,avaliação,data-hora-inicio,data-hora-fim].
-- [ ] Criar tabela de usuários [usuário,nome,imagem,instituição,email].
+- [ ] Criar tabela de atendimento (atendente,cliente,status,assunto,avaliação,data-hora-inicio,data-hora-fim).
+- [ ] Criar tabela de usuários (usuário,nome,imagem,instituição,email).
 - [ ] Criar tabela de atendentes.
 
 
