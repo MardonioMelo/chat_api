@@ -3,7 +3,7 @@
 use Src\Controllers\Home\Dashboard;
 use Src\Controllers\Bot\BotController;
 use Slim\Exception\HttpNotFoundException;
-
+use Src\Controllers\Home\Attendant;
 
 $app->options('/{routes:.+}', function ($request, $response, $args) {
     return $response;
@@ -30,6 +30,7 @@ $app->get('/bot', BotController::class . ":widget");
 // Rotas GET
 $app->post('/bot', BotController::class . ":chatBot");
 $app->post('/history', Dashboard::class . ":msgHistory"); 
+$app->post('/create/attendant', Attendant::class . ":createAttendant"); 
 
 // --------------------------+
 // Fim rotas a partir daqui

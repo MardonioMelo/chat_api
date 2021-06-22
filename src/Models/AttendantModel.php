@@ -26,23 +26,43 @@ class  AttendantModel
      * Salva mensagem do chat no banco de dados
      * 
      * Parei aqui..........
-     *
-     * @param Int $attendant_id  
+     *   
      * @param String $attendant_name
      * @param String $attendant_lastname
      * @param String $attendant_avatar
      * @return void
      */
-    public function saveMsg(Int $user_id, Int $user_dest_id, String $text, String $drive = "web", String $type = "text", String $attachment = null): void
+    public function saveAttendant(String $attendant_name, String $attendant_lastname, String $attendant_avatar = "/avatar"): void
     {
-        $this->tab_chat_msg->chat_user_id = (int) $user_id;
-        $this->tab_chat_msg->chat_user_dest_id = (int) $user_dest_id;
-        $this->tab_chat_msg->chat_text = (string) trim(strip_tags($text));
-        $this->tab_chat_msg->chat_drive = (string) $drive;
-        $this->tab_chat_msg->chat_type = (string) $type;
-        $this->tab_chat_msg->chat_attachment = (string)$attachment;    
-
+        $this->tab_chat_attendant->attendant_name = (int) $attendant_name;
+        $this->tab_chat_attendant->attendant_lastname = (int) $attendant_lastname;
+        $this->tab_chat_attendant->chat_text = (string) $attendant_avatar;
+       
         $this->saveCreate();
+    }
+
+     /**
+     * Organizar dados ara envio  
+     *
+     * @param Object $obj
+     * @return array
+     */
+    public function passeAllDataArray($obj): array
+    {
+        $result = [];
+
+        if ($obj) {
+            foreach ($obj as $key => $arr) {
+                $result[$key]['attendant_id'] = $arr->data()->attendant_id;
+                $result[$key]['attendant_name'] = $arr->data()->attendant_name;
+                $result[$key]['attendant_lastname'] = $arr->data()->attendant_lastname;              
+                $result[$key]['attendant_avatar'] = $arr->data()->attendant_avatar;    
+                $result[$key]['attendant_updated_at'] = $arr->data()->attendant_updated_at;
+                $result[$key]['attendant_created_at'] = $arr->data()->attendant_created_at;  
+
+            }
+        }
+        return $result;
     }
 
     /**
@@ -65,21 +85,20 @@ class  AttendantModel
     }
 
     /**
-     * Salvar dados da mensagem no banco de dados
+     * Salvar dados no banco de dados
      *
      * @return string
      */
     private function saveCreate(): void
-    {
-        $this->tab_chat_msg->chat_date = date("Y-m-d H:i:s");
-        $id = $this->tab_chat_msg->save();
+    {        
+        $id = $this->tab_chat_attendant->save();
 
         if ((int)$id > 0) {
             $this->Result = $id;
             $this->Error = "Cadastro realizado com sucesso!";
         } else {
             $this->Result = $id;
-            $this->Error = $this->tab_chat_msg->fail()->getMessage();
+            $this->Error = $this->tab_chat_attendant->fail()->getMessage();
         }
     }
     
