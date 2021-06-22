@@ -4,20 +4,18 @@ namespace Src\Controllers\Chat\Socket;
 
 use Ratchet\MessageComponentInterface;
 use Ratchet\ConnectionInterface;
-use Symfony\Component\HttpFoundation\Session\Session;
 use Src\Models\MsgModel;
 use Src\Models\CallModel;
-
+use Src\Models\LogModel;
+use Src\Models\SessionModel;
 
 class Chat implements MessageComponentInterface
 {
     protected $clients;
-    private $session;
-    private $key_session;
+    private $session_model;
     private $msg_model;
     private $call_model;
-    private $log;
-    private $on_log;
+    private $log_model;
     private $msg_obj;
 
     /**
@@ -27,11 +25,10 @@ class Chat implements MessageComponentInterface
      */
     public function __construct(bool $on_log = false)
     {
+        $this->log_model = new LogModel($on_log);
         $this->clients = new \SplObjectStorage;
-        $this->session = new Session();
-        $this->session->start();
-        $this->on_log = (bool) $on_log;
-        $this->setRoom();
+        $this->session_model = new SessionModel();
+        $this->session_model->setRoom();
     }
 
     /**
@@ -42,20 +39,27 @@ class Chat implements MessageComponentInterface
      */
     public function onOpen(ConnectionInterface $conn): void
     {
-        $this->log = "";
-        $user_id = (int) str_replace("/", "", $conn->httpRequest->getRequestTarget());
+      
+        $this->log_model->resetLog();
+        $params = explode("/", $conn->httpRequest->getRequestTarget());
 
-        if (empty($user_id) || $user_id === 0) {
-            $this->setLog("Opss! O ID do user não foi informado ou ID inválido.\n");
+        if ($params[2] === "attendant" ) {
+            
+        } else {
+
+        }
+
+        if (empty($params[1]) || $params[1] === 0 || $params[0] !== "api") {
+            $this->log_model->setLog("Opss! URI invalida.\n");
             $conn->close();
         } else {
             //Armazene a nova conexão para enviar mensagens mais tarde      
-            $this->newConnection($conn, $user_id);
-            $this->addUserRoom($user_id);
+            $this->newConnection($conn, $params[1]);
+            $this->session_model->addUserRoom($conn->resourceId, $params[1]);
         }
         //Log
-        $this->setLog("Total Online: {$this->qtdUsersOn()} \n");
-        $this->printLog();
+        $this->log_model->setLog("Total Online: {$this->qtdUsersOn()} \n");
+        $this->log_model->printLog();
     }
 
     /**
@@ -67,35 +71,31 @@ class Chat implements MessageComponentInterface
      */
     public function onMessage(ConnectionInterface $from, $msg): void
     {
-        $this->log = "";
         $this->msg_obj = json_decode($msg);
+        $this->log_model->resetLog();
 
         switch ($this->msg_obj->cmd) {
             case 'msg':
-                //Check session
-                $this->checkUserSession();
-                //Log
-                $this->setLog("Total Online: {$this->qtdUsersOn()} \n");
-                $this->setLog("Origem user: " . $this->msg_obj->userId . " | Destino user: " . $this->msg_obj->userDestId . " \n");
+                //Check session               
+                $this->log_model->setLog($this->session_model->checkUserSession($from->resourceId, $this->msg_obj->userId));
+                $this->log_model->setLog("Total Online: {$this->qtdUsersOn()} \n");
+                $this->log_model->setLog("Origem user: " . $this->msg_obj->userId . " | Destino user: " . $this->msg_obj->userDestId . " \n");
                 //Send msg
                 $this->searchUserSendMsg($from);
                 break;
             case 'n_on':
                 $this->msg_obj->qtd = $this->qtdUsersOn();
                 $from->send(json_encode($this->msg_obj));
-                $this->setLog("Total Online: {$this->qtdUsersOn()} \n");
+                $this->log_model->setLog("Total Online: {$this->qtdUsersOn()} \n");
                 break;
-            case 'n_':
-
-                break;
-            default:              
+            default:
                 $from->send('{"text":"Comando não reconhecido!"}');
-                $this->setLog("Comando não reconhecido!\n");
+                $this->log_model->setLog("Comando não reconhecido!\n");
                 break;
         }
 
         //Log      
-        $this->printLog();
+        $this->log_model->printLog();
     }
 
     /**
@@ -106,12 +106,12 @@ class Chat implements MessageComponentInterface
      */
     public function onClose(ConnectionInterface $conn): void
     {
-        $this->log = "";
+        $this->log_model->resetLog();
         // A conexão foi encerrada, remova-a, pois não podemos mais enviar mensagens para ela
         $this->clients->detach($conn);
-        $this->session->remove('resourceId_' . $conn->resourceId);
-        $this->setLog("A conexão {$conn->resourceId} foi desconectada.\n" . "Sessão:\n" . print_r($_SESSION, true) . "\n");
-        $this->printLog();
+        $this->session_model->removeUserSession($conn->resourceId);
+        $this->log_model->setLog("A conexão {$conn->resourceId} foi desconectada.\n" . "Sessão:\n" . print_r($_SESSION, true) . "\n");
+        $this->log_model->printLog();
     }
 
     /**
@@ -123,37 +123,11 @@ class Chat implements MessageComponentInterface
      */
     public function onError(ConnectionInterface $conn, \Exception $e): void
     {
-        $this->log = "";
-        $this->setLog("Ocorreu um erro: {$e->getMessage()}\n");
-        $this->session->remove('resourceId_' . $conn->resourceId);
+        $this->log_model->resetLog();
+        $this->log_model->setLog("Ocorreu um erro: {$e->getMessage()}\n");
+        $this->session_model->removeUserSession($conn->resourceId);
         $conn->close();
-        $this->printLog();
-    }
-
-    /**
-     * Inclui os dados na memória para serem exibidos ou salvos em db 
-     *
-     * @param string $log
-     * @return void
-     */
-    public function setLog(string $log): void
-    {
-        $this->log .= $log;
-    }
-
-    /**
-     * Imprimi os logs na tela
-     *
-     * @return void
-     */
-    public function printLog(): void
-    {
-        $in = "\n---------" . date("d/m/Y H:i:s") . "------------\n";
-        $out = "\n----------------------------------------\n";
-
-        if ($this->on_log) {
-            echo $in . $this->log . "\nMemory: " . memory_get_usage() . " bytes" . $out;
-        }
+        $this->log_model->printLog();
     }
 
     /**
@@ -183,7 +157,7 @@ class Chat implements MessageComponentInterface
 
             // O remetente não é o destinatário 
             if ($from !== $client) {
-                $destiny_id = (int) $this->session->get('resourceId_' . $client->resourceId) + 0;
+                $destiny_id = $this->session_model->getUserId($client->resourceId) + 0;
 
                 // O destinatária corresponde ao id informado do destinatário
                 if ((int) $this->msg_obj->userDestId === $destiny_id) {
@@ -191,7 +165,7 @@ class Chat implements MessageComponentInterface
                     // Envie msg para o destinatário   
                     $client->send(json_encode($this->msg_obj));
                     $result = true;
-                    $this->setLog("Origem resourceId " . $from->resourceId . " | Destino resourceId: " . $client->resourceId  . "\n");
+                    $this->log_model->setLog("Origem resourceId " . $from->resourceId . " | Destino resourceId: " . $client->resourceId  . "\n");
                 }
             }
         }
@@ -200,12 +174,11 @@ class Chat implements MessageComponentInterface
         if ($result === false) {
             $this->msg_obj->text = "A mensagem foi enviada mas o usuário está offline.";
             $from->send(json_encode($this->msg_obj));
-            $this->setLog("User offline\n");
+            $this->log_model->setLog("User offline\n");
         }
 
-        //Log
-        $this->setLog("Mensagem: " . $this->msg_obj->text . "\n");
-        $this->setLog("Status: " . $status_save);
+        $this->log_model->setLog("Mensagem: " . $this->msg_obj->text . "\n");
+        $this->log_model->setLog("Status: " . $status_save);
     }
 
     /**
@@ -215,29 +188,9 @@ class Chat implements MessageComponentInterface
      */
     public function saveMsgDB(): string
     {
-        //Salvar msg no banco de dados   
         $this->msg_model = new MsgModel();
         $this->msg_model->saveMsg($this->msg_obj->userId, $this->msg_obj->userDestId, $this->msg_obj->text);
         return $this->msg_model->getError();
-    }
-
-    /**
-     * Verificar se o user está na sessão, se não estiver, será adicionado.
-     *
-     * @return void
-     */
-    public function checkUserSession(): void
-    {
-        if ($this->session->get($this->key_session) === 0) {
-            //Salvar dados na sessão        
-            $this->session->remove($this->key_session);
-            $this->session->set($this->key_session, $this->msg_obj->userId);
-            //Log
-            $this->setLog("\nNew user logged in!\n");
-        } else {
-            //Log
-            $this->setLog("\nLogged in user!\n");
-        }
     }
 
     /**
@@ -250,30 +203,7 @@ class Chat implements MessageComponentInterface
     public function newConnection(ConnectionInterface  $conn, int $user_id): void
     {
         $this->clients->attach($conn);
-        $this->key_session = 'resourceId_' . $conn->resourceId;
-        $this->session->set($this->key_session, $user_id);
-        $this->setLog("New Connection ({$conn->resourceId}) user_id ({$user_id}).\n");
-    }
-
-    /**
-     * Set sala de espera
-     *
-     * @return void
-     */
-    public function setRoom(): void
-    {
-        $this->session->set("waiting_room", []);
-    }
-
-    /**
-     * Adicionar user na sala de espera
-     *
-     * @return void
-     */
-    public function addUserRoom(int $user_id): void
-    {
-        $arr = $this->session->get("waiting_room");
-        $arr[$this->key_session] = $user_id;
-        $this->session->set("waiting_room", $arr);
+        $this->session_model->addUserSession($conn->resourceId, $user_id);
+        $this->log_model->setLog("New Connection ({$conn->resourceId}) user_id ({$user_id}).\n");
     }
 }

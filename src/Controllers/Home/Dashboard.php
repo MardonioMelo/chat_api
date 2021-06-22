@@ -62,4 +62,5 @@ class Dashboard
         $response->getBody()->write(json_encode($this->msg_model->passeAllDataArrayHistory($payload)));
         return $response;
     }
+    
 }

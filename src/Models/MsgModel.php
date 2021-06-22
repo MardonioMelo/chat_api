@@ -37,7 +37,7 @@ class  MsgModel
     {
         $this->tab_chat_msg->chat_user_id = (int) $user_id;
         $this->tab_chat_msg->chat_user_dest_id = (int) $user_dest_id;
-        $this->tab_chat_msg->chat_text = (string) $text;
+        $this->tab_chat_msg->chat_text = (string) trim(strip_tags($text));
         $this->tab_chat_msg->chat_drive = (string) $drive;
         $this->tab_chat_msg->chat_type = (string) $type;
         $this->tab_chat_msg->chat_attachment = (string)$attachment;    
