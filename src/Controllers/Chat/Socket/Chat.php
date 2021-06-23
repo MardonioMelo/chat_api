@@ -17,7 +17,7 @@ class Chat implements MessageComponentInterface
     private $call_model;
     private $log_model;
     private $msg_obj;
-
+   
     /**
      * Construct - informe true na declaração para imprimir os logs no terminal do servidor websocket.
      *
@@ -38,24 +38,24 @@ class Chat implements MessageComponentInterface
      * @return void
      */
     public function onOpen(ConnectionInterface $conn): void
-    {
-      
+    {      
         $this->log_model->resetLog();
-        $params = explode("/", $conn->httpRequest->getRequestTarget());
+        $params = explode("/", $conn->httpRequest->getRequestTarget());       
 
-        if ($params[2] === "attendant" ) {
-            
-        } else {
-
-        }
-
-        if (empty($params[1]) || $params[1] === 0 || $params[0] !== "api") {
-            $this->log_model->setLog("Opss! URI invalida.\n");
+        if (empty($params[2]) || (int) $params[2] === 0 || $params[0] !== "api") {
             $conn->close();
+            $this->log_model->setLog("Opss! URI invalida.\n");           
         } else {
+
+            if ($params[2] === "attendant") {
+            
+            } elseif($params[2] === "client") {
+    
+            }
+
             //Armazene a nova conexão para enviar mensagens mais tarde      
-            $this->newConnection($conn, $params[1]);
-            $this->session_model->addUserRoom($conn->resourceId, $params[1]);
+            $this->newConnection($conn, $params[3]);
+            $this->session_model->addUserRoom($conn->resourceId, $params[3]);
         }
         //Log
         $this->log_model->setLog("Total Online: {$this->qtdUsersOn()} \n");

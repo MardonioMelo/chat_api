@@ -10,16 +10,16 @@ API para chat e chatbot de suporte, ainda em desenvolvimento.
 - [x] Consulta do histórico de conversas por atendente/cliente/data e hora de inicio e fim.
 - [x] Consultar quantidade de usuários online no total (atendentes + clientes)
 - [ ] Receber e salvar dados da abertura do atendimento no db.
-- [ ] Criar sala de espera dos clientes para atendimento.
+- [x] Criar sala de espera dos clientes para atendimento.
 - [ ] Listar clientes da sala de espera por ordem de chegada.
 - [ ] Retirar cliente da sala de espera ao iniciar o atendimento.
 - [ ] Receber dados de avaliação do atendimento, salvar e finalizar a sessão do cliente.
 - [ ] Consultar dados dos clientes.
 - [ ] Mudar status do atendimento.
 - [ ] Criar span de envio para o cliente da posição dele na fila de espera.
-- [ ] Criar tabela de atendimento (atendente,cliente,status,assunto,avaliação,data-hora-inicio,data-hora-fim).
+- [x] Criar tabela de atendimento (atendente,cliente,status,assunto,avaliação,data-hora-inicio,data-hora-fim).
 - [ ] Criar tabela de usuários (usuário,nome,imagem,instituição,email).
-- [ ] Criar tabela de atendentes.
+- [x] Criar tabela de atendentes.
 - [ ] Autentificação JWT.
 
 
@@ -103,10 +103,10 @@ Variáveis:
  - ID = id do usuário que deseja fazer conexão.
  - A conexão é aberta assim que a url com o id do user é acessada. Não precisa enviar outros parâmetros para abria a conexão.
 
-> ws://localhost:SERVER_CHAT_PORT/ID
+> ws://localhost:SERVER_CHAT_PORT/api/ID/attendant
 
 Exemplos para troca de mensagens:   
-URL: ws://localhost:8081/1  
+URL: ws://localhost:8081/api/1/attendant
 
 >    
     Dados de envio: {  
@@ -124,7 +124,7 @@ URL: ws://localhost:8081/1
 > 
 
 Exemplos para troca de mensagens:   
-URL: ws://localhost:8081/1  
+URL: ws://localhost:8081/api/1/client  
 
 >    
     Dados: {  
@@ -171,6 +171,20 @@ URL: http://localhost/history
         },
         ...
     ]          
+> 
+
+<b>Cadastrar atendente</b><br>
+
+Exemplo de envio:   
+URL: localhost/chatbot_api/create/attendant
+>   
+    Dados via POST:     
+        attendant_name: "João"  
+        attendant_lastname: "Junior"     
+        attendant_avatar: "avatar.png"  
+        
+
+    Dados de retorno: 1 caso tenha cadastrado         
 > 
 
 ## Comandos

@@ -34,9 +34,9 @@ class  AttendantModel
      */
     public function saveAttendant(String $attendant_name, String $attendant_lastname, String $attendant_avatar = "/avatar"): void
     {
-        $this->tab_chat_attendant->attendant_name = (int) $attendant_name;
-        $this->tab_chat_attendant->attendant_lastname = (int) $attendant_lastname;
-        $this->tab_chat_attendant->chat_text = (string) $attendant_avatar;
+        $this->tab_chat_attendant->attendant_name = (string) $attendant_name;
+        $this->tab_chat_attendant->attendant_lastname = (string) $attendant_lastname;
+        $this->tab_chat_attendant->attendant_avatar = (string) $attendant_avatar;
        
         $this->saveCreate();
     }
