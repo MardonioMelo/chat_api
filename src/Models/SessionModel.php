@@ -16,7 +16,6 @@ class SessionModel
         $this->session = new Session();
         $this->session->start();
         $this->pre_key = 'resourceId_';
-        $this->name_room = 'waiting_room';
     }
 
     /**
@@ -27,8 +26,8 @@ class SessionModel
      * @return void
      */
     public function addUserSession(int $resourceId, int $user_id): void
-    {    
-        $this->session->set( $this->pre_key . $resourceId, $user_id);        
+    {
+        $this->session->set($this->pre_key . $resourceId, $user_id);
     }
 
     /**
@@ -40,7 +39,7 @@ class SessionModel
     {
         $arr = $this->session->get($this->name_room);
         $arr[$this->pre_key . $resourceId] = $user_id;
-        $this->session->set("waiting_room", $arr);
+        $this->session->set($this->name_room, $arr);
     }
 
     /**
@@ -53,7 +52,7 @@ class SessionModel
     {
         $arr = $this->session->get($this->name_room);
         unset($arr[$this->pre_key . $resourceId]);
-        $this->session->set("waiting_room", $arr);
+        $this->session->set($this->name_room, $arr);
     }
 
 
@@ -72,11 +71,24 @@ class SessionModel
     /**
      * Set sala de espera
      *
+     * @param boolean $name_room
      * @return void
      */
-    public function setRoom(): void
+    public function setRoom($name_room = ""): void
     {
-        $this->session->set($this->name_room, []);
+        $name = $name_room === "" ? $this->name_room : $name_room;
+        $this->session->set($name, []);
+    }
+
+    /**
+     * Set nome da sala
+     *
+     * @param string $name
+     * @return void
+     */
+    public function setNameRoom(string $name = "limbo"): void
+    {
+        $this->name_room = $name;
     }
 
     /**

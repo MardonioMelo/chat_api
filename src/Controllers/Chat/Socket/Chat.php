@@ -2,12 +2,12 @@
 
 namespace Src\Controllers\Chat\Socket;
 
-use Ratchet\MessageComponentInterface;
-use Ratchet\ConnectionInterface;
+use Src\Models\LogModel;
 use Src\Models\MsgModel;
 use Src\Models\CallModel;
-use Src\Models\LogModel;
 use Src\Models\SessionModel;
+use Ratchet\ConnectionInterface;
+use Ratchet\MessageComponentInterface;
 
 class Chat implements MessageComponentInterface
 {
@@ -17,7 +17,7 @@ class Chat implements MessageComponentInterface
     private $call_model;
     private $log_model;
     private $msg_obj;
-   
+
     /**
      * Construct - informe true na declaração para imprimir os logs no terminal do servidor websocket.
      *
@@ -28,7 +28,8 @@ class Chat implements MessageComponentInterface
         $this->log_model = new LogModel($on_log);
         $this->clients = new \SplObjectStorage;
         $this->session_model = new SessionModel();
-        $this->session_model->setRoom();
+        $this->session_model->setRoom('attendant');
+        $this->session_model->setRoom('client');  
     }
 
     /**
@@ -38,25 +39,25 @@ class Chat implements MessageComponentInterface
      * @return void
      */
     public function onOpen(ConnectionInterface $conn): void
-    {      
+    {
         $this->log_model->resetLog();
-        $params = explode("/", $conn->httpRequest->getRequestTarget());       
-
-        if (empty($params[2]) || (int) $params[2] === 0 || $params[0] !== "api") {
-            $conn->close();
-            $this->log_model->setLog("Opss! URI invalida.\n");           
-        } else {
-
-            if ($params[2] === "attendant") {
-            
-            } elseif($params[2] === "client") {
+        $params = array_values(array_filter(explode("/", $conn->httpRequest->getRequestTarget())));
     
-            }
+        if (!empty($params[2]) && (int) $params[2] > 0 && $params[1] === "attendant" && $params[0] === "api") {
 
-            //Armazene a nova conexão para enviar mensagens mais tarde      
-            $this->newConnection($conn, $params[3]);
-            $this->session_model->addUserRoom($conn->resourceId, $params[3]);
+            // Armazene a nova conexão para enviar mensagens mais tarde      
+            $this->newConnection($conn, (int)$params[2], "attendant");           
+
+        } elseif (empty($params[2]) !== true && (int) $params[2] > 0 && $params[1] === "client" && $params[0] === "api") {
+
+             // Armazene a nova conexão para enviar mensagens mais tarde      
+             $this->newConnection($conn, (int)$params[2], "client");            
+
+        } else {
+            $conn->close();
+            $this->log_model->setLog("Opss! URI invalida.\n");              
         }
+
         //Log
         $this->log_model->setLog("Total Online: {$this->qtdUsersOn()} \n");
         $this->log_model->printLog();
@@ -105,9 +106,9 @@ class Chat implements MessageComponentInterface
      * @return void
      */
     public function onClose(ConnectionInterface $conn): void
-    {
-        $this->log_model->resetLog();
+    {       
         // A conexão foi encerrada, remova-a, pois não podemos mais enviar mensagens para ela
+        $this->log_model->resetLog();
         $this->clients->detach($conn);
         $this->session_model->removeUserSession($conn->resourceId);
         $this->log_model->setLog("A conexão {$conn->resourceId} foi desconectada.\n" . "Sessão:\n" . print_r($_SESSION, true) . "\n");
@@ -200,10 +201,12 @@ class Chat implements MessageComponentInterface
      * @param int $user_id
      * @return void
      */
-    public function newConnection(ConnectionInterface  $conn, int $user_id): void
+    public function newConnection(ConnectionInterface  $conn, int $user_id, $name_room): void
     {
         $this->clients->attach($conn);
         $this->session_model->addUserSession($conn->resourceId, $user_id);
+        $this->session_model->setNameRoom($name_room);
+        $this->session_model->addUserRoom($conn->resourceId, $user_id);
         $this->log_model->setLog("New Connection ({$conn->resourceId}) user_id ({$user_id}).\n");
     }
 }

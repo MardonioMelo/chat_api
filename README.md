@@ -10,7 +10,7 @@ API para chat e chatbot de suporte, ainda em desenvolvimento.
 - [x] Consulta do histórico de conversas por atendente/cliente/data e hora de inicio e fim.
 - [x] Consultar quantidade de usuários online no total (atendentes + clientes)
 - [ ] Receber e salvar dados da abertura do atendimento no db.
-- [x] Criar sala de espera dos clientes para atendimento.
+- [x] Criar sala de espera dos clientes para atendimento e sala para os atendentes.
 - [ ] Listar clientes da sala de espera por ordem de chegada.
 - [ ] Retirar cliente da sala de espera ao iniciar o atendimento.
 - [ ] Receber dados de avaliação do atendimento, salvar e finalizar a sessão do cliente.
