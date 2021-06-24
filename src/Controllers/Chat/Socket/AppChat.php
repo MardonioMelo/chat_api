@@ -5,11 +5,11 @@ namespace Src\Controllers\Chat\Socket;
 use Src\Models\LogModel;
 use Src\Models\MsgModel;
 use Src\Models\CallModel;
-use Src\Models\SessionModel;
+use Src\Controllers\Chat\Socket\SessionRoom;
 use Ratchet\ConnectionInterface;
 use Ratchet\MessageComponentInterface;
 
-class Chat implements MessageComponentInterface
+class AppChat implements MessageComponentInterface
 {
     protected $clients;
     private $session_model;
@@ -19,7 +19,7 @@ class Chat implements MessageComponentInterface
     private $msg_obj;
 
     /**
-     * Construct - informe true na declaração para imprimir os logs no terminal do servidor websocket.
+     * Set class - informe true para exibir os logs no terminal
      *
      * @param boolean $on_log
      */
@@ -27,13 +27,11 @@ class Chat implements MessageComponentInterface
     {
         $this->log_model = new LogModel($on_log);
         $this->clients = new \SplObjectStorage;
-        $this->session_model = new SessionModel();
-        $this->session_model->setRoom('attendant');
-        $this->session_model->setRoom('client');  
+        $this->session_model = new SessionRoom();       
     }
 
     /**
-     * Abrir conexão
+     * Abrir e armazenar a nova conexão para enviar mensagens mais tarde   
      *
      * @param ConnectionInterface $conn
      * @return void
@@ -44,24 +42,21 @@ class Chat implements MessageComponentInterface
         $params = array_values(array_filter(explode("/", $conn->httpRequest->getRequestTarget())));
     
         if (!empty($params[2]) && (int) $params[2] > 0 && $params[1] === "attendant" && $params[0] === "api") {
-
-            // Armazene a nova conexão para enviar mensagens mais tarde      
-            $this->newConnection($conn, (int)$params[2], "attendant");           
-
-        } elseif (empty($params[2]) !== true && (int) $params[2] > 0 && $params[1] === "client" && $params[0] === "api") {
-
-             // Armazene a nova conexão para enviar mensagens mais tarde      
-             $this->newConnection($conn, (int)$params[2], "client");            
-
+            $this->newConnection($conn, (int)$params[2], "attendant");
+       
+        } elseif (!empty($params[2]) && (int) $params[2] > 0 && $params[1] === "client" && $params[0] === "api") {
+            $this->newConnection($conn, (int)$params[2], "client");
+       
         } else {
             $conn->close();
-            $this->log_model->setLog("Opss! URI invalida.\n");              
+            $this->log_model->setLog("Opss! URI invalida.\n");
         }
 
-        //Log
+        $this->log_model->setLog("A conexão {$conn->resourceId} foi desconectada.\n" . "Sessão:\n" . print_r($_SESSION, true) . "\n");
         $this->log_model->setLog("Total Online: {$this->qtdUsersOn()} \n");
         $this->log_model->printLog();
     }
+
 
     /**
      * Ouvir mensagens e redireciona-las
@@ -95,22 +90,20 @@ class Chat implements MessageComponentInterface
                 break;
         }
 
-        //Log      
         $this->log_model->printLog();
     }
 
     /**
-     * Fechar conexão
+     * Fechar conexão e remover user das salas 
      *
      * @param ConnectionInterface $conn
      * @return void
      */
     public function onClose(ConnectionInterface $conn): void
-    {       
-        // A conexão foi encerrada, remova-a, pois não podemos mais enviar mensagens para ela
+    {      
         $this->log_model->resetLog();
         $this->clients->detach($conn);
-        $this->session_model->removeUserSession($conn->resourceId);
+        $this->session_model->removeUserAllRoom($conn->resourceId);       
         $this->log_model->setLog("A conexão {$conn->resourceId} foi desconectada.\n" . "Sessão:\n" . print_r($_SESSION, true) . "\n");
         $this->log_model->printLog();
     }
@@ -126,7 +119,7 @@ class Chat implements MessageComponentInterface
     {
         $this->log_model->resetLog();
         $this->log_model->setLog("Ocorreu um erro: {$e->getMessage()}\n");
-        $this->session_model->removeUserSession($conn->resourceId);
+        $this->session_model->removeUserList($conn->resourceId);
         $conn->close();
         $this->log_model->printLog();
     }
@@ -150,21 +143,16 @@ class Chat implements MessageComponentInterface
      */
     public function searchUserSendMsg(ConnectionInterface $from): void
     {
-        $status_save = $this->saveMsgDB();
-
-        //Liste os users alocados na memória e procure o destinatário
+        $status_save = $this->saveMsgDB();        
         $result = false;
-        foreach ($this->clients as $client) {
-
-            // O remetente não é o destinatário 
-            if ($from !== $client) {
+        foreach ($this->clients as $client) { //Liste os users alocados na memória e procure o destinatário
+          
+            if ($from !== $client) {   // O remetente não é o destinatário 
                 $destiny_id = $this->session_model->getUserId($client->resourceId) + 0;
-
-                // O destinatária corresponde ao id informado do destinatário
-                if ((int) $this->msg_obj->userDestId === $destiny_id) {
-
-                    // Envie msg para o destinatário   
-                    $client->send(json_encode($this->msg_obj));
+              
+                if ((int) $this->msg_obj->userDestId === $destiny_id) {  // O destinatária corresponde ao id informado do destinatário
+                   
+                    $client->send(json_encode($this->msg_obj));  // Envie msg para o destinatário   
                     $result = true;
                     $this->log_model->setLog("Origem resourceId " . $from->resourceId . " | Destino resourceId: " . $client->resourceId  . "\n");
                 }
@@ -195,7 +183,7 @@ class Chat implements MessageComponentInterface
     }
 
     /**
-     * Armazene nova conexão para enviar mensagens mais tarde 
+     * Armazene nova conexão para enviar mensagens mais tarde     
      *
      * @param ConnectionInterface $conn
      * @param int $user_id
@@ -204,9 +192,8 @@ class Chat implements MessageComponentInterface
     public function newConnection(ConnectionInterface  $conn, int $user_id, $name_room): void
     {
         $this->clients->attach($conn);
-        $this->session_model->addUserSession($conn->resourceId, $user_id);
-        $this->session_model->setNameRoom($name_room);
-        $this->session_model->addUserRoom($conn->resourceId, $user_id);
+        $this->session_model->addUserList($conn->resourceId, $user_id);
+        $this->session_model->addUserRoom($conn->resourceId, $user_id, $name_room);
         $this->log_model->setLog("New Connection ({$conn->resourceId}) user_id ({$user_id}).\n");
     }
 }
