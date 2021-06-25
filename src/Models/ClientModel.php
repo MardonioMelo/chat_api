@@ -2,39 +2,39 @@
 
 namespace Src\Models;
 
-use Src\Models\DataBase\ChatAttendant;
+use Src\Models\DataBase\ChatClient;
 
 /**
- * Class responsável por gerenciar os atendentes do chat no banco de dados
+ * Class responsável por gerenciar os clientes do chat no banco de dados
  */
-class  AttendantModel
+class  ClientModel
 {
 
-    private $tab_chat_attendant;
+    private $tab_chat_client;
     private $Error;
     private $Result;
 
     /**
-     * Declara a classe ChatAttendant na inicialização
+     * Declara a classe ChatClient na inicialização
      */
     public function __construct()
     {
-        $this->tab_chat_attendant = new ChatAttendant();
+        $this->tab_chat_client = new ChatClient();
     }
 
     /**
      * Salva mensagem do chat no banco de dados    
      *   
-     * @param String $attendant_name
-     * @param String $attendant_lastname
-     * @param String $attendant_avatar
+     * @param String $client_name
+     * @param String $client_lastname
+     * @param String $client_avatar
      * @return void
      */
-    public function saveAttendant(String $attendant_name, String $attendant_lastname, String $attendant_avatar = "/avatar"): void
+    public function saveAttendant(String $client_name, String $client_lastname, String $client_avatar = "/avatar"): void
     {
-        $this->tab_chat_attendant->attendant_name = (string) $attendant_name;
-        $this->tab_chat_attendant->attendant_lastname = (string) $attendant_lastname;
-        $this->tab_chat_attendant->attendant_avatar = (string) $attendant_avatar;
+        $this->tab_chat_client->client_name = (string) $client_name;
+        $this->tab_chat_client->client_lastname = (string) $client_lastname;
+        $this->tab_chat_client->client_avatar = (string) $client_avatar;
 
         $this->saveCreate();
     }
@@ -51,12 +51,12 @@ class  AttendantModel
 
         if ($obj) {
             foreach ($obj as $key => $arr) {
-                $result[$key]['attendant_id'] = $arr->data()->attendant_id;
-                $result[$key]['attendant_name'] = $arr->data()->attendant_name;
-                $result[$key]['attendant_lastname'] = $arr->data()->attendant_lastname;
-                $result[$key]['attendant_avatar'] = $arr->data()->attendant_avatar;
-                $result[$key]['attendant_updated_at'] = $arr->data()->attendant_updated_at;
-                $result[$key]['attendant_created_at'] = $arr->data()->attendant_created_at;
+                $result[$key]['client_id'] = $arr->data()->client_id;
+                $result[$key]['client_name'] = $arr->data()->client_name;
+                $result[$key]['client_lastname'] = $arr->data()->client_lastname;
+                $result[$key]['client_avatar'] = $arr->data()->client_avatar;
+                $result[$key]['client_updated_at'] = $arr->data()->client_updated_at;
+                $result[$key]['client_created_at'] = $arr->data()->client_created_at;
             }
         }
         return $result;
@@ -70,8 +70,8 @@ class  AttendantModel
      */
     public function getUser(int $id)
     {
-        if ($this->tab_chat_attendant->findById($id)){
-            return $this->tab_chat_attendant->findById($id)->data();
+        if ($this->tab_chat_client->findById($id)){
+            return $this->tab_chat_client->findById($id)->data();
         }else{
             return false;
         }       
@@ -103,14 +103,14 @@ class  AttendantModel
      */
     private function saveCreate(): void
     {
-        $id = $this->tab_chat_attendant->save();
+        $id = $this->tab_chat_client->save();
 
         if ((int)$id > 0) {
             $this->Result = $id;
             $this->Error = "Cadastro realizado com sucesso!";
         } else {
             $this->Result = $id;
-            $this->Error = $this->tab_chat_attendant->fail()->getMessage();
+            $this->Error = $this->tab_chat_client->fail()->getMessage();
         }
     }
 }

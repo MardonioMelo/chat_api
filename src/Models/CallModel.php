@@ -10,7 +10,7 @@ use Src\Models\DataBase\ChatCall;
 class  CallModel
 {
 
-    private $tab_chat_call;   
+    private $tab_chat_call;
     private $Error;
     private $Result;
 
@@ -37,8 +37,8 @@ class  CallModel
         $this->tab_chat_call->call_user_id = (int) $user_id;
         $this->tab_chat_call->call_user_dest_id = (int) $user_dest_id;
         $this->tab_chat_call->call_objective = (string) $objective;
-        $this->setStatus($status); 
-        $this->tab_chat_call->call_date_start = (string) $date_start;              
+        $this->setStatus($status);
+        $this->tab_chat_call->call_date_start = (string) $date_start;
 
         $this->saveCreate();
     }
@@ -58,8 +58,8 @@ class  CallModel
         $this->tab_chat_call->call_user_id = (int) $user_id;
         $this->tab_chat_call->call_user_dest_id = (int) $user_dest_id;
         $this->tab_chat_call->call_objective = (string) $objective;
-        $this->setStatus($status); 
-        $this->tab_chat_call->call_date_start = (string) $date_start;              
+        $this->setStatus($status);
+        $this->tab_chat_call->call_date_start = (string) $date_start;
 
         $this->saveCreate();
     }
@@ -165,7 +165,7 @@ class  CallModel
                 $result[$key]['call_status'] = $arr->data()->call_status;
                 $result[$key]['call_date_start'] = $arr->data()->call_date_start;
                 $result[$key]['call_date_end'] = $arr->data()->call_date_end;
-                $result[$key]['call_evaluation'] = $arr->data()->call_evaluation;               
+                $result[$key]['call_evaluation'] = $arr->data()->call_evaluation;
             }
         }
         return $result;
@@ -177,7 +177,7 @@ class  CallModel
      * @return string
      */
     private function saveCreate(): void
-    {      
+    {
         $id = $this->tab_chat_call->save();
 
         if ((int)$id > 0) {
@@ -188,5 +188,4 @@ class  CallModel
             $this->Error = $this->tab_chat_call->fail()->getMessage();
         }
     }
-   
 }

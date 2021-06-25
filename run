@@ -1,0 +1,3 @@
+<?php
+popen('cls', 'w');
+require './server-chat.php';

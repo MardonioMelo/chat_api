@@ -18,7 +18,7 @@ API para chat e chatbot de suporte, ainda em desenvolvimento.
 - [ ] Mudar status do atendimento.
 - [ ] Criar span de envio para o cliente da posição dele na fila de espera.
 - [x] Criar tabela de atendimento (atendente,cliente,status,assunto,avaliação,data-hora-inicio,data-hora-fim).
-- [ ] Criar tabela de usuários (usuário,nome,imagem,instituição,email).
+- [x] Criar tabela de usuários (usuário,nome,imagem,instituição,email).
 - [x] Criar tabela de atendentes.
 - [ ] Autentificação JWT.
 
@@ -103,10 +103,11 @@ Variáveis:
  - ID = id do usuário que deseja fazer conexão.
  - A conexão é aberta assim que a url com o id do user é acessada. Não precisa enviar outros parâmetros para abria a conexão.
 
-> ws://localhost:SERVER_CHAT_PORT/api/ID/attendant
+> ws://localhost:SERVER_CHAT_PORT/api/attendant/ID
 
 Exemplos para troca de mensagens:   
-URL: ws://localhost:8081/api/1/attendant
+URL: ws://localhost:8081/api/attendant/1
+URL: ws://localhost:8081/api/client/1  
 
 >    
     Dados de envio: {  
@@ -124,7 +125,27 @@ URL: ws://localhost:8081/api/1/attendant
 > 
 
 Exemplos para troca de mensagens:   
-URL: ws://localhost:8081/api/1/client  
+URL: ws://localhost:8081/api/attendant/1  
+URL: ws://localhost:8081/api/client/1  
+
+>    
+    Dados de envio: {  
+        "cmd": "msg",   
+        "driver": "web",  
+        "userId": 1,  
+        "userDestId": 2,    
+        "text": "ola 1",    
+        "type": "text", 
+        "time": "10:30",    
+        "attachment":null  
+    } 
+
+    Dados de retorno: N/A.    
+> 
+
+Exemplos para consulta da quantidade online:   
+URL: ws://localhost:8081/api/attendant/1  
+URL: ws://localhost:8081/api/client/1  
 
 >    
     Dados: {  
@@ -190,7 +211,7 @@ URL: localhost/chatbot_api/create/attendant
 ## Comandos
 
 ### Iniciar servidor WebSocket do chat
-> php server.php
+> php run
 
 ### Testes Automatizados - PHPUnit
 - Execute o comando para os testes automatizados com PHPUnit

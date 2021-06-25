@@ -5,9 +5,11 @@ namespace Src\Controllers\Chat\Socket;
 use Src\Models\LogModel;
 use Src\Models\MsgModel;
 use Src\Models\CallModel;
-use Src\Controllers\Chat\Socket\SessionRoom;
+use Src\Models\ClientModel;
+use Src\Models\AttendantModel;
 use Ratchet\ConnectionInterface;
 use Ratchet\MessageComponentInterface;
+use Src\Controllers\Chat\Socket\SessionRoom;
 
 class AppChat implements MessageComponentInterface
 {
@@ -17,6 +19,8 @@ class AppChat implements MessageComponentInterface
     private $call_model;
     private $log_model;
     private $msg_obj;
+    private $attendant_model;
+    private $client_model;
 
     /**
      * Set class - informe true para exibir os logs no terminal
@@ -27,7 +31,10 @@ class AppChat implements MessageComponentInterface
     {
         $this->log_model = new LogModel($on_log);
         $this->clients = new \SplObjectStorage;
-        $this->session_model = new SessionRoom();       
+        $this->session_model = new SessionRoom();
+        $this->call_model = new CallModel();
+        $this->attendant_model = new AttendantModel();
+        $this->client_model = new ClientModel();
     }
 
     /**
@@ -40,23 +47,39 @@ class AppChat implements MessageComponentInterface
     {
         $this->log_model->resetLog();
         $params = array_values(array_filter(explode("/", $conn->httpRequest->getRequestTarget())));
-    
+
+        //Validar conexão do usuário conforme a rota
         if (!empty($params[2]) && (int) $params[2] > 0 && $params[1] === "attendant" && $params[0] === "api") {
-            $this->newConnection($conn, (int)$params[2], "attendant");
-       
+
+            //Validar usuário  
+            $user = $this->attendant_model->getUser($params[2]);
+            if ($user) {
+                $this->newConnection($conn, (int)$params[2], "attendant", $user->attendant_name);
+            } else {
+                $conn->close();
+                $this->log_model->setLog("Opss! Usuário invalido.\n");
+            }
         } elseif (!empty($params[2]) && (int) $params[2] > 0 && $params[1] === "client" && $params[0] === "api") {
-            $this->newConnection($conn, (int)$params[2], "client");
-       
+
+            //Validar usuário  
+            $user = $this->client_model->getUser($params[2]);
+            if ($user) {
+                $this->newConnection($conn, (int)$params[2], "client", $user->client_name);
+            } else {
+                $conn->close();
+                $this->log_model->setLog("Opss! Usuário invalido.\n");
+            }
         } else {
             $conn->close();
             $this->log_model->setLog("Opss! URI invalida.\n");
         }
 
-        $this->log_model->setLog("A conexão {$conn->resourceId} foi desconectada.\n" . "Sessão:\n" . print_r($_SESSION, true) . "\n");
-        $this->log_model->setLog("Total Online: {$this->qtdUsersOn()} \n");
+        $this->log_model->setLog("Sessão:\n" . print_r($_SESSION['_sf2_attributes'], true) . "\n");
+        $this->log_model->setLog("Total Online: {$this->qtdUsersServer()} \n");
+        $this->log_model->setLog("Total Atendentes: " . count($this->session_model->getUsersRoom("attendant")) . "\n");
+        $this->log_model->setLog("Total Clientes: " . count($this->session_model->getUsersRoom("client")) . "\n");
         $this->log_model->printLog();
     }
-
 
     /**
      * Ouvir mensagens e redireciona-las
@@ -74,15 +97,15 @@ class AppChat implements MessageComponentInterface
             case 'msg':
                 //Check session               
                 $this->log_model->setLog($this->session_model->checkUserSession($from->resourceId, $this->msg_obj->userId));
-                $this->log_model->setLog("Total Online: {$this->qtdUsersOn()} \n");
+                $this->log_model->setLog("Total Online: {$this->qtdUsersServer()} \n");
                 $this->log_model->setLog("Origem user: " . $this->msg_obj->userId . " | Destino user: " . $this->msg_obj->userDestId . " \n");
                 //Send msg
                 $this->searchUserSendMsg($from);
                 break;
             case 'n_on':
-                $this->msg_obj->qtd = $this->qtdUsersOn();
+                $this->msg_obj->qtd = $this->qtdUsersServer();
                 $from->send(json_encode($this->msg_obj));
-                $this->log_model->setLog("Total Online: {$this->qtdUsersOn()} \n");
+                $this->log_model->setLog("Total Online: {$this->qtdUsersServer()} \n");
                 break;
             default:
                 $from->send('{"text":"Comando não reconhecido!"}');
@@ -100,11 +123,14 @@ class AppChat implements MessageComponentInterface
      * @return void
      */
     public function onClose(ConnectionInterface $conn): void
-    {      
+    {
         $this->log_model->resetLog();
         $this->clients->detach($conn);
-        $this->session_model->removeUserAllRoom($conn->resourceId);       
-        $this->log_model->setLog("A conexão {$conn->resourceId} foi desconectada.\n" . "Sessão:\n" . print_r($_SESSION, true) . "\n");
+        $this->session_model->removeUserAllRoom($conn->resourceId);
+        $this->log_model->setLog("A conexão {$conn->resourceId} foi desconectada.\n" . "Sessão:\n" . print_r($_SESSION["_sf2_attributes"], true) . "\n");
+        $this->log_model->setLog("Total Online: {$this->qtdUsersServer()} \n");
+        $this->log_model->setLog("Total Atendentes: " . count($this->session_model->getUsersRoom("attendant")) . "\n");
+        $this->log_model->setLog("Total Clientes: " . count($this->session_model->getUsersRoom("client")) . "\n");
         $this->log_model->printLog();
     }
 
@@ -121,18 +147,17 @@ class AppChat implements MessageComponentInterface
         $this->log_model->setLog("Ocorreu um erro: {$e->getMessage()}\n");
         $this->session_model->removeUserList($conn->resourceId);
         $conn->close();
-        $this->log_model->printLog();
+        $this->log_model->printLog(true);
     }
 
     /**
      * Quantidade de usuários online
-     *
-     * @param int $sub informe uma quantidade para subtrair do total
+     *  
      * @return int
      */
-    public function qtdUsersOn(int $sub = 1): int
+    public function qtdUsersServer(): int
     {
-        return count($this->clients) - $sub; //Qtd de usuários online;           
+        return count($this->clients); //Qtd de usuários online;           
     }
 
     /**
@@ -143,15 +168,15 @@ class AppChat implements MessageComponentInterface
      */
     public function searchUserSendMsg(ConnectionInterface $from): void
     {
-        $status_save = $this->saveMsgDB();        
+        $status_save = $this->saveMsgDB();
         $result = false;
         foreach ($this->clients as $client) { //Liste os users alocados na memória e procure o destinatário
-          
+
             if ($from !== $client) {   // O remetente não é o destinatário 
                 $destiny_id = $this->session_model->getUserId($client->resourceId) + 0;
-              
+
                 if ((int) $this->msg_obj->userDestId === $destiny_id) {  // O destinatária corresponde ao id informado do destinatário
-                   
+
                     $client->send(json_encode($this->msg_obj));  // Envie msg para o destinatário   
                     $result = true;
                     $this->log_model->setLog("Origem resourceId " . $from->resourceId . " | Destino resourceId: " . $client->resourceId  . "\n");
@@ -189,11 +214,11 @@ class AppChat implements MessageComponentInterface
      * @param int $user_id
      * @return void
      */
-    public function newConnection(ConnectionInterface  $conn, int $user_id, $name_room): void
+    public function newConnection(ConnectionInterface  $conn, int $user_id, $name_room, $user_name): void
     {
         $this->clients->attach($conn);
         $this->session_model->addUserList($conn->resourceId, $user_id);
         $this->session_model->addUserRoom($conn->resourceId, $user_id, $name_room);
-        $this->log_model->setLog("New Connection ({$conn->resourceId}) user_id ({$user_id}).\n");
+        $this->log_model->setLog("New Connection ({$conn->resourceId}) | id ({$user_id}) | name ({$user_name}).\n");
     }
 }

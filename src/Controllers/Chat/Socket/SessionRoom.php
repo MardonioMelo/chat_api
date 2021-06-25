@@ -63,7 +63,7 @@ class SessionRoom
     {
         $arr = $this->session->get($name_room);
         unset($arr[$this->pre_key . $resourceId]);
-        $this->session->set($this->name_room, $arr);
+        $this->session->set($name_room, $arr);
     }
 
     /**
@@ -75,7 +75,7 @@ class SessionRoom
      */
     public function addUserList(int $resourceId, int $user_id): void
     {
-        $this->addUserRoom($resourceId, $user_id,  'users_list');
+        $this->addUserRoom($resourceId, $user_id,  'list');
     }
 
     /**
@@ -86,7 +86,7 @@ class SessionRoom
      */
     public function removeUserList(int $resourceId): void
     {
-        $this->removeUserRoom($resourceId, 'users_list');
+        $this->removeUserRoom($resourceId, 'list');
     }
 
     /**
@@ -121,7 +121,7 @@ class SessionRoom
      */
     public function addUserAttendant(int $resourceId, int $user_id): void
     {
-        $this->addUserRoom($resourceId, $user_id,  'client');
+        $this->addUserRoom($resourceId, $user_id,  'attendant');
     }
 
     /**
@@ -132,7 +132,7 @@ class SessionRoom
      */
     public function removeUserAttendant(int $resourceId): void
     {
-        $this->removeUserRoom($resourceId, 'client');
+        $this->removeUserRoom($resourceId, 'attendant');
     }
     
     /**
@@ -176,5 +176,16 @@ class SessionRoom
         $this->removeUserAttendant($resourceId);
         $this->removeUserClient($resourceId);
         $this->removeUserList($resourceId);
+    }
+
+    /**
+     * Obter os usuários de uma sala ou de da sala geral por padrão.
+     *  
+     * @param string $name_room
+     * @return array
+     */
+    public function getUsersRoom(string $name_room = "list"): array
+    {
+        return  $this->session->get($name_room);
     }
 }

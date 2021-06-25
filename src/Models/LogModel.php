@@ -7,7 +7,7 @@ class LogModel
 {
 
     private $log;
-    
+
     /**
      * Init log
      *
@@ -32,12 +32,14 @@ class LogModel
 
     /**
      * Imprimi os logs na tela
-     * 
-     * @param string $on_log
+     *
+     * @param boolean $history
      * @return void
      */
-    public function printLog(): void
+    public function printLog($history = false): void
     {
+        $history === true ?: popen('cls', 'w');
+
         $in = "\n---------" . date("d/m/Y H:i:s") . "------------\n";
         $out = "\n----------------------------------------\n";
 
