@@ -25,7 +25,7 @@ $app->add(function ($request, $handler) {
 //Rotas GET
 $app->get('/', Dashboard::class . ":home");
 $app->get('/bot', BotController::class . ":widget");
-//$app->get(APP_CONFIG['api_v']. '/home/{id}', Api::class . ":home"); 
+//$app->get(getenv('API_VERSION'). '/home/{id}', Api::class . ":home"); 
 
 // Rotas GET
 $app->post('/bot', BotController::class . ":chatBot");

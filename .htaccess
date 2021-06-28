@@ -147,6 +147,9 @@ ExpiresDefault "access 2 days"
 
 </IfModule>
 
+#### JWT
+RewriteRule .* - [env=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
 #### Escrita para o compente de Rotas
 
 # DEFINIR PASTA RAIZ

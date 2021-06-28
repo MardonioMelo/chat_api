@@ -8,8 +8,11 @@ use Src\Models\CallModel;
 use Src\Models\ClientModel;
 use Src\Models\AttendantModel;
 use Ratchet\ConnectionInterface;
+use Src\Controllers\JWT\TokenJWT;
 use Ratchet\MessageComponentInterface;
 use Src\Controllers\Chat\Socket\SessionRoom;
+use GuzzleHttp\Psr7\Message;
+
 
 class AppChat implements MessageComponentInterface
 {
@@ -21,6 +24,7 @@ class AppChat implements MessageComponentInterface
     private $msg_obj;
     private $attendant_model;
     private $client_model;
+    private $jwt;
 
     /**
      * Set class - informe true para exibir os logs no terminal
@@ -35,6 +39,7 @@ class AppChat implements MessageComponentInterface
         $this->call_model = new CallModel();
         $this->attendant_model = new AttendantModel();
         $this->client_model = new ClientModel();
+        $this->jwt = new TokenJWT();
     }
 
     /**
@@ -47,6 +52,16 @@ class AppChat implements MessageComponentInterface
     {
         $this->log_model->resetLog();
         $params = array_values(array_filter(explode("/", $conn->httpRequest->getRequestTarget())));
+
+        // Criar token do user no outro servidor http onde o front-end está instalado com chave
+        // $this->jwt->createTokenUser(["id" => "1", "name" => "Mardonio"]);
+        // $this->log_model->setLog($this->jwt->getToken() . "\n");
+
+        // Check token no servidor Websoket
+        $token_user = explode(" ", array_filter(explode("\n", Message::toString($conn->httpRequest)))[5])[2];
+        $header = $this->jwt->getDecodeJWT($token_user);
+        $this->log_model->setLog(print_r($header));
+
 
         //Validar conexão do usuário conforme a rota
         if (!empty($params[2]) && (int) $params[2] > 0 && $params[1] === "attendant" && $params[0] === "api") {
@@ -90,8 +105,8 @@ class AppChat implements MessageComponentInterface
      */
     public function onMessage(ConnectionInterface $from, $msg): void
     {
-        $this->msg_obj = json_decode($msg);
         $this->log_model->resetLog();
+        $this->msg_obj = json_decode($msg);
 
         switch ($this->msg_obj->cmd) {
             case 'msg':
@@ -123,8 +138,7 @@ class AppChat implements MessageComponentInterface
      * @return void
      */
     public function onClose(ConnectionInterface $conn): void
-    {
-        $this->log_model->resetLog();
+    {      
         $this->clients->detach($conn);
         $this->session_model->removeUserAllRoom($conn->resourceId);
         $this->log_model->setLog("A conexão {$conn->resourceId} foi desconectada.\n" . "Sessão:\n" . print_r($_SESSION["_sf2_attributes"], true) . "\n");
@@ -142,12 +156,11 @@ class AppChat implements MessageComponentInterface
      * @return void
      */
     public function onError(ConnectionInterface $conn, \Exception $e): void
-    {
-        $this->log_model->resetLog();
+    {        
         $this->log_model->setLog("Ocorreu um erro: {$e->getMessage()}\n");
         $this->session_model->removeUserList($conn->resourceId);
         $conn->close();
-        $this->log_model->printLog(true);
+        $this->log_model->printLog();
     }
 
     /**
@@ -216,6 +229,7 @@ class AppChat implements MessageComponentInterface
      */
     public function newConnection(ConnectionInterface  $conn, int $user_id, $name_room, $user_name): void
     {
+        $this->log_model->resetLog();
         $this->clients->attach($conn);
         $this->session_model->addUserList($conn->resourceId, $user_id);
         $this->session_model->addUserRoom($conn->resourceId, $user_id, $name_room);
