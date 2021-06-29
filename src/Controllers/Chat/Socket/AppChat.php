@@ -11,7 +11,7 @@ use Ratchet\ConnectionInterface;
 use Src\Controllers\JWT\TokenJWT;
 use Ratchet\MessageComponentInterface;
 use Src\Controllers\Chat\Socket\SessionRoom;
-use GuzzleHttp\Psr7\Message;
+
 
 
 class AppChat implements MessageComponentInterface
@@ -51,48 +51,52 @@ class AppChat implements MessageComponentInterface
     public function onOpen(ConnectionInterface $conn): void
     {
         $this->log_model->resetLog();
-        $params = array_values(array_filter(explode("/", $conn->httpRequest->getRequestTarget())));
 
-        // Criar token do user no outro servidor http onde o front-end está instalado com chave
-        // $this->jwt->createTokenUser(["id" => "1", "name" => "Mardonio"]);
+        // Criar token do user no outro servidor http onde o front-end está instalado com a mesma chave secreta
+        // $this->jwt->createTokenUser(["id" => "1", "name" => "Mardonio"], 86400); //24hs de validade do token
         // $this->log_model->setLog($this->jwt->getToken() . "\n");
 
-        // Check token no servidor Websoket
-        $token_user = explode(" ", array_filter(explode("\n", Message::toString($conn->httpRequest)))[5])[2];
-        $header = $this->jwt->getDecodeJWT($token_user);
-        $this->log_model->setLog(print_r($header));
+        $this->jwt->checkToken($conn->httpRequest);       
 
+        if ($this->jwt->getResult()) {           
 
-        //Validar conexão do usuário conforme a rota
-        if (!empty($params[2]) && (int) $params[2] > 0 && $params[1] === "attendant" && $params[0] === "api") {
+            $params = array_values(array_filter(explode("/", $conn->httpRequest->getRequestTarget())));
 
-            //Validar usuário  
-            $user = $this->attendant_model->getUser($params[2]);
-            if ($user) {
-                $this->newConnection($conn, (int)$params[2], "attendant", $user->attendant_name);
+            //Validar conexão do usuário conforme a rota
+            if (!empty($params[2]) && (int) $params[2] > 0 && $params[1] === "attendant" && $params[0] === "api") {
+
+                //Validar usuário  
+                $user = $this->attendant_model->getUser($params[2]);
+                if ($user) {
+                    $this->newConnection($conn, (int)$params[2], "attendant", $user->attendant_name);
+                } else {
+                    $conn->close();
+                    $this->log_model->setLog("Opss! Usuário invalido.\n");
+                }
+            } elseif (!empty($params[2]) && (int) $params[2] > 0 && $params[1] === "client" && $params[0] === "api") {
+
+                //Validar usuário  
+                $user = $this->client_model->getUser($params[2]);
+                if ($user) {
+                    $this->newConnection($conn, (int)$params[2], "client", $user->client_name);
+                } else {
+                    $conn->close();
+                    $this->log_model->setLog("Opss! Usuário invalido.\n");
+                }
             } else {
                 $conn->close();
-                $this->log_model->setLog("Opss! Usuário invalido.\n");
+                $this->log_model->setLog("Opss! URI invalida.\n");
             }
-        } elseif (!empty($params[2]) && (int) $params[2] > 0 && $params[1] === "client" && $params[0] === "api") {
 
-            //Validar usuário  
-            $user = $this->client_model->getUser($params[2]);
-            if ($user) {
-                $this->newConnection($conn, (int)$params[2], "client", $user->client_name);
-            } else {
-                $conn->close();
-                $this->log_model->setLog("Opss! Usuário invalido.\n");
-            }
+            $this->log_model->setLog("Sessão:\n" . print_r($_SESSION['_sf2_attributes'], true) . "\n");
+            $this->log_model->setLog("Total Online: {$this->qtdUsersServer()} \n");
+            $this->log_model->setLog("Total Atendentes: " . count($this->session_model->getUsersRoom("attendant")) . "\n");
+            $this->log_model->setLog("Total Clientes: " . count($this->session_model->getUsersRoom("client")) . "\n");
         } else {
+            $conn->send(json_encode(["Result" => false, "Error" => $this->jwt->getError()]));
+            $this->log_model->setLog($this->jwt->getError()."\n");
             $conn->close();
-            $this->log_model->setLog("Opss! URI invalida.\n");
         }
-
-        $this->log_model->setLog("Sessão:\n" . print_r($_SESSION['_sf2_attributes'], true) . "\n");
-        $this->log_model->setLog("Total Online: {$this->qtdUsersServer()} \n");
-        $this->log_model->setLog("Total Atendentes: " . count($this->session_model->getUsersRoom("attendant")) . "\n");
-        $this->log_model->setLog("Total Clientes: " . count($this->session_model->getUsersRoom("client")) . "\n");
         $this->log_model->printLog();
     }
 
@@ -138,7 +142,7 @@ class AppChat implements MessageComponentInterface
      * @return void
      */
     public function onClose(ConnectionInterface $conn): void
-    {      
+    {
         $this->clients->detach($conn);
         $this->session_model->removeUserAllRoom($conn->resourceId);
         $this->log_model->setLog("A conexão {$conn->resourceId} foi desconectada.\n" . "Sessão:\n" . print_r($_SESSION["_sf2_attributes"], true) . "\n");
@@ -156,7 +160,7 @@ class AppChat implements MessageComponentInterface
      * @return void
      */
     public function onError(ConnectionInterface $conn, \Exception $e): void
-    {        
+    {
         $this->log_model->setLog("Ocorreu um erro: {$e->getMessage()}\n");
         $this->session_model->removeUserList($conn->resourceId);
         $conn->close();

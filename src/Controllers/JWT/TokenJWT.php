@@ -3,6 +3,7 @@
 namespace Src\Controllers\JWT;
 
 use Firebase\JWT\JWT;
+use GuzzleHttp\Psr7\Message;
 
 /**
  * Class para geração e autentificação de token JWT
@@ -14,6 +15,8 @@ class TokenJWT
     private $algorithms;
     private $token;
     private $payload;
+    private $Result;
+    private $Error;
 
     /**
      * Set init key e algorithms
@@ -106,5 +109,53 @@ class TokenJWT
         $this->setPayload($data, $time_exp);
         $this->setEncodeJWT();
         return "Authorization: Bearer " . $this->getToken();
+    }
+
+    /**
+     * Verificar token no servidor de conexão
+     * @param Object $request
+     * @return void
+     */
+    public function checkToken(object $request)
+    {
+        $headers = explode("\n", Message::toString($request));
+        $is_authorization = preg_grep('/Authorization: Bearer /', $headers);
+
+        if (count($is_authorization) === 1) {
+
+            $token = explode(" ", trim(array_values($is_authorization)[0]))[2];            
+            $token_data = $this->getDecodeJWT($token);
+
+            $this->Result = true;
+            $this->Error = "Conexão Autorizada!";
+        } else {
+            $this->Result = $is_authorization;
+            $this->Error = "Conexão Recusada: o token de autorização não foi informado corretamente.";
+        }
+
+        print_r($token);
+       print_r($token_data);
+
+        exit("exit.\n");
+    }
+
+    /**
+     * Verificar Ação
+     * 
+     * @return mixed
+     */
+    public function getResult()
+    {
+        return $this->Result;
+    }
+
+    /**
+     * Obter Erro
+     * 
+     * @return string
+     */
+    public function getError(): string
+    {
+        return $this->Error;
     }
 }
