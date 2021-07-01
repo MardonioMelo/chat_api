@@ -7,7 +7,7 @@ use Symfony\Component\HttpFoundation\Session\Session;
 /**
  * Class responsável por administrar as salas de usuários da sessão no servidor websocket
  */
-class SessionRoom
+class SessionRoomController
 {
 
     private $session;

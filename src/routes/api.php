@@ -1,9 +1,10 @@
 <?php
 
-use Src\Controllers\Home\Dashboard;
+use Src\Controllers\Home\AttendantController;
+use Src\Controllers\Home\DashboardController;
 use Src\Controllers\Bot\BotController;
 use Slim\Exception\HttpNotFoundException;
-use Src\Controllers\Home\Attendant;
+use Src\Controllers\JWT\JWTController;
 
 $app->options('/{routes:.+}', function ($request, $response, $args) {
     return $response;
@@ -13,9 +14,9 @@ $app->options('/{routes:.+}', function ($request, $response, $args) {
 $app->add(function ($request, $handler) {
     $response = $handler->handle($request);
     return $response
-            ->withHeader('Access-Control-Allow-Origin', '*')
-            ->withHeader('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Accept, Origin, Authorization')
-            ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
+        ->withHeader('Access-Control-Allow-Origin', '*')
+        ->withHeader('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Accept, Origin, Authorization')
+        ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
 });
 
 // --------------------------+
@@ -29,8 +30,11 @@ $app->get('/bot', BotController::class . ":widget");
 
 // Rotas GET
 $app->post('/bot', BotController::class . ":chatBot");
-$app->post('/history', Dashboard::class . ":msgHistory"); 
-$app->post('/create/attendant', Attendant::class . ":createAttendant"); 
+//Chat
+$app->post(API_VERSION . '/history/read', DashboardController::class . ":msgHistory");
+$app->post(API_VERSION . '/create/attendant', AttendantController::class . ":createAttendant");
+$app->post(API_VERSION . '/create/client', AttendantController::class . ":createClient");
+$app->post(API_VERSION . '/create/token', JWTController::class . ":createToken");
 
 // --------------------------+
 // Fim rotas a partir daqui

@@ -1,6 +1,6 @@
 <?php
 
-namespace Src\Controllers\JWT;
+namespace Src\Models;
 
 use Firebase\JWT\JWT;
 use GuzzleHttp\Psr7\Message;
@@ -8,7 +8,7 @@ use GuzzleHttp\Psr7\Message;
 /**
  * Class para geração e autentificação de token JWT
  */
-class TokenJWT
+class JWTModel
 {
 
     private $key;
@@ -102,13 +102,17 @@ class TokenJWT
      *
      * @param array $data
      * @param integer $time_exp
-     * @return string
+     * @return void
      */
-    public function createTokenUser(array $data = [], int $time_exp = 3600): string
+    public function createTokenUser(array $data = [], int $time_exp = 3600): void
     {
         $this->setPayload($data, $time_exp);
         $this->setEncodeJWT();
-        return "Authorization: Bearer " . $this->getToken();
+
+        $this->Result = true;
+        $this->Error['header'] = "Authorization";
+        $this->Error['token'] = "Bearer " . $this->getToken();      
+        $this->Error['msg'] = "Token gerado com sucesso!";
     }
 
     /**
@@ -121,21 +125,23 @@ class TokenJWT
         $headers = explode("\n", Message::toString($request));
         $is_authorization = preg_grep('/Authorization: Bearer /', $headers);
 
-        if (count($is_authorization) === 1) {         
-            $this->Result = $this->getDecodeJWT(explode(" ", trim(array_values($is_authorization)[0]))[2])['data'];
-            $this->Error = "Conexão Autorizada!";
+        if (count($is_authorization) === 1) {
+            $this->Result = true;
+            $this->Error['authorization'] = $this->getDecodeJWT(explode(" ", trim(array_values($is_authorization)[0]))[2])['data'];
+            $this->Error['msg'] = "Conexão Autorizada!";
         } else {
-            $this->Result = $is_authorization;
-            $this->Error = "Conexão Recusada: o token de autorização não foi informado corretamente.";
-        }     
+            $this->Result = false;
+            $this->Error['authorization'] = $is_authorization;
+            $this->Error['msg'] = "Conexão Recusada: o token de autorização não foi informado corretamente.";
+        }
     }
 
     /**
      * Verificar Ação
      * 
-     * @return mixed
+     * @return bool
      */
-    public function getResult()
+    public function getResult(): bool
     {
         return $this->Result;
     }
@@ -143,9 +149,9 @@ class TokenJWT
     /**
      * Obter Erro
      * 
-     * @return string
+     * @return array
      */
-    public function getError(): string
+    public function getError(): array
     {
         return $this->Error;
     }

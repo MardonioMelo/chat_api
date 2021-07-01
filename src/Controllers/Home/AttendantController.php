@@ -9,7 +9,7 @@ use Src\Models\AttendantModel;
 /**
  * Classe controller dos atendentes
  */
-class Attendant
+class AttendantController
 {
 
     private $bot_model;

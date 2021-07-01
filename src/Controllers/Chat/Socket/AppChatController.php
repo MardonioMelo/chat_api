@@ -8,13 +8,13 @@ use Src\Models\CallModel;
 use Src\Models\ClientModel;
 use Src\Models\AttendantModel;
 use Ratchet\ConnectionInterface;
-use Src\Controllers\JWT\TokenJWT;
+use Src\Models\JWTModel;
 use Ratchet\MessageComponentInterface;
-use Src\Controllers\Chat\Socket\SessionRoom;
+use Src\Controllers\Chat\Socket\SessionRoomController;
 
 
 
-class AppChat implements MessageComponentInterface
+class AppChatController implements MessageComponentInterface
 {
     protected $clients;
     private $session_model;
@@ -35,11 +35,11 @@ class AppChat implements MessageComponentInterface
     {
         $this->log_model = new LogModel($on_log);
         $this->clients = new \SplObjectStorage;
-        $this->session_model = new SessionRoom();
+        $this->session_model = new SessionRoomController();
         $this->call_model = new CallModel();
         $this->attendant_model = new AttendantModel();
         $this->client_model = new ClientModel();
-        $this->jwt = new TokenJWT();
+        $this->jwt = new JWTModel();
     }
 
     /**

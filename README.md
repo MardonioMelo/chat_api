@@ -21,6 +21,8 @@ API para chat e chatbot de suporte, ainda em desenvolvimento.
 - [x] Criar tabela de usuários (usuário,nome,imagem,instituição,email).
 - [x] Criar tabela de atendentes.
 - [ ] Autentificação JWT.
+- [x] Rota para criação de token JWT
+- [ ] Autenticação por Login/Senha nas horas HTTP
 
 
 <i><b>E o andamento do bot?</b> Algumas coisas do bot já foram feitas/iniciadas como a implementação das lib's PHP nlp-tools e botman, por hora, essa parte está aguardando o desenvolvimento do chat para dar continuidade o desenvolvimento do bot.</i>
@@ -166,7 +168,7 @@ Os dados de retorno seguem a mesma estrutura de envio caso o outro user esteja o
 <b>Consultar Histórico de Mensagens</b><br>
 
 Exemplo de envio:   
-URL: http://localhost/history
+URL: http://localhost/api/history/read
 >   
     Dados via POST:     
         user_id: 1  
@@ -197,7 +199,7 @@ URL: http://localhost/history
 <b>Cadastrar atendente</b><br>
 
 Exemplo de envio:   
-URL: localhost/chatbot_api/create/attendant
+URL: localhost/chatbot_api/api/create/attendant
 >   
     Dados via POST:     
         attendant_name: "João"  
@@ -207,6 +209,28 @@ URL: localhost/chatbot_api/create/attendant
 
     Dados de retorno: 1 caso tenha cadastrado         
 > 
+
+<b>Criar token do usuário</b><br>
+
+Exemplo de envio:   
+URL: localhost:81/chatbot_api/api/create/token
+>   
+    Dados via POST:     
+        uuid: 1  
+        name: "Junior"     
+        type: "client" ou "attendant"    
+
+    Dados de retorno: 
+        {
+            "result": true,
+            "error": {
+                "header": "Authorization",
+                "token": "Bearer ...hashdotoknjwt",
+                "msg": "Token gerado com sucesso!"
+            }
+        } 
+> 
+
 
 ## Comandos
 
