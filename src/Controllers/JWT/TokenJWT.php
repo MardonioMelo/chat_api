@@ -121,22 +121,13 @@ class TokenJWT
         $headers = explode("\n", Message::toString($request));
         $is_authorization = preg_grep('/Authorization: Bearer /', $headers);
 
-        if (count($is_authorization) === 1) {
-
-            $token = explode(" ", trim(array_values($is_authorization)[0]))[2];            
-            $token_data = $this->getDecodeJWT($token);
-
-            $this->Result = true;
+        if (count($is_authorization) === 1) {         
+            $this->Result = $this->getDecodeJWT(explode(" ", trim(array_values($is_authorization)[0]))[2])['data'];
             $this->Error = "Conexão Autorizada!";
         } else {
             $this->Result = $is_authorization;
             $this->Error = "Conexão Recusada: o token de autorização não foi informado corretamente.";
-        }
-
-        print_r($token);
-       print_r($token_data);
-
-        exit("exit.\n");
+        }     
     }
 
     /**

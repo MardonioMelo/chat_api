@@ -51,52 +51,56 @@ class AppChat implements MessageComponentInterface
     public function onOpen(ConnectionInterface $conn): void
     {
         $this->log_model->resetLog();
+        $this->jwt->checkToken($conn->httpRequest);
+        $data_token = $this->jwt->getResult();
 
         // Criar token do user no outro servidor http onde o front-end está instalado com a mesma chave secreta
         // $this->jwt->createTokenUser(["id" => "1", "name" => "Mardonio"], 86400); //24hs de validade do token
-        // $this->log_model->setLog($this->jwt->getToken() . "\n");
+        // $this->log_model->setLog($this->jwt->getToken() . "\n");      
 
-        $this->jwt->checkToken($conn->httpRequest);       
+        if ($data_token) {
+            $rota = strip_tags($conn->httpRequest->getRequestTarget());
 
-        if ($this->jwt->getResult()) {           
+            switch ($rota) {
 
-            $params = array_values(array_filter(explode("/", $conn->httpRequest->getRequestTarget())));
+                case '/api/attendant':
 
-            //Validar conexão do usuário conforme a rota
-            if (!empty($params[2]) && (int) $params[2] > 0 && $params[1] === "attendant" && $params[0] === "api") {
+                    $user = $this->attendant_model->getUser($data_token->id);
+                    if ($user) {
+                        $this->newConnection($conn, (int)$data_token->id, "attendant", $user->attendant_name);
+                    } else {
+                        $conn->close();
+                        $this->log_model->setLog("Opss! Usuário invalido.\n");
+                    }
+                    break;
 
-                //Validar usuário  
-                $user = $this->attendant_model->getUser($params[2]);
-                if ($user) {
-                    $this->newConnection($conn, (int)$params[2], "attendant", $user->attendant_name);
-                } else {
+                case "/api/client":
+
+                    $user = $this->client_model->getUser($data_token->id);
+                    if ($user) {
+                        $this->newConnection($conn, (int)$data_token->id, "client", $user->client_name);
+                    } else {
+                        $conn->close();
+                        $this->log_model->setLog("Opss! Usuário invalido.\n");
+                    }
+
+                    $this->log_model->setLog("Sessão:\n" . print_r($_SESSION['_sf2_attributes'], true) . "\n");
+                    $this->log_model->setLog("Total Online: {$this->qtdUsersServer()} \n");
+                    $this->log_model->setLog("Total Atendentes: " . count($this->session_model->getUsersRoom("attendant")) . "\n");
+                    $this->log_model->setLog("Total Clientes: " . count($this->session_model->getUsersRoom("client")) . "\n");
+                    break;
+
+                default:
                     $conn->close();
-                    $this->log_model->setLog("Opss! Usuário invalido.\n");
-                }
-            } elseif (!empty($params[2]) && (int) $params[2] > 0 && $params[1] === "client" && $params[0] === "api") {
-
-                //Validar usuário  
-                $user = $this->client_model->getUser($params[2]);
-                if ($user) {
-                    $this->newConnection($conn, (int)$params[2], "client", $user->client_name);
-                } else {
-                    $conn->close();
-                    $this->log_model->setLog("Opss! Usuário invalido.\n");
-                }
-            } else {
-                $conn->close();
-                $this->log_model->setLog("Opss! URI invalida.\n");
+                    $this->log_model->setLog("Opss! URL invalida.\n" . $rota);
+                    break;
             }
-
-            $this->log_model->setLog("Sessão:\n" . print_r($_SESSION['_sf2_attributes'], true) . "\n");
-            $this->log_model->setLog("Total Online: {$this->qtdUsersServer()} \n");
-            $this->log_model->setLog("Total Atendentes: " . count($this->session_model->getUsersRoom("attendant")) . "\n");
-            $this->log_model->setLog("Total Clientes: " . count($this->session_model->getUsersRoom("client")) . "\n");
         } else {
             $conn->send(json_encode(["Result" => false, "Error" => $this->jwt->getError()]));
-            $this->log_model->setLog($this->jwt->getError()."\n");
+            $this->log_model->setLog($this->jwt->getError() . "\n");
             $conn->close();
         }
+
         $this->log_model->printLog();
     }
 
