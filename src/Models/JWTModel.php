@@ -98,20 +98,51 @@ class JWTModel
     }
 
     /**
-     * Criar Token do usuário
+     * Criar Token do usuário HTTP
      *
      * @param array $data
      * @param integer $time_exp
      * @return void
      */
-    public function createTokenUser(array $data = [], int $time_exp = 3600): void
+    public function createTokenUserHTTP(array $data = [], int $time_exp = 3600): void
+    {        
+        $this->createToken($data, $time_exp);
+        $this->Result = true;
+        $this->Error['uuid'] =  $data['uuid'];
+        $this->Error['name'] = $data['name'];
+        $this->Error['type'] = $data['type'];
+        $this->Error['protocol'] = "http";   
+
+    }
+
+    /**
+     * Criar Token do usuário WebSocket
+     *
+     * @param array $data
+     * @param integer $time_exp
+     * @return void
+     */
+    public function createTokenWebSocket(array $data = [], int $time_exp = 3600): void
+    {       
+        $this->createToken($data, $time_exp);
+        $this->Result = true;
+        $this->Error['protocol'] = "ws";   
+    }
+
+    /**
+     * Criar token
+     *
+     * @param array $data
+     * @param integer $time_exp
+     * @return void
+     */
+    private function createToken(array $data = [], int $time_exp = 3600): void
     {
         $this->setPayload($data, $time_exp);
         $this->setEncodeJWT();
 
-        $this->Result = true;
         $this->Error['header'] = "Authorization";
-        $this->Error['token'] = "Bearer " . $this->getToken();      
+        $this->Error['token'] = "Bearer " . $this->getToken();
         $this->Error['msg'] = "Token gerado com sucesso!";
     }
 
@@ -127,11 +158,11 @@ class JWTModel
 
         if (count($is_authorization) === 1) {
             $this->Result = true;
-            $this->Error['authorization'] = $this->getDecodeJWT(explode(" ", trim(array_values($is_authorization)[0]))[2])['data'];
+            $this->Error['data'] = $this->getDecodeJWT(explode(" ", trim(array_values($is_authorization)[0]))[2])['data'];
             $this->Error['msg'] = "Conexão Autorizada!";
         } else {
             $this->Result = false;
-            $this->Error['authorization'] = $is_authorization;
+            $this->Error['data'] = $is_authorization;
             $this->Error['msg'] = "Conexão Recusada: o token de autorização não foi informado corretamente.";
         }
     }

@@ -20,9 +20,8 @@ API para chat e chatbot de suporte, ainda em desenvolvimento.
 - [x] Criar tabela de atendimento (atendente,cliente,status,assunto,avaliação,data-hora-inicio,data-hora-fim).
 - [x] Criar tabela de usuários (usuário,nome,imagem,instituição,email).
 - [x] Criar tabela de atendentes.
-- [ ] Autentificação JWT.
+- [x] Autentificação JWT.
 - [x] Rota para criação de token JWT
-- [ ] Autenticação por Login/Senha nas horas HTTP
 
 
 <i><b>E o andamento do bot?</b> Algumas coisas do bot já foram feitas/iniciadas como a implementação das lib's PHP nlp-tools e botman, por hora, essa parte está aguardando o desenvolvimento do chat para dar continuidade o desenvolvimento do bot.</i>

@@ -52,22 +52,22 @@ class AppChatController implements MessageComponentInterface
     {
         $this->log_model->resetLog();
         $this->jwt->checkToken($conn->httpRequest);
-        $data_token = $this->jwt->getResult();
-
+        
         // Criar token do user no outro servidor http onde o front-end está instalado com a mesma chave secreta
         // $this->jwt->createTokenUser(["id" => "1", "name" => "Mardonio"], 86400); //24hs de validade do token
         // $this->log_model->setLog($this->jwt->getToken() . "\n");      
 
-        if ($data_token) {
+        if ($this->jwt->getResult()) {
             $rota = strip_tags($conn->httpRequest->getRequestTarget());
+            $user_token = $this->jwt->getError()['data'];
 
             switch ($rota) {
 
-                case '/api/attendant':
+                case '/api/attendant':                 
 
-                    $user = $this->attendant_model->getUser($data_token->id);
+                    $user = $this->attendant_model->getUser($user_token->uuid);
                     if ($user) {
-                        $this->newConnection($conn, (int)$data_token->id, "attendant", $user->attendant_name);
+                        $this->newConnection($conn, (int)$user_token->uuid, "attendant", $user_token->name);
                     } else {
                         $conn->close();
                         $this->log_model->setLog("Opss! Usuário invalido.\n");
@@ -76,9 +76,9 @@ class AppChatController implements MessageComponentInterface
 
                 case "/api/client":
 
-                    $user = $this->client_model->getUser($data_token->id);
+                    $user = $this->client_model->getUser($user_token->uuid);
                     if ($user) {
-                        $this->newConnection($conn, (int)$data_token->id, "client", $user->client_name);
+                        $this->newConnection($conn, (int)$user_token->uuid, "client", $user_token->name);
                     } else {
                         $conn->close();
                         $this->log_model->setLog("Opss! Usuário invalido.\n");

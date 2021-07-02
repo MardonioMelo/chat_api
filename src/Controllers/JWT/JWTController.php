@@ -19,7 +19,8 @@ class JWTController
     }
 
     /**
-     * Cadastrar usuário
+     * Check token
+     * A aplicação front-end deverá criar um token previamente
      *
      * @param Request $request
      * @param Response $response
@@ -27,20 +28,32 @@ class JWTController
      */
     public function createToken(Request $request, Response $response)
     {
-        $params = (array)$request->getParsedBody();
-        $data = [
-            "uuid" => strip_tags((string)$params['uuid']),
-            "name" => strip_tags((string)$params['name']),
-            "type" => strip_tags((string)$params['type'])
-        ];
+        $this->jwt->checkToken($request);
 
-        $this->jwt->createTokenUser($data, 43200);
+        if ($this->jwt->getResult()) {
 
-        $result = [];
-        $result['result'] = $this->jwt->getResult();
-        $result['error'] = $this->jwt->getError();
+            $user_token = $this->jwt->getError()['data'];
+            $params = (array)$request->getParsedBody();
+            $data = [
+                "uuid" => strip_tags((string)$params['uuid']),
+                "name" => strip_tags((string)$params['name']),
+                "type" => strip_tags((string)$params['type'])
+            ];
+
+            if ($user_token->uuid === $data['uuid'] && $user_token->name === $data['name'] && $user_token->name === $data['type']) {
+
+            }else{
+
+            }
+
+            $this->jwt->createTokenWebSocket($data, 43200);
+        } else {
+            $result = [];
+            $result['result'] = $this->jwt->getResult();
+            $result['error'] = $this->jwt->getError();
+        }       
 
         $response->getBody()->write(json_encode($result));
-        return $response;
+        return $response->withHeader('Content-Type', 'application/json');
     }
 }

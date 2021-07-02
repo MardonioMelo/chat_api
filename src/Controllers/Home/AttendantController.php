@@ -36,7 +36,7 @@ class AttendantController
         );
 
         $response->getBody()->write($this->bot_model->getResult());
-        return $response;
+        return $response->withHeader('Content-Type', 'application/json');    
     }
 
 
