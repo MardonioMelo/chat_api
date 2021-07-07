@@ -53,10 +53,6 @@ class AppChatController implements MessageComponentInterface
         $this->log_model->resetLog();
         $this->jwt->checkToken($conn->httpRequest);
         
-        // Criar token do user no outro servidor http onde o front-end está instalado com a mesma chave secreta
-        // $this->jwt->createTokenUser(["id" => "1", "name" => "Mardonio"], 86400); //24hs de validade do token
-        // $this->log_model->setLog($this->jwt->getToken() . "\n");      
-
         if ($this->jwt->getResult()) {
             $rota = strip_tags($conn->httpRequest->getRequestTarget());
             $user_token = $this->jwt->getError()['data'];

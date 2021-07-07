@@ -35,4 +35,5 @@ define("BOT_IMG", "assets/img/bot.jpg");
 # WebSocket
 define("SERVER_CHAT_PORT", "8081");
 define("SERVER_CHAT_URL", "ws://localhost:" . SERVER_CHAT_PORT . "/api");
-define("JWT_SECRET", "ffc68a2eb25f5a1f11a7f1b7546cb3ca"); // Chave uuid aleatória gerada md5(uniqid(rand(),true)));
+define("JWT_USER", "ffc6wwq2eb25f5asasf11a7f1b7546cb3ca"); // Chave gerada com md5(uniqid(rand(),true))); para o 1º token
+define("JWT_SECRET", "ffc68a2eb25f5a1f11a7f1b7546cb3ca"); // Chave gerada com md5(uniqid(rand(),true))); para o 2º token

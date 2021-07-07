@@ -19,14 +19,41 @@ class JWTController
     }
 
     /**
-     * Check token
-     * A aplicação front-end deverá criar um token previamente
+     * Gerar o token 1
      *
      * @param Request $request
      * @param Response $response
      * @return void
      */
-    public function createToken(Request $request, Response $response)
+    public function createTokenOne(Request $request, Response $response)
+    {
+
+        $params = (array)$request->getParsedBody();
+        $data = $this->filterParams($params);
+
+        if ($data['public'] === JWT_PUBLIC) { 
+
+            $this->jwt->createTokenUserHTTP($data, 43200);
+            $result['result'] = $this->jwt->getResult();
+            $result['error'] = $this->jwt->getError();
+        } else {
+            $result = [];
+            $result['result'] = false;
+            $result['error'] = "Chave pública inválida!";
+        }      
+
+        $response->getBody()->write(json_encode($result));
+        return $response->withHeader('Content-Type', 'application/json');
+    }
+
+    /**
+     * Gerar o token 2  
+     *
+     * @param Request $request
+     * @param Response $response
+     * @return void
+     */
+    public function createTokenTwo(Request $request, Response $response)
     {
         $this->jwt->checkToken($request);
 
@@ -41,9 +68,7 @@ class JWTController
             ];
 
             if ($user_token->uuid === $data['uuid'] && $user_token->name === $data['name'] && $user_token->name === $data['type']) {
-
-            }else{
-
+            } else {
             }
 
             $this->jwt->createTokenWebSocket($data, 43200);
@@ -51,9 +76,22 @@ class JWTController
             $result = [];
             $result['result'] = $this->jwt->getResult();
             $result['error'] = $this->jwt->getError();
-        }       
+        }
 
         $response->getBody()->write(json_encode($result));
         return $response->withHeader('Content-Type', 'application/json');
+    }
+
+    /**
+     * Limpar parâmetros de tags e espaços
+     *
+     * @param array $params
+     * @return void
+     */
+    public function filterParams($params = []): array
+    {       
+        return array_filter($params, function ($str) {
+            return trim(strip_tags($str));
+        });
     }
 }

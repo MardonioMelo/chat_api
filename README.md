@@ -21,7 +21,8 @@ API para chat e chatbot de suporte, ainda em desenvolvimento.
 - [x] Criar tabela de usuários (usuário,nome,imagem,instituição,email).
 - [x] Criar tabela de atendentes.
 - [x] Autentificação JWT.
-- [x] Rota para criação de token JWT
+- [x] Rota para criação do 1º token JWT
+- [x] Rota para criação do 2º token JWT 
 
 
 <i><b>E o andamento do bot?</b> Algumas coisas do bot já foram feitas/iniciadas como a implementação das lib's PHP nlp-tools e botman, por hora, essa parte está aguardando o desenvolvimento do chat para dar continuidade o desenvolvimento do bot.</i>
@@ -99,18 +100,24 @@ Estilo do documento:
 As rotas são URL's para troca de dados e integração com outras aplicações front-end.
 
 <b>WebSocket</b><br>
-Variáveis: 
- - SERVER_CHAT_PORT = porta de conexão com o servidor websocket. Ess porta pode ser configurada no arquivo src\config\app.php
- - ID = id do usuário que deseja fazer conexão.
- - A conexão é aberta assim que a url com o id do user é acessada. Não precisa enviar outros parâmetros para abria a conexão.
 
-> ws://localhost:SERVER_CHAT_PORT/api/attendant/ID
+Fluxo de acesso ao WebSocket: A conexão é aberta assim que a url é acessada. O cabeçalho da requisição de conexão deverá ter o token de autorização valido ou a conexão será fechada. 
+
+Para o usuário obter acesso ao sistema hospedeiro você deverá criar uma rota em ambiente seguro onde será executado o método especifico para geração de 1º token. Esse token servirá para o usuário ter acesso a criação rota de criação do 2º token. Esse segundo token servirá para o usuário ter acesso ao WebSocket.
+ 
+Detalhe: O fluxo de acesso parte da criação do 1º token em ambiente seguro exe.: após a tela de login do sistema hospedeiro assim que o user fizer login. Com o 1º token o usuário terá permissão para gerar o 2º token e ter acesso a API do chat.
+
+Variáveis: 
+- SERVER_CHAT_PORT = porta de conexão com o servidor websocket. Essa porta pode ser configurada no arquivo src\config\app.php
+
+> ws://localhost:SERVER_CHAT_PORT/api/...
 
 Exemplos para troca de mensagens:   
-URL: ws://localhost:8081/api/attendant/1
-URL: ws://localhost:8081/api/client/1  
+- ws://localhost:8081/api/attendant
+- ws://localhost:8081/api/client  
 
 >    
+    Dados via POST:     
     Dados de envio: {  
         "cmd": "msg",   
         "driver": "web",  
@@ -125,11 +132,12 @@ URL: ws://localhost:8081/api/client/1
     Dados de retorno: N/A.    
 > 
 
-Exemplos para troca de mensagens:   
-URL: ws://localhost:8081/api/attendant/1  
-URL: ws://localhost:8081/api/client/1  
+Exemplos para troca de mensagens: 
+- ws://localhost:8081/api/attendant
+- ws://localhost:8081/api/client
 
 >    
+    Dados via POST:     
     Dados de envio: {  
         "cmd": "msg",   
         "driver": "web",  
@@ -145,10 +153,11 @@ URL: ws://localhost:8081/api/client/1
 > 
 
 Exemplos para consulta da quantidade online:   
-URL: ws://localhost:8081/api/attendant/1  
-URL: ws://localhost:8081/api/client/1  
+- ws://localhost:8081/api/attendant 
+- ws://localhost:8081/api/client 
 
 >    
+    Dados via POST:     
     Dados: {  
         "cmd": "n_on",          
         "userId": 1,          
@@ -167,7 +176,7 @@ Os dados de retorno seguem a mesma estrutura de envio caso o outro user esteja o
 <b>Consultar Histórico de Mensagens</b><br>
 
 Exemplo de envio:   
-URL: http://localhost/api/history/read
+- localhost/api/history/read
 >   
     Dados via POST:     
         user_id: 1  
@@ -198,21 +207,20 @@ URL: http://localhost/api/history/read
 <b>Cadastrar atendente</b><br>
 
 Exemplo de envio:   
-URL: localhost/chatbot_api/api/create/attendant
+- localhost/chatbot_api/api/create/attendant
 >   
     Dados via POST:     
         attendant_name: "João"  
         attendant_lastname: "Junior"     
-        attendant_avatar: "avatar.png"  
-        
+        attendant_avatar: "avatar.png"          
 
     Dados de retorno: 1 caso tenha cadastrado         
 > 
 
-<b>Criar token do usuário</b><br>
+<b>Criar 1º token do usuário</b><br>
 
 Exemplo de envio:   
-URL: localhost:81/chatbot_api/api/create/token
+- localhost:81/chatbot_api/api/create/token/one
 >   
     Dados via POST:     
         uuid: 1  
@@ -224,11 +232,33 @@ URL: localhost:81/chatbot_api/api/create/token
             "result": true,
             "error": {
                 "header": "Authorization",
-                "token": "Bearer ...hashdotoknjwt",
+                "token": "Bearer ...token...",
                 "msg": "Token gerado com sucesso!"
             }
         } 
 > 
+
+<b>Criar 2º token do usuário</b><br>
+
+Exemplo de envio:   
+- localhost:81/chatbot_api/api/create/token/two
+>   
+    Dados via POST:     
+        uuid: 1  
+        name: "Junior"     
+        type: "client" ou "attendant"    
+
+    Dados de retorno: 
+        {
+            "result": true,
+            "error": {
+                "header": "Authorization",
+                "token": "Bearer ...token...",
+                "msg": "Token gerado com sucesso!"
+            }
+        } 
+> 
+
 
 
 ## Comandos
