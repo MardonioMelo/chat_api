@@ -260,6 +260,38 @@ Exemplo de envio:
 > 
 
 
+Exemplo de implementação no cliente
+>
+    $(document).ready(function () {
+
+        let user = $("#j_chat_user")[0]
+
+        //Obter o 1º token
+        function createToken(uuid, name, type, public) {
+            let token = "";
+
+            $.ajax({
+                type: "POST",
+                url: "http://localhost:81/chatbot_api/api/create/token/one",
+                data: {
+                    "uuid": uuid,
+                    "name": name,
+                    "type": type,
+                    "public": public
+                },
+                dataType: "dataType",
+                success: function (response) {
+                    token = response
+                    alert(response.error.msg)
+                }
+            });
+
+            console.log(token)
+        }
+
+        createToken(user.dataset.uuid, user.dataset.name, user.dataset.type, user.dataset.public)
+    });
+>
 
 ## Comandos
 
