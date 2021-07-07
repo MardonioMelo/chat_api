@@ -261,7 +261,18 @@ Exemplo de envio:
 
 
 Exemplo de implementação no cliente
+
+ <script 
+src="../chat/chat.js" 
+id="j_chat_user" 
+data-uuid="1" 
+data-name="Mardonio" 
+data-type="client" 
+data-public="ffc6wwq2eb25f5asasf11a7f1b7546cb3ca"></script>
+
 >
+   
+
     $(document).ready(function () {
 
         let user = $("#j_chat_user")[0]
