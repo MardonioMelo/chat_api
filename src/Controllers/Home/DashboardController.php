@@ -2,11 +2,13 @@
 
 namespace Src\Controllers\Home;
 
+use Src\Models\BotModel;
+use Src\Models\MsgModel;
+use Src\View\Chatbot\ChatbotWidgetView;
+use Src\View\PainelChat\PainelChatView;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
-use Src\Models\BotModel;
-use Src\View\PainelChat\PainelChatView;
-use Src\Models\MsgModel;
+use Src\Models\JWTModel;
 
 /**
  * Classe controller principal da API
@@ -22,6 +24,7 @@ class Dashboard
         $this->bot_model = new BotModel();
         $this->PainelChatView = new PainelChatView();
         $this->msg_model = new MsgModel();
+        $this->jwt = new JWTModel();
     }
 
     /**
@@ -61,6 +64,19 @@ class Dashboard
 
         $response->getBody()->write(json_encode($this->msg_model->passeAllDataArrayHistory($payload)));
         return $response->withHeader('Content-Type', 'application/json');    
+    }
+
+      /**
+     * Widget do chat do bot
+     */
+    public function widget(Request $request, Response $response, array $args)
+    {     
+        //fazer verificação de token aqui... 
+        
+        $chatbotWidget = new ChatbotWidgetView();   
+        $payload = $chatbotWidget->tplView();
+        $response->getBody()->write($payload);
+        return $response;
     }
     
 }

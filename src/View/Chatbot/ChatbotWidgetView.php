@@ -39,6 +39,7 @@ class ChatbotWidgetView extends DefaultView
     public function tplView(array  $data = [USER_ID, USER_DEST_ID, USER_NAME, USER_IMG, BOT_NAME, BOT_IMG]): string
     {
         $data['url'] = SERVER_CHAT_URL . '/' . USER_ID;
+        $data['home'] = HOME . '/';
         $data_var = [
             "{{userid}}",
             "{{userdestid}}",
@@ -46,7 +47,8 @@ class ChatbotWidgetView extends DefaultView
             "{{userimg}}",
             "{{botname}}",
             "{{botimg}}",
-            "{{url}}"
+            "{{url}}",
+            "{{home}}"
         ];       
 
         $this->setDataName($data_var);

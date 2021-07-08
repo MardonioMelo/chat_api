@@ -262,45 +262,48 @@ Exemplo de envio:
 
 Exemplo de implementação no cliente
 
- <script 
+Criar um aquivo js e importa-lo na home da pagina após o login do usuário.
+Exemplo:
+
+< script 
 src="../chat/chat.js" 
 id="j_chat_user" 
-data-uuid="1" 
-data-name="Mardonio" 
+data-uuid="1"
 data-type="client" 
-data-public="ffc6wwq2eb25f5asasf11a7f1b7546cb3ca"></script>
+data-public="ffc6wwq2eb25f5asasf11a7f1b7546cb3ca">< script/>
 
+Conteúdo do arquivo chat.js
 >
-   
 
     $(document).ready(function () {
 
         let user = $("#j_chat_user")[0]
 
         //Obter o 1º token
-        function createToken(uuid, name, type, public) {
+        function createToken(uuid, type, public) {
             let token = "";
 
             $.ajax({
                 type: "POST",
                 url: "http://localhost:81/chatbot_api/api/create/token/one",
                 data: {
-                    "uuid": uuid,
-                    "name": name,
-                    "type": type,
-                    "public": public
+                    "uuid": uuid, //uuid do usuário                   
+                    "type": type, //tipo de usuário (client ou attendant)
+                    "public": public //chave publica pre-definida
                 },
                 dataType: "dataType",
                 success: function (response) {
-                    token = response
-                    alert(response.error.msg)
+                    console.log(response)
+                },
+                error: function (response) {
+                    console.log(response)
                 }
             });
 
             console.log(token)
         }
 
-        createToken(user.dataset.uuid, user.dataset.name, user.dataset.type, user.dataset.public)
+        createToken(user.dataset.uuid, user.dataset.type, user.dataset.public)
     });
 >
 

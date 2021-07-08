@@ -16,7 +16,7 @@ $app->add(function ($request, $handler) {
     $response = $handler->handle($request);
     return $response        
         ->withHeader('Access-Control-Allow-Origin', '*')
-        ->withHeader('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Accept, Origin, Authorization, ajax-request')
+        ->withHeader('Access-Control-Allow-Headers', '*')
         ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
 });
 
@@ -30,16 +30,17 @@ $app->add(function ($request, $handler) {
 //$app->get(getenv('API_VERSION'). '/home/{id}', Api::class . ":home"); 
 $app->get('/', Dashboard::class . ":home");
 $app->get('/bot', BotController::class . ":widget");
+$app->get('/widget', Dashboard::class . ":widget");
 
 
-// Rotas GET
+// Rotas POST
 $app->post('/bot', BotController::class . ":chatBot");
 //Chat
 $app->post(API_VERSION . '/history/read', DashboardController::class . ":msgHistory");
 $app->post(API_VERSION . '/create/attendant', AttendantController::class . ":createAttendant");
 $app->post(API_VERSION . '/create/client', AttendantController::class . ":createClient");
-$app->post(API_VERSION . '/create/token/one', JWTController::class . ":createTokenOne");
-$app->post(API_VERSION . '/create/token/two', JWTController::class . ":createTokenTwo");
+$app->post(API_VERSION . '/create/token', JWTController::class . ":createToken");
+
 
 // --------------------------+
 // Fim rotas a partir daqui

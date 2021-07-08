@@ -36,14 +36,14 @@ class JWTModel
      */
     public function setPayload(array $data = [], int $exp = 3600): void
     {
-        $now = idate("U");
+        $now = time();
         $this->payload = array(
-            "iss" => HOME, //getenv(HOME), # Emitente        
+            "iss" => HOME, # Emitente        
             "iat" => $now, # Identifica a hora em que o JWT foi emitido. O valor deve ser um NumericDate.
             "nbf" => $now, # Identifica a hora em que o JWT começará a ser aceito para processamento. O valor deve ser um NumericDate.
             "exp" => $now + $exp,
             "data" => $data
-        );
+        );     
     }
 
     /**
@@ -98,24 +98,6 @@ class JWTModel
     }
 
     /**
-     * Criar Token do usuário HTTP
-     *
-     * @param array $data
-     * @param integer $time_exp
-     * @return void
-     */
-    public function createTokenUserHTTP(array $data = [], int $time_exp = 3600): void
-    {        
-        $this->createToken($data, $time_exp);
-        $this->Result = true;
-        $this->Error['uuid'] =  $data['uuid'];
-        $this->Error['name'] = $data['name'];
-        $this->Error['type'] = $data['type'];
-        $this->Error['protocol'] = "http";   
-
-    }
-
-    /**
      * Criar Token do usuário WebSocket
      *
      * @param array $data
@@ -123,10 +105,10 @@ class JWTModel
      * @return void
      */
     public function createTokenWebSocket(array $data = [], int $time_exp = 3600): void
-    {       
+    {
         $this->createToken($data, $time_exp);
         $this->Result = true;
-        $this->Error['protocol'] = "ws";   
+        $this->Error['protocol'] = "ws";
     }
 
     /**
