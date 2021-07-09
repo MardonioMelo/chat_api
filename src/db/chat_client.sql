@@ -29,6 +29,7 @@ SET time_zone = "+00:00";
 
 CREATE TABLE `chat_client` (
   `client_id` int(11) NOT NULL,
+  `client_uuid` varchar(255) NOT NULL,
   `client_name` varchar(50) NOT NULL,
   `client_lastname` varchar(50) NOT NULL,
   `client_avatar` varchar(255) NOT NULL,

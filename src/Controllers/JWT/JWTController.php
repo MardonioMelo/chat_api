@@ -2,9 +2,11 @@
 
 namespace Src\Controllers\JWT;
 
+use Src\Models\JWTModel;
+use Src\Models\ClientModel;
+use Src\Models\AttendantModel;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
-use Src\Models\JWTModel;
 
 /**
  * Class para controle de geração e autentificação de token JWT
@@ -12,10 +14,15 @@ use Src\Models\JWTModel;
 class JWTController
 {
     private $jwt;
+    private $attendant_model;
+    private $client_model;
+    private $result;
 
     public function __construct()
     {
         $this->jwt = new JWTModel();
+        $this->attendant_model = new AttendantModel();
+        $this->client_model = new ClientModel();
     }
 
     /**
@@ -30,31 +37,20 @@ class JWTController
         $params = (array)$request->getParsedBody();
         $data = $this->filterParams($params);
 
-        if ($data['public'] === JWT_PUBLIC) {                 
+        if (!empty($data['uuid']) && !empty($data['type']) && $data['public'] === JWT_PUBLIC) {
 
-           // if ($user_token->uuid === $data['uuid'] && $user_token->type === $data['type']) {
-                $this->jwt->createTokenWebSocket($data, 43200);  
-
-                if ($this->jwt->getResult()) {       
-                                          
-                    $result['result'] = $this->jwt->getResult();
-                    $result['error'] = $this->jwt->getError();
-                    unset($result['error']['data']);                    
-                } else {
-                    $result['result'] = $this->jwt->getResult();
-                    $result['error'] = $this->jwt->getError();
-                }
-         //   } else {
-          //      $result['result'] = false;
-         //       $result['error'] = "O usuário não existe!";
-          //  }
+            if ($data['type'] === "attendat") {
+                $this->createTokenAttendant($data['uuid']);
+            } else {
+                $this->createTokenClient($data['uuid']);                
+            }
         } else {
-            $result = [];
-            $result['result'] = false;
-            $result['error'] = "Chave pública inválida!";
+            $this->result = [];
+            $this->result['result'] = false;
+            $this->result['error'] = "Chave pública inválida!";
         }
 
-        $response->getBody()->write(json_encode($result));
+        $response->getBody()->write(json_encode($this->result));
         return $response->withHeader('Content-Type', 'application/json');
     }
 
@@ -69,5 +65,59 @@ class JWTController
         return array_filter($params, function ($str) {
             return trim(strip_tags($str));
         });
+    }
+
+
+    private function createTokenAttendant($uuid){
+
+        $user = $this->attendant_model->getUserUUID($uuid);
+
+        if ($user) {
+            $this->jwt->createToken([
+                "uuid" => $user->attendant_uuid,
+                "name" => $user->attendant_name,
+                "type" => "attendat"
+            ], 43200);
+
+            if ($this->jwt->getResult()) {
+
+                $this->result['result'] = $this->jwt->getResult();
+                $this->result['error'] = $this->jwt->getError();
+                unset($this->result['error']['data']);
+            } else {
+                $this->result['result'] = $this->jwt->getResult();
+                $this->result['error'] = $this->jwt->getError();
+            }
+        } else {
+            $this->result['result'] = false;
+            $this->result['error'] = "O usuário não existe!";
+        }
+    }
+
+
+    private function createTokenClient($uuid){
+
+        $user = $this->client_model->getUserUUID($uuid);
+
+        if ($user) {
+            $this->jwt->createToken([
+                "uuid" => $user->client_uuid,
+                "name" => $user->client_name,
+                "type" => "attendat"
+            ], 43200);
+
+            if ($this->jwt->getResult()) {
+
+                $this->result['result'] = $this->jwt->getResult();
+                $this->result['error'] = $this->jwt->getError();
+                unset($this->result['error']['data']);
+            } else {
+                $this->result['result'] = $this->jwt->getResult();
+                $this->result['error'] = $this->jwt->getError();
+            }
+        } else {
+            $this->result['result'] = false;
+            $this->result['error'] = "O usuário não existe!";
+        }
     }
 }

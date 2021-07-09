@@ -2,42 +2,39 @@
 
 namespace Src\Controllers\Home;
 
-use Src\Models\BotModel;
 use Src\Models\MsgModel;
-use Src\View\Chatbot\ChatbotWidgetView;
 use Src\View\PainelChat\PainelChatView;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
-use Src\Models\JWTModel;
+
 
 /**
  * Classe controller principal da API
  */
-class Dashboard
+class DashboardController
 {
-
-    private $bot_model;
-    private $msg_model;
+  
+    private $msg_model; 
+    private $painel_view;   
 
     public function __construct()
-    {
-        $this->bot_model = new BotModel();
-        $this->PainelChatView = new PainelChatView();
-        $this->msg_model = new MsgModel();
-        $this->jwt = new JWTModel();
+    {   
+        $this->painel_view = new PainelChatView();
+        $this->msg_model = new MsgModel();      
     }
 
     /**
      * Executa pagina index
      *
      * @param Request $request
-     * @param Response $response
+     * @param Response $response    
      * @param array $args
      * @return void
      */
     public function home(Request $request, Response $response, array $args)
     {
-        $payload = $this->PainelChatView->tplPainelView();
+        $id =  trim(strip_tags($args['id']));
+        $payload = $this->painel_view->tplPainelView(["Painel de Chat", $id, USER_NAME, USER_IMG, BOT_NAME, BOT_IMG]);
         $response->getBody()->write($payload);
         return $response;
     }
@@ -48,8 +45,7 @@ class Dashboard
      * As datas devem está no formato a americano ex.: 2021-06-16
      *
      * @param Request $request
-     * @param Response $response
-     * @param array $args
+     * @param Response $response    
      * @return void
      */
     public function msgHistory(Request $request, Response $response)
@@ -63,20 +59,7 @@ class Dashboard
         );
 
         $response->getBody()->write(json_encode($this->msg_model->passeAllDataArrayHistory($payload)));
-        return $response->withHeader('Content-Type', 'application/json');    
+        return $response->withHeader('Content-Type', 'application/json');
     }
 
-      /**
-     * Widget do chat do bot
-     */
-    public function widget(Request $request, Response $response, array $args)
-    {     
-        //fazer verificação de token aqui... 
-        
-        $chatbotWidget = new ChatbotWidgetView();   
-        $payload = $chatbotWidget->tplView();
-        $response->getBody()->write($payload);
-        return $response;
-    }
-    
 }

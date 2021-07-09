@@ -21,8 +21,7 @@ class PainelChatView extends DefaultView
      * @return string
      */
     public function tplPainelView(array $data = []): string
-    {
-        $data = ["Painel de Chat", 1, USER_NAME, USER_IMG, BOT_NAME, BOT_IMG];
+    {      
         $name = [
             "{{title}}",
             "{{userid}}",

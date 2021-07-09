@@ -4,21 +4,21 @@ namespace Src\Controllers\Home;
 
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
-use Src\Models\AttendantModel;
+use Src\Models\ClientModel;
 use Src\Models\JWTModel;
 
 /**
- * Classe controller dos atendentes
+ * Classe controller dos clientes
  */
-class AttendantController
+class ClientController
 {
 
-    private $attendant_model;
+    private $client_model;
     private $jwt;
 
     public function __construct()
     {
-        $this->attendant_model = new AttendantModel();
+        $this->client_model = new ClientModel();
         $this->jwt = new JWTModel();
     }
 
@@ -36,9 +36,9 @@ class AttendantController
 
         if (!empty($this->jwt->getError()['data']->type) && $this->jwt->getError()['data']->type === "attendat") {
 
-            $this->attendant_model->saveAttendant($params);
-            $result['result'] = $this->attendant_model->getResult();
-            $result['error'] = $this->attendant_model->getError();
+            $this->client_model->saveAttendant($params);
+            $result['result'] = $this->client_model->getResult();
+            $result['error'] = $this->client_model->getError();
         } else {
             $result['result'] = false;
             $result['error'] = "Você não tem permissão para cadastrar atendentes!";

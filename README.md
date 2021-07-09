@@ -99,38 +99,95 @@ Estilo do documento:
 ### Rotas
 As rotas são URL's para troca de dados e integração com outras aplicações front-end.
 
-<b>WebSocket</b><br>
-
 Fluxo de acesso ao WebSocket: A conexão é aberta assim que a url é acessada. O cabeçalho da requisição de conexão deverá ter o token de autorização valido ou a conexão será fechada. 
 
-Para o usuário obter acesso ao sistema hospedeiro você deverá criar uma rota em ambiente seguro onde será executado o método especifico para geração de 1º token. Esse token servirá para o usuário ter acesso a criação rota de criação do 2º token. Esse segundo token servirá para o usuário ter acesso ao WebSocket.
- 
-Detalhe: O fluxo de acesso parte da criação do 1º token em ambiente seguro exe.: após a tela de login do sistema hospedeiro assim que o user fizer login. Com o 1º token o usuário terá permissão para gerar o 2º token e ter acesso a API do chat.
+Para o usuário obter o token de autorização ele deverá estar previamente cadastrado no db do chat e a aplicação front-end deverá acessar primeiramente a rota de geração de token e informar os dados obrigatórios. Apos a obtenção do token, a aplicação fornt-end deverá informa-lo no cabeçalho para acesso as demais rotas da API.
 
-Variáveis: 
-- SERVER_CHAT_PORT = porta de conexão com o servidor websocket. Essa porta pode ser configurada no arquivo src\config\app.php
+<b>Criar token do usuário</b><br>
 
-> ws://localhost:SERVER_CHAT_PORT/api/...
-
-Exemplos para troca de mensagens:   
-- ws://localhost:8081/api/attendant
-- ws://localhost:8081/api/client  
-
->    
+Exemplo de envio:   
+- localhost:81/chatbot_api/api/create/token
+>   
     Dados via POST:     
-    Dados de envio: {  
-        "cmd": "msg",   
-        "driver": "web",  
-        "userId": 1,  
-        "userDestId": 2,    
-        "text": "ola 1",    
-        "type": "text", 
-        "time": "10:30",    
-        "attachment":null  
-    } 
+        uuid: "290b7b75-b949-4643-9e11-1cc2214a6882"  
+        name: "Junior"     
+        type: "client" ou "attendant"    
+        public: "ffc6wwq2eb25f5asasf11a7f1b7546cb3ca"
 
-    Dados de retorno: N/A.    
+    Dados de retorno: 
+        {
+            "result": true,
+            "error": {
+                "header": "Authorization",
+                "token": "Bearer ...token...",
+                "msg": "Token gerado com sucesso!"
+            }
+        } 
 > 
+
+
+<b>Cadastro de Atendente</b><br>
+
+Exemplo de envio:   
+- localhost/chatbot_api/api/create/attendant
+>   
+    Dados via POST:     
+        name: "João"  
+        lastname: "Junior"     
+        avatar: "http://sitedeimagem/imagem.png"          
+
+    Dados de retorno: 
+    {
+        "result": true,
+        "error": {
+            "msg": "Cadastro realizado com sucesso!",
+            "data": {
+                "id": "9",
+                "uuid": "290b7b75-b949-4643-9e11-1cc2214a6882"
+            }
+        }
+    }         
+> 
+
+<b>Cadastro de Cliente</b><br>
+
+Exemplo de envio:   
+- localhost/chatbot_api/api/create/client
+>   
+    Dados via POST:     
+        name: "Maria"  
+        lastname: "Oliveira"     
+        avatar: "http://sitedeimagem/imagem.png"            
+
+    Dados de retorno: 
+    {
+        "result": true,
+        "error": {
+            "msg": "Cadastro realizado com sucesso!",
+            "data": {
+                "id": "10",
+                "uuid": "46b3a264-4ff1-464c-821f-aa9c389b620f"
+            }
+        }
+    }            
+> 
+
+<b>Exemplo de implementação no cliente</b>
+
+Criar um aquivo js e importa-lo na home da pagina após o login do usuário.<br>
+Confira um exemplo de implementação pasta ./examples
+<br><br>
+
+<b>PORT do WebSocket</b><br>
+
+SERVER_CHAT_PORT = porta de conexão com o servidor websocket. Essa porta pode ser configurada no arquivo src\config\app.php
+
+Exemplos para troca de mensagens: 
+>
+    ws://localhost:SERVER_CHAT_PORT/api/... 
+>
+
+<b>Troca de Mensagens</b><br>
 
 Exemplos para troca de mensagens: 
 - ws://localhost:8081/api/attendant
@@ -151,6 +208,8 @@ Exemplos para troca de mensagens:
 
     Dados de retorno: N/A.    
 > 
+
+<b>Quantidade Online</b><br>
 
 Exemplos para consulta da quantidade online:   
 - ws://localhost:8081/api/attendant 
@@ -204,108 +263,6 @@ Exemplo de envio:
     ]          
 > 
 
-<b>Cadastrar atendente</b><br>
-
-Exemplo de envio:   
-- localhost/chatbot_api/api/create/attendant
->   
-    Dados via POST:     
-        attendant_name: "João"  
-        attendant_lastname: "Junior"     
-        attendant_avatar: "avatar.png"          
-
-    Dados de retorno: 1 caso tenha cadastrado         
-> 
-
-<b>Criar 1º token do usuário</b><br>
-
-Exemplo de envio:   
-- localhost:81/chatbot_api/api/create/token/one
->   
-    Dados via POST:     
-        uuid: 1  
-        name: "Junior"     
-        type: "client" ou "attendant"    
-
-    Dados de retorno: 
-        {
-            "result": true,
-            "error": {
-                "header": "Authorization",
-                "token": "Bearer ...token...",
-                "msg": "Token gerado com sucesso!"
-            }
-        } 
-> 
-
-<b>Criar 2º token do usuário</b><br>
-
-Exemplo de envio:   
-- localhost:81/chatbot_api/api/create/token/two
->   
-    Dados via POST:     
-        uuid: 1  
-        name: "Junior"     
-        type: "client" ou "attendant"    
-
-    Dados de retorno: 
-        {
-            "result": true,
-            "error": {
-                "header": "Authorization",
-                "token": "Bearer ...token...",
-                "msg": "Token gerado com sucesso!"
-            }
-        } 
-> 
-
-
-Exemplo de implementação no cliente
-
-Criar um aquivo js e importa-lo na home da pagina após o login do usuário.
-Exemplo:
-
-< script 
-src="../chat/chat.js" 
-id="j_chat_user" 
-data-uuid="1"
-data-type="client" 
-data-public="ffc6wwq2eb25f5asasf11a7f1b7546cb3ca">< script/>
-
-Conteúdo do arquivo chat.js
->
-
-    $(document).ready(function () {
-
-        let user = $("#j_chat_user")[0]
-
-        //Obter o 1º token
-        function createToken(uuid, type, public) {
-            let token = "";
-
-            $.ajax({
-                type: "POST",
-                url: "http://localhost:81/chatbot_api/api/create/token/one",
-                data: {
-                    "uuid": uuid, //uuid do usuário                   
-                    "type": type, //tipo de usuário (client ou attendant)
-                    "public": public //chave publica pre-definida
-                },
-                dataType: "dataType",
-                success: function (response) {
-                    console.log(response)
-                },
-                error: function (response) {
-                    console.log(response)
-                }
-            });
-
-            console.log(token)
-        }
-
-        createToken(user.dataset.uuid, user.dataset.type, user.dataset.public)
-    });
->
 
 ## Comandos
 

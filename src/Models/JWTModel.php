@@ -98,31 +98,18 @@ class JWTModel
     }
 
     /**
-     * Criar Token do usuário WebSocket
-     *
-     * @param array $data
-     * @param integer $time_exp
-     * @return void
-     */
-    public function createTokenWebSocket(array $data = [], int $time_exp = 3600): void
-    {
-        $this->createToken($data, $time_exp);
-        $this->Result = true;
-        $this->Error['protocol'] = "ws";
-    }
-
-    /**
      * Criar token
      *
      * @param array $data
      * @param integer $time_exp
      * @return void
      */
-    private function createToken(array $data = [], int $time_exp = 3600): void
+    public function createToken(array $data = [], int $time_exp = 3600): void
     {
         $this->setPayload($data, $time_exp);
         $this->setEncodeJWT();
 
+        $this->Result = true;
         $this->Error['header'] = "Authorization";
         $this->Error['token'] = "Bearer " . $this->getToken();
         $this->Error['msg'] = "Token gerado com sucesso!";
