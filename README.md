@@ -125,13 +125,15 @@ Exemplo de envio:
         } 
 > 
 
-
 <b>Cadastro de Atendente</b><br>
+
+Apenas os atendentes tem permissão para cadastrar outros atendentes ou clientes.
 
 Exemplo de envio:   
 - localhost/chatbot_api/api/create/attendant
 >   
-    Dados via POST:     
+    Dados via POST:   
+        cpf: 000.000.000-00    
         name: "João"  
         lastname: "Junior"     
         avatar: "http://sitedeimagem/imagem.png"          
@@ -154,7 +156,8 @@ Exemplo de envio:
 Exemplo de envio:   
 - localhost/chatbot_api/api/create/client
 >   
-    Dados via POST:     
+    Dados via POST:   
+        cpf: 000.000.000-00  
         name: "Maria"  
         lastname: "Oliveira"     
         avatar: "http://sitedeimagem/imagem.png"            
@@ -171,6 +174,12 @@ Exemplo de envio:
         }
     }            
 > 
+
+Caso o usuário não esteja cadastrado no banco de dados da chat, o mesmo poderá ser cadastrado via terminal também:
+
+>
+    php new-user.php
+>
 
 <b>Exemplo de implementação no cliente</b>
 

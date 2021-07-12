@@ -34,7 +34,7 @@ class ClientController
         $params = (array)$request->getParsedBody();
         $this->jwt->checkToken($request);
 
-        if (!empty($this->jwt->getError()['data']->type) && $this->jwt->getError()['data']->type === "attendet") {
+        if (!empty($this->jwt->getError()['data']->type) && $this->jwt->getError()['data']->type === "attendant") {
 
             $this->client_model->saveClient($params);
             $result['result'] = $this->client_model->getResult();

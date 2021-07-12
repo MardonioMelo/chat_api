@@ -46,11 +46,11 @@ class UtilitiesModel
      * Extrair somente os números do CPF
      *
      * @param string $cpf
-     * @return bool
+     * @return int
      */
-    public static function numCPF(string $cpf): bool
-    {        
-        return preg_replace('/[^0-9]/is', '', $cpf);      
+    public static function numCPF(string $cpf): int
+    {
+        return (int) preg_replace('/[^0-9]/is', '', $cpf);
     }
 
     /**
@@ -62,8 +62,7 @@ class UtilitiesModel
     public static function filterParams($params = []): array
     {
         return array_filter($params, function ($str) {
-            return trim(strip_tags($str));
+            return preg_replace( "/\r|\n/", "",  trim(strip_tags($str)));
         });
     }
-
 }

@@ -44,7 +44,7 @@ class JWTController
 
         if (!empty($data['uuid']) && !empty($data['type']) &&  !empty($data['public']) && $data['public'] === JWT_PUBLIC) {
 
-            if ($data['type'] === "attendat") {
+            if ($data['type'] === "attendant") {
                 $this->createTokenAttendant($data['uuid']);
             } else {
                 $this->createTokenClient($data['uuid']);
@@ -73,7 +73,7 @@ class JWTController
             $this->jwt->createToken([
                 "uuid" => $user->attendant_uuid,
                 "name" => $user->attendant_name,
-                "type" => "attendat"
+                "type" => "attendant"
             ], 43200);
 
             if ($this->jwt->getResult()) {

@@ -91,6 +91,33 @@ switch (trim($resp)) {
     case 2:
         clearTerminal();
         logInicio();
+        echo "\n\nInforme os dados do novo usuário.";
+
+        echo "\n\nNome: ";
+        $resp = inputResp();
+        $params["name"] = $resp;
+
+        echo "\nSobrenome: ";
+        $resp = inputResp();
+        $params["lastname"] = $resp;
+
+        echo "\nCPF: ";
+        $resp = inputResp();
+        $params["cpf"] = $resp;
+
+        echo "\nAvatar (link da imagem): ";
+        $resp = inputResp();
+        $params["avatar"] = $resp;
+
+        echo "\nInforme a chave secreta: ";
+        $resp = inputResp();
+       
+        if(trim($resp) === JWT_SECRET){
+            $client->saveClient($params);
+            echo "\n\n" . $client->getError()['msg'];
+        }else{
+            echo "\n\nChave secreta inválida, tente novamente!";
+        }       
 
         logFim();
         break;

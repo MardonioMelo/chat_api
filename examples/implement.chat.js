@@ -1,5 +1,6 @@
 $(document).ready(function () {
 
+   
     //Config
     const host_http = "http://localhost:81/chatbot_api"
     const html_chat = "http://localhost:81/chatbot_api/widget"

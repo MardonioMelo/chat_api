@@ -61,9 +61,11 @@ class AppChatController implements MessageComponentInterface
 
                 case '/api/attendant':                 
 
-                    $user = $this->attendant_model->getUser($user_token->uuid);
+                    $user = $this->attendant_model->getUserUUID($user_token->uuid);
+
+                    var_dump($user);
                     if ($user) {
-                        $this->newConnection($conn, (int)$user_token->uuid, "attendant", $user_token->name);
+                        $this->newConnection($conn, (int)$user->attendant_id, "attendant", $user_token->name);
                     } else {
                         $conn->close();
                         $this->log_model->setLog("Opss! Usuário invalido.\n");
@@ -72,18 +74,13 @@ class AppChatController implements MessageComponentInterface
 
                 case "/api/client":
 
-                    $user = $this->client_model->getUser($user_token->uuid);
+                    $user = $this->client_model->getUserUUID($user_token->uuid);
                     if ($user) {
-                        $this->newConnection($conn, (int)$user_token->uuid, "client", $user_token->name);
+                        $this->newConnection($conn, (int)$user->client_id, "client", $user_token->name);
                     } else {
                         $conn->close();
                         $this->log_model->setLog("Opss! Usuário invalido.\n");
-                    }
-
-                    $this->log_model->setLog("Sessão:\n" . print_r($_SESSION['_sf2_attributes'], true) . "\n");
-                    $this->log_model->setLog("Total Online: {$this->qtdUsersServer()} \n");
-                    $this->log_model->setLog("Total Atendentes: " . count($this->session_model->getUsersRoom("attendant")) . "\n");
-                    $this->log_model->setLog("Total Clientes: " . count($this->session_model->getUsersRoom("client")) . "\n");
+                    }                   
                     break;
 
                 default:
@@ -91,6 +88,11 @@ class AppChatController implements MessageComponentInterface
                     $this->log_model->setLog("Opss! URL invalida.\n" . $rota);
                     break;
             }
+
+            $this->log_model->setLog("Sessão:\n" . print_r($_SESSION['_sf2_attributes'], true) . "\n");
+            $this->log_model->setLog("Total Online: {$this->qtdUsersServer()} \n");
+            $this->log_model->setLog("Total Atendentes: " . count($this->session_model->getUsersRoom("attendant")) . "\n");
+            $this->log_model->setLog("Total Clientes: " . count($this->session_model->getUsersRoom("client")) . "\n");
         } else {
             $conn->send(json_encode(["Result" => false, "Error" => $this->jwt->getError()]));
             $this->log_model->setLog($this->jwt->getError() . "\n");
@@ -143,6 +145,7 @@ class AppChatController implements MessageComponentInterface
      */
     public function onClose(ConnectionInterface $conn): void
     {
+        $this->log_model->resetLog();
         $this->clients->detach($conn);
         $this->session_model->removeUserAllRoom($conn->resourceId);
         $this->log_model->setLog("A conexão {$conn->resourceId} foi desconectada.\n" . "Sessão:\n" . print_r($_SESSION["_sf2_attributes"], true) . "\n");

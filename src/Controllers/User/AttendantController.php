@@ -34,7 +34,7 @@ class AttendantController
         $params = (array)$request->getParsedBody();
         $this->jwt->checkToken($request);
 
-        if (!empty($this->jwt->getError()['data']->type) && $this->jwt->getError()['data']->type === "attendat") {
+        if (!empty($this->jwt->getError()['data']->type) && $this->jwt->getError()['data']->type === "attendant") {
 
             $this->attendant_model->saveAttendant($params);
             $result['result'] = $this->attendant_model->getResult();
