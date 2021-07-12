@@ -31,8 +31,14 @@ class JWTMiddleware
 
         if ($jwt->getResult()) {
             $response->getBody()->write($existingContent);
-        }else{
-            $response->getBody()->write("Acesso Negado!");
+        } else {
+            $result = array(
+                "result" => false,
+                "error" => array("msg" => "Acesso Negado!")
+            );
+
+            $response->getBody()->write(json_encode($result));
+            return $response->withHeader('Content-Type', 'application/json');
         };
 
         return $response;

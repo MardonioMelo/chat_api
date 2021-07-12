@@ -22,6 +22,7 @@ class ChatAttendant extends DataLayer
       "chat_attendant",
       [
         "attendant_uuid",
+        "attendant_cpf",
         "attendant_name",
         "attendant_lastname",
         "attendant_avatar"

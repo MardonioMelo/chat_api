@@ -1,6 +1,6 @@
 <?php
 
-namespace Src\Controllers\Home;
+namespace Src\Controllers\User;
 
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
@@ -23,7 +23,7 @@ class AttendantController
     }
 
     /**
-     * Cadastrar usuário
+     * Cadastrar atendente 
      *
      * @param Request $request
      * @param Response $response

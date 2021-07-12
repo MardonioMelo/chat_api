@@ -2,7 +2,9 @@
 
 namespace Src\Models;
 
+use Src\Models\UUIDModel;
 use Src\Models\DataBase\ChatClient;
+use Src\Models\UtilitiesModel;
 
 /**
  * Class responsável por gerenciar os clientes do chat no banco de dados
@@ -23,20 +25,22 @@ class  ClientModel
     }
 
     /**
-     * Salva mensagem do chat no banco de dados    
+     * Salvar dados no banco de dados    
      *   
-     * @param String $client_name
-     * @param String $client_lastname
-     * @param String $client_avatar
+     * @param Array $params ["name" => "", "lastname" => "", "avatar" => "", "cpf" => ""]
      * @return void
      */
-    public function saveAttendant(String $client_name, String $client_lastname, String $client_avatar = "/avatar"): void
+    public function saveClient(array $params): void
     {
-        $this->tab_chat_client->client_name = (string) $client_name;
-        $this->tab_chat_client->client_lastname = (string) $client_lastname;
-        $this->tab_chat_client->client_avatar = (string) $client_avatar;
-
-        $this->saveCreate();
+        $this->checkInputs(UtilitiesModel::filterParams($params));
+        if ($this->Result) {
+            $this->tab_chat_client->client_uuid = $this->inputs['uuid'];
+            $this->tab_chat_client->client_cpf = $this->inputs['cpf'];
+            $this->tab_chat_client->client_name = $this->inputs['name'];
+            $this->tab_chat_client->client_lastname = $this->inputs['lastname'];
+            $this->tab_chat_client->client_avatar =  $this->inputs['avatar'];           
+            $this->saveCreate();
+        }
     }
 
     /**
@@ -52,6 +56,8 @@ class  ClientModel
         if ($obj) {
             foreach ($obj as $key => $arr) {
                 $result[$key]['client_id'] = $arr->data()->client_id;
+                $result[$key]['client_uuid'] = $arr->data()->client_uuid;
+                $result[$key]['client_cpf'] = $arr->data()->client_cpf;
                 $result[$key]['client_name'] = $arr->data()->client_name;
                 $result[$key]['client_lastname'] = $arr->data()->client_lastname;
                 $result[$key]['client_avatar'] = $arr->data()->client_avatar;
@@ -63,35 +69,96 @@ class  ClientModel
     }
 
     /**
-     * Consultar dados de um usuário
+     * Consultar dados de um usuário pelo UUID
+     *
+     * @param string $uuid
+     * @return null|Object
+     */
+    public function getUserUUID(string $uuid)
+    {
+        $client = $this->tab_chat_client->find("client_uuid = :uuid", "uuid=$uuid")->fetch();
+
+        if ($client) {
+            return $client->data();
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Consultar dados de um usuário pelo CPF
+     *
+     * @param string $cpf
+     * @return null|Object
+     */
+    public function getUserCPF(string $cpf)
+    {
+        $client = $this->tab_chat_client->find("client_cpf = :cpf", "cpf=$cpf")->fetch();
+
+        if ($client) {
+            return $client->data();
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Consultar dados de um usuário pelo ID
      *
      * @param integer $id
      * @return null|Object
      */
     public function getUser(int $id)
     {
-        if ($this->tab_chat_client->findById($id)){
+        if ($this->tab_chat_client->findById($id)) {
             return $this->tab_chat_client->findById($id)->data();
-        }else{
+        } else {
             return false;
-        }       
+        }
     }
 
     /**
-     * <b>Verificar Ação:</b> Retorna TRUE se ação for efetuada ou FALSE se não. Para verificar erros
-     * execute um getError();
-     * @return string $Var = True(com o id) or False
+     * Verificar e validar os dados para cadastro
+     *
+     * @param array $inputs
+     * @return void
      */
-    public function getResult(): string
+    public function checkInputs(array $inputs)
+    {
+        if (!empty($inputs['cpf']) && !empty($inputs['name']) && !empty($inputs['lastname'])) {
+            if (UtilitiesModel::validateCPF($inputs['cpf'])) {
+                $this->inputs['cpf'] = UtilitiesModel::numCPF($inputs['cpf']);
+                $this->inputs['name'] = $inputs['name'];
+                $this->inputs['lastname'] = $inputs['lastname'];
+                $this->inputs['avatar'] = empty($inputs['avatar']) ? "assets/img/user.png" : $inputs['avatar'];
+                $this->inputs['uuid'] = UUIDModel::v4();
+                $this->Result = true;
+            } else {
+                $this->Result = false;
+                $this->Error['msg'] = "Opss! CPF inválido!";
+            }
+        } else {
+            $this->Result = false;
+            $this->Error['msg'] = "Opss! Informe os campos obrigatórios";
+        }
+    }
+
+    /**
+     * <b>Verificar Ação:</b> 
+     * 
+     * @return bool 
+     */
+    public function getResult(): bool
     {
         return $this->Result;
     }
 
     /**
-     * <b>Obter Erro:</b> Retorna um string com o erro.
-     * @return string $Error = String com o erro
+     * <b>Obter Erro:</b> 
+     * 
+     * @return array|Object 
      */
-    public function getError(): string
+    public function getError()
     {
         return $this->Error;
     }
@@ -103,14 +170,17 @@ class  ClientModel
      */
     private function saveCreate(): void
     {
-        $id = $this->tab_chat_client->save();
+        $result = $this->tab_chat_client->save();
 
-        if ((int)$id > 0) {
-            $this->Result = $id;
-            $this->Error = "Cadastro realizado com sucesso!";
+        if ($result) {
+            $this->Result = true;
+            $this->Error['msg'] = "Cadastro realizado com sucesso!";
+            $this->Error['data']['id'] = $this->tab_chat_client->client_id;
+            $this->Error['data']['uuid'] = $this->tab_chat_client->client_uuid;
         } else {
-            $this->Result = $id;
-            $this->Error = $this->tab_chat_client->fail()->getMessage();
+            $this->Result = false;
+            $this->Error['msg'] = $this->tab_chat_client->fail()->getMessage();
+            $this->Error['data'] = null;
         }
     }
 }

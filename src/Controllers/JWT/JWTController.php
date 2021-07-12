@@ -7,9 +7,11 @@ use Src\Models\ClientModel;
 use Src\Models\AttendantModel;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
+use Src\Controllers\Bot\UtilitiesController;
+use Src\Models\UtilitiesModel;
 
 /**
- * Class para controle de geração e autentificação de token JWT
+ * Class controle para geração de token JWT
  */
 class JWTController
 {
@@ -18,6 +20,9 @@ class JWTController
     private $client_model;
     private $result;
 
+    /**
+     * Set class  jwt, attendant e client
+     */
     public function __construct()
     {
         $this->jwt = new JWTModel();
@@ -35,14 +40,14 @@ class JWTController
     public function createToken(Request $request, Response $response)
     {
         $params = (array)$request->getParsedBody();
-        $data = $this->filterParams($params);
+        $data =  UtilitiesModel::filterParams($params);
 
-        if (!empty($data['uuid']) && !empty($data['type']) && $data['public'] === JWT_PUBLIC) {
+        if (!empty($data['uuid']) && !empty($data['type']) &&  !empty($data['public']) && $data['public'] === JWT_PUBLIC) {
 
             if ($data['type'] === "attendat") {
                 $this->createTokenAttendant($data['uuid']);
             } else {
-                $this->createTokenClient($data['uuid']);                
+                $this->createTokenClient($data['uuid']);
             }
         } else {
             $this->result = [];
@@ -52,24 +57,16 @@ class JWTController
 
         $response->getBody()->write(json_encode($this->result));
         return $response->withHeader('Content-Type', 'application/json');
-    }
+    }   
 
     /**
-     * Limpar parâmetros de tags e espaços
+     * Cadastro de atendentes
      *
-     * @param array $params
+     * @param string $uuid
      * @return void
      */
-    public function filterParams($params = []): array
+    private function createTokenAttendant(string $uuid): void
     {
-        return array_filter($params, function ($str) {
-            return trim(strip_tags($str));
-        });
-    }
-
-
-    private function createTokenAttendant($uuid){
-
         $user = $this->attendant_model->getUserUUID($uuid);
 
         if ($user) {
@@ -94,16 +91,21 @@ class JWTController
         }
     }
 
-
-    private function createTokenClient($uuid){
-
+    /**
+     * Cadastro de clientes
+     *
+     * @param string $uuid
+     * @return void
+     */
+    private function createTokenClient(string $uuid): void
+    {
         $user = $this->client_model->getUserUUID($uuid);
 
         if ($user) {
             $this->jwt->createToken([
                 "uuid" => $user->client_uuid,
                 "name" => $user->client_name,
-                "type" => "attendat"
+                "type" => "client"
             ], 43200);
 
             if ($this->jwt->getResult()) {
