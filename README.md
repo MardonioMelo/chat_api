@@ -109,10 +109,12 @@ Exemplo de envio:
 - localhost:81/chatbot_api/api/create/token
 >   
     Dados via POST:     
-        uuid: "290b7b75-b949-4643-9e11-1cc2214a6882"  
-        name: "Junior"     
+        uuid: "290b7b75-b949-4643-9e11-1cc2214a6882" ou o número do CPF              
         type: "client" ou "attendant"    
         public: "ffc6wwq2eb25f5asasf11a7f1b7546cb3ca"
+        name: "Junior - opcional" 
+        avatar: "link de uma imagem do usuário - opcional"
+        lastname: "sobrenome do usuário - opcional"
 
     Dados de retorno: 
         {
@@ -124,6 +126,8 @@ Exemplo de envio:
             }
         } 
 > 
+
+O name | lastname | avatar: são opcionais porque só serão utilizados quando a API tiver que cadastrar um usuário que não existe no db e que informou um CPF válido no campo uuid, nesse caso o name e lastname passam a ser obrigatórios..
 
 <b>Cadastro de Atendente</b><br>
 

@@ -61,9 +61,7 @@ class AppChatController implements MessageComponentInterface
 
                 case '/api/attendant':                 
 
-                    $user = $this->attendant_model->getUserUUID($user_token->uuid);
-
-                    var_dump($user);
+                    $user = $this->attendant_model->getUserUUID($user_token->uuid);                  
                     if ($user) {
                         $this->newConnection($conn, (int)$user->attendant_id, "attendant", $user_token->name);
                     } else {

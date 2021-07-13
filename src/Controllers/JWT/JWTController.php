@@ -7,7 +7,6 @@ use Src\Models\ClientModel;
 use Src\Models\AttendantModel;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
-use Src\Controllers\Bot\UtilitiesController;
 use Src\Models\UtilitiesModel;
 
 /**
@@ -19,6 +18,8 @@ class JWTController
     private $attendant_model;
     private $client_model;
     private $result;
+    private $user;
+    private $data;
 
     /**
      * Set class  jwt, attendant e client
@@ -40,39 +41,43 @@ class JWTController
     public function createToken(Request $request, Response $response)
     {
         $params = (array)$request->getParsedBody();
-        $data =  UtilitiesModel::filterParams($params);
+        $this->data =  UtilitiesModel::filterParams($params);
+        $this->result = [];
+        $this->result['result'] = false;
 
-        if (!empty($data['uuid']) && !empty($data['type']) &&  !empty($data['public']) && $data['public'] === JWT_PUBLIC) {
+        if (!empty($this->data['public']) && $this->data['public'] === JWT_PUBLIC) {
 
-            if ($data['type'] === "attendant") {
-                $this->createTokenAttendant($data['uuid']);
+            if (!empty($this->data['uuid']) && !empty($this->data['type'])) {
+
+                if ($this->data['type'] === "attendant") {
+                    $this->createTokenAttendant();
+                } else {
+                    $this->checkClient();
+                }
             } else {
-                $this->createTokenClient($data['uuid']);
+                $this->result['error'] = "Informe todos os campos obrigatórios!";
             }
         } else {
-            $this->result = [];
-            $this->result['result'] = false;
             $this->result['error'] = "Chave pública inválida!";
         }
 
         $response->getBody()->write(json_encode($this->result));
         return $response->withHeader('Content-Type', 'application/json');
-    }   
+    }
 
     /**
-     * Cadastro de atendentes
-     *
-     * @param string $uuid
+     * Verificar e Gerar token JWT para um atendente
+     *   
      * @return void
      */
-    private function createTokenAttendant(string $uuid): void
+    private function createTokenAttendant(): void
     {
-        $user = $this->attendant_model->getUserUUID($uuid);
+        $this->user = $this->attendant_model->getUserUUID($this->data['uuid']);
 
-        if ($user) {
+        if ($this->user) {
             $this->jwt->createToken([
-                "uuid" => $user->attendant_uuid,
-                "name" => $user->attendant_name,
+                "uuid" => $this->user->attendant_uuid,
+                "name" => $this->user->attendant_name,
                 "type" => "attendant"
             ], 43200);
 
@@ -80,7 +85,7 @@ class JWTController
 
                 $this->result['result'] = $this->jwt->getResult();
                 $this->result['error'] = $this->jwt->getError();
-                unset($this->result['error']['data']);
+                unset($this->result['error']['this->data']);
             } else {
                 $this->result['result'] = $this->jwt->getResult();
                 $this->result['error'] = $this->jwt->getError();
@@ -92,34 +97,66 @@ class JWTController
     }
 
     /**
-     * Cadastro de clientes
-     *
-     * @param string $uuid
+     * Verificar se o cliente existe para cadastra-lo e obter o uuid do mesmo
+     *   
      * @return void
      */
-    private function createTokenClient(string $uuid): void
+    private function checkClient(): void
     {
-        $user = $this->client_model->getUserUUID($uuid);
+        $this->user = $this->client_model->getUserUUID($this->data['uuid']);
 
-        if ($user) {
-            $this->jwt->createToken([
-                "uuid" => $user->client_uuid,
-                "name" => $user->client_name,
-                "type" => "client"
-            ], 43200);
-
-            if ($this->jwt->getResult()) {
-
-                $this->result['result'] = $this->jwt->getResult();
-                $this->result['error'] = $this->jwt->getError();
-                unset($this->result['error']['data']);
-            } else {
-                $this->result['result'] = $this->jwt->getResult();
-                $this->result['error'] = $this->jwt->getError();
-            }
-        } else {
+        if ($this->user) {
+            $this->createTokenClient();
+        } else {          
             $this->result['result'] = false;
-            $this->result['error'] = "O usuário não existe!";
+
+            if (UtilitiesModel::validateCPF($this->data['uuid'])) {
+                
+                if (!empty($this->data['name']) && !empty($this->data['lastname'])) {                 
+
+                    $this->client_model->saveClient([
+                        "name" => $this->data['name'],
+                        "lastname" => $this->data['lastname'],
+                        "avatar" => empty($this->data['avatar']) ? "" : $this->data['avatar'],
+                        "cpf" => $this->data['uuid']
+                    ]);
+
+                    if ($this->client_model->getResult()) {
+                        $this->user = $this->client_model->getUserUUID($this->client_model->getError()['data']['uuid']);
+                        $this->createTokenClient();
+                    } else {                     
+                        $this->result['error'] = $this->client_model->getError()['msg'];
+                    }
+                }else{                   
+                    $this->result['error'] = "Informe todos os campos obrigatórios!";
+                }
+            } else {              
+                $this->result['error'] = "O usuário não existe e o CPF informado é inválido!";
+            }
+        }
+    }
+
+    /**
+     * Verificar e Gerar token JWT para um cliente
+     *  
+     * @return void
+     */
+    private function createTokenClient(): void
+    {
+        $this->jwt->createToken([
+            "uuid" => $this->user->client_uuid,
+            "name" => $this->user->client_name,
+            "type" => "client"
+        ], 43200);
+
+        if ($this->jwt->getResult()) {
+
+            $this->result['result'] = $this->jwt->getResult();
+            $this->result['error'] = $this->jwt->getError();
+            unset($this->result['error']['this->data']);
+        } else {
+            $this->result['result'] = $this->jwt->getResult();
+            $this->result['error'] = $this->jwt->getError();
         }
     }
 }
