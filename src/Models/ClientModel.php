@@ -93,6 +93,7 @@ class  ClientModel
      */
     public function getUserCPF(string $cpf)
     {
+        $cpf = UtilitiesModel::numCPF($cpf);
         $client = $this->tab_chat_client->find("client_cpf = :cpf", "cpf=$cpf")->fetch();
 
         if ($client) {
@@ -124,7 +125,7 @@ class  ClientModel
      * @return void
      */
     public function checkInputs(array $inputs)
-    {
+    {     
         if (!empty($inputs['cpf']) && !empty($inputs['name']) && !empty($inputs['lastname'])) {
             if (UtilitiesModel::validateCPF($inputs['cpf'])) {
                 $this->inputs['cpf'] = UtilitiesModel::numCPF($inputs['cpf']);

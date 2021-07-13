@@ -107,30 +107,26 @@ class JWTController
 
         if ($this->user) {
             $this->createTokenClient();
-        } else {          
+        } else {
             $this->result['result'] = false;
 
             if (UtilitiesModel::validateCPF($this->data['uuid'])) {
-                
-                if (!empty($this->data['name']) && !empty($this->data['lastname'])) {                 
+                $this->user = $this->client_model->getUserCPF($this->data['uuid']);
 
-                    $this->client_model->saveClient([
-                        "name" => $this->data['name'],
-                        "lastname" => $this->data['lastname'],
-                        "avatar" => empty($this->data['avatar']) ? "" : $this->data['avatar'],
-                        "cpf" => $this->data['uuid']
-                    ]);
+                if ($this->user) {
+                    $this->createTokenClient();
+                } else {
+                    $this->data['cpf'] = $this->data['uuid'];
+                    $this->client_model->saveClient($this->data);
 
                     if ($this->client_model->getResult()) {
                         $this->user = $this->client_model->getUserUUID($this->client_model->getError()['data']['uuid']);
                         $this->createTokenClient();
-                    } else {                     
+                    } else {
                         $this->result['error'] = $this->client_model->getError()['msg'];
                     }
-                }else{                   
-                    $this->result['error'] = "Informe todos os campos obrigatórios!";
                 }
-            } else {              
+            } else {
                 $this->result['error'] = "O usuário não existe e o CPF informado é inválido!";
             }
         }

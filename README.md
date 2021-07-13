@@ -179,7 +179,8 @@ Exemplo de envio:
     }            
 > 
 
-Caso o usuário não esteja cadastrado no banco de dados da chat, o mesmo poderá ser cadastrado via terminal também:
+E recomendado que os usuários sejam cadastrados através das rotas citadas acima, porem o mesmo poderá ser cadastrado via terminal também. 
+Esse recurso só deve ser usado para testes, quando ainda não há uma interface para cadastro do usuário ou quando não existem usuários do tipo atendente cadastrado.
 
 >
     php new-user.php

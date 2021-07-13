@@ -95,6 +95,7 @@ class  AttendantModel
      */
     public function getUserCPF(string $cpf)
     {
+        $cpf = UtilitiesModel::numCPF($cpf);
         $attendant = $this->tab_chat_attendant->find("attendant_cpf = :cpf", "cpf=$cpf")->fetch();
 
         if ($attendant) {
