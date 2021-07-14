@@ -26,16 +26,22 @@ $app->add(function ($request, $handler) {
 // Inicio das rotas
 // --------------------------+
 
-
-//Rotas GET
+// View do chat
 $app->get('/home/{id}', DashboardController::class . ":home")->add(new JWTMiddleware());
 $app->get('/bot', BotController::class . ":widget")->add(new JWTMiddleware());
-
 // Rotas POST
 $app->post('/bot', BotController::class . ":chatBot")->add(new JWTMiddleware());
-$app->post(API_VERSION . '/create/token', JWTController::class . ":createToken");
-$app->post(API_VERSION . '/create/attendant', AttendantController::class . ":createAttendant")->add(new JWTMiddleware());
-$app->post(API_VERSION . '/create/client', ClientController::class . ":createClient")->add(new JWTMiddleware());
+// JWT
+$app->post(API_VERSION . '/token', JWTController::class . ":createToken");
+// Atendente
+$app->post(API_VERSION . '/attendant', AttendantController::class . ":createAttendant")->add(new JWTMiddleware());
+$app->get(API_VERSION . '/attendant/{id}', AttendantController::class . ":readAttendant")->add(new JWTMiddleware());
+$app->put(API_VERSION . '/attendant/{id}', AttendantController::class . ":updateAttendant")->add(new JWTMiddleware());
+$app->patch(API_VERSION . '/attendant/{id}', AttendantController::class . ":updateImgAttendant")->add(new JWTMiddleware());
+$app->delete(API_VERSION . '/attendant', AttendantController::class . ":createAttendant")->add(new JWTMiddleware());
+// Cliente
+$app->post(API_VERSION . '/client', ClientController::class . ":createClient")->add(new JWTMiddleware());
+// Mensagens
 $app->post(API_VERSION . '/history/read', DashboardController::class . ":msgHistory")->add(new JWTMiddleware());
 
 
@@ -57,9 +63,17 @@ try {
     $app->run();
 } catch (Exception $e) {
 
+    if ($e->getMessage() === "Expired token") {
+        $msg = "Token expirado";
+    } elseif ($e->getMessage() === "Malformed UTF-8 characters") {
+        $msg = "Caracteres UTF-8 malformados";
+    } else {
+        $msg = "Erro 404 - Not Found!";
+    }
+
     $result = array(
         "result" => false,
-        "error" => array("msg" => "Erro 404 - Not Found!")
+        "error" => array("msg" => $msg)
     );
 
     header('Content-Type', 'application/json');

@@ -106,7 +106,7 @@ Para o usuário obter o token de autorização ele deverá estar previamente cad
 <b>Criar token do usuário</b><br>
 
 Exemplo de envio:   
-- localhost:81/chatbot_api/api/create/token
+- POST: localhost/chatbot_api/api/token
 >   
     Dados via POST:     
         uuid: "290b7b75-b949-4643-9e11-1cc2214a6882" ou o número do CPF              
@@ -134,13 +134,13 @@ O name | lastname | avatar: são opcionais porque só serão utilizados quando a
 Apenas os atendentes tem permissão para cadastrar outros atendentes ou clientes.
 
 Exemplo de envio:   
-- localhost/chatbot_api/api/create/attendant
+- POST: localhost/chatbot_api/api/attendant
 >   
     Dados via POST:   
-        cpf: 000.000.000-00    
+        cpf: 123.456.789-10    
         name: "João"  
         lastname: "Junior"     
-        avatar: "http://sitedeimagem/imagem.png"          
+        avatar: "http://sitedeimagem/imagem.png" - opcional          
 
     Dados de retorno: 
     {
@@ -148,8 +148,8 @@ Exemplo de envio:
         "error": {
             "msg": "Cadastro realizado com sucesso!",
             "data": {
-                "id": "9",
-                "uuid": "290b7b75-b949-4643-9e11-1cc2214a6882"
+                "id": "...",
+                "uuid": "..."
             }
         }
     }         
@@ -158,13 +158,13 @@ Exemplo de envio:
 <b>Cadastro de Cliente</b><br>
 
 Exemplo de envio:   
-- localhost/chatbot_api/api/create/client
+- POST: localhost/chatbot_api/api/client
 >   
     Dados via POST:   
-        cpf: 000.000.000-00  
+        cpf: 123.456.789-10  
         name: "Maria"  
         lastname: "Oliveira"     
-        avatar: "http://sitedeimagem/imagem.png"            
+        avatar: "http://sitedeimagem/imagem.png" - opcional            
 
     Dados de retorno: 
     {

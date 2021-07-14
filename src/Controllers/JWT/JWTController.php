@@ -127,7 +127,7 @@ class JWTController
                     }
                 }
             } else {
-                $this->result['error'] = "O usuário não existe e o CPF informado é inválido!";
+                $this->result['error'] = "O usuário não existe!";
             }
         }
     }

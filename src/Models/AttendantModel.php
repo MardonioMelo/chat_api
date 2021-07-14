@@ -45,7 +45,57 @@ class  AttendantModel
     }
 
     /**
-     * Organizar dados ara envio  
+     * Consultar cadastro de um cliente   
+     *   
+     * @param int $id
+     * @return void
+     */
+    public function readAttendant(int $id): void
+    {   
+        $attendant = $this->getUser($id);
+        if ($id > 0 && $attendant) {
+            $this->Result = true;
+            $this->Error['msg'] = "Sucesso!";
+            $this->Error['data']['id'] = $attendant->attendant_id;
+            $this->Error['data']['cpf'] = $attendant->attendant_cpf;
+            $this->Error['data']['name'] = $attendant->attendant_name;
+            $this->Error['data']['lastname'] = $attendant->attendant_lastname;
+            $this->Error['data']['avatar'] = $attendant->attendant_avatar;
+            $this->Error['data']['created_at'] = $attendant->created_at;
+            $this->Error['data']['updated_at'] = $attendant->updated_at;           
+        }else{
+            $this->Result = false;
+            $this->Error['msg'] = "Opss! O ID informado não existe ou o atendente foi excluído.";           
+        }
+    }
+
+    /**
+     * Consultar cadastro de um cliente   
+     *   
+     * @param int $id
+     * @return void
+     */
+    public function updateAttendant(int $id): void
+    {   
+        $attendant = $this->getUser($id);
+        if ($id > 0 && $attendant) {
+            $this->Result = true;
+            $this->Error['msg'] = "Sucesso!";
+            $this->Error['data']['id'] = $attendant->attendant_id;
+            $this->Error['data']['cpf'] = $attendant->attendant_cpf;
+            $this->Error['data']['name'] = $attendant->attendant_name;
+            $this->Error['data']['lastname'] = $attendant->attendant_lastname;
+            $this->Error['data']['avatar'] = $attendant->attendant_avatar;
+            $this->Error['data']['created_at'] = $attendant->created_at;
+            $this->Error['data']['updated_at'] = $attendant->updated_at;           
+        }else{
+            $this->Result = false;
+            $this->Error['msg'] = "Opss! O ID informado não existe ou o atendente foi excluído.";           
+        }
+    }
+
+    /**
+     * Organizar dados para envio  
      *
      * @param Object $obj
      * @return array
@@ -56,19 +106,18 @@ class  AttendantModel
 
         if ($obj) {
             foreach ($obj as $key => $arr) {
-                $result[$key]['attendant_id'] = $arr->data()->attendant_id;
-                $result[$key]['attendant_uuid'] = $arr->data()->attendant_uuid;
-                $result[$key]['attendant_cpf'] = $arr->data()->attendant_cpf;
-                $result[$key]['attendant_name'] = $arr->data()->attendant_name;
-                $result[$key]['attendant_lastname'] = $arr->data()->attendant_lastname;
-                $result[$key]['attendant_avatar'] = $arr->data()->attendant_avatar;
-                $result[$key]['attendant_updated_at'] = $arr->data()->attendant_updated_at;
-                $result[$key]['attendant_created_at'] = $arr->data()->attendant_created_at;
+                $result[$key]['id'] = $arr->data()->attendant_id;
+                $result[$key]['uuid'] = $arr->data()->attendant_uuid;
+                $result[$key]['cpf'] = $arr->data()->attendant_cpf;
+                $result[$key]['name'] = $arr->data()->attendant_name;
+                $result[$key]['lastname'] = $arr->data()->attendant_lastname;
+                $result[$key]['avatar'] = $arr->data()->attendant_avatar;
+                $result[$key]['updated_at'] = $arr->data()->updated_at;
+                $result[$key]['created_at'] = $arr->data()->created_at;
             }
         }
         return $result;
     }
-
 
     /**
      * Consultar dados de um usuário pelo UUID
@@ -129,25 +178,32 @@ class  AttendantModel
     public function checkInputs(array $inputs)
     {
         if (!empty($inputs['cpf']) && !empty($inputs['name']) && !empty($inputs['lastname'])) {
+
             if (UtilitiesModel::validateCPF($inputs['cpf'])) {
-                $this->inputs['cpf'] = UtilitiesModel::numCPF($inputs['cpf']);
-                $this->inputs['name'] = $inputs['name'];
-                $this->inputs['lastname'] = $inputs['lastname'];
-                $this->inputs['avatar'] = empty($inputs['avatar']) ? "assets/img/user.png" : $inputs['avatar'];
-                $this->inputs['uuid'] = UUIDModel::v4();
-                $this->Result = true;
+
+                if (!$this->getUserCPF($inputs['cpf'])) {
+                    $this->inputs['cpf'] = UtilitiesModel::numCPF($inputs['cpf']);
+                    $this->inputs['name'] = $inputs['name'];
+                    $this->inputs['lastname'] = $inputs['lastname'];
+                    $this->inputs['avatar'] = empty($inputs['avatar']) ? "assets/img/user.png" : $inputs['avatar'];
+                    $this->inputs['uuid'] = UUIDModel::v4();
+                    $this->Result = true;
+                } else {
+                    $this->Result = false;
+                    $this->Error['msg'] = "Opss! O CPF informado já foi cadastrado para outro atendente.";
+                }
             } else {
                 $this->Result = false;
                 $this->Error['msg'] = "Opss! CPF inválido!";
             }
         } else {
             $this->Result = false;
-            $this->Error['msg'] = "Opss! Informe os campos obrigatórios";
+            $this->Error['msg'] = "Opss! Informe os campos obrigatórios.";
         }
     }
-
+   
     /**
-     * <b>Verificar Ação:</b> 
+     * Verificar Ação
      * 
      * @return bool 
      */
@@ -157,7 +213,7 @@ class  AttendantModel
     }
 
     /**
-     * <b>Obter Erro:</b> 
+     * Obter Erro
      * 
      * @return array|Object 
      */

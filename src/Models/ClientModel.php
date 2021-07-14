@@ -15,6 +15,7 @@ class  ClientModel
     private $tab_chat_client;
     private $Error;
     private $Result;
+    private $inputs;
 
     /**
      * Declara a classe ChatClient na inicialização
@@ -38,13 +39,13 @@ class  ClientModel
             $this->tab_chat_client->client_cpf = $this->inputs['cpf'];
             $this->tab_chat_client->client_name = $this->inputs['name'];
             $this->tab_chat_client->client_lastname = $this->inputs['lastname'];
-            $this->tab_chat_client->client_avatar =  $this->inputs['avatar'];           
+            $this->tab_chat_client->client_avatar =  $this->inputs['avatar'];
             $this->saveCreate();
         }
     }
 
     /**
-     * Organizar dados ara envio  
+     * Organizar dados para envio  
      *
      * @param Object $obj
      * @return array
@@ -125,15 +126,22 @@ class  ClientModel
      * @return void
      */
     public function checkInputs(array $inputs)
-    {     
+    {
         if (!empty($inputs['cpf']) && !empty($inputs['name']) && !empty($inputs['lastname'])) {
+
             if (UtilitiesModel::validateCPF($inputs['cpf'])) {
-                $this->inputs['cpf'] = UtilitiesModel::numCPF($inputs['cpf']);
-                $this->inputs['name'] = $inputs['name'];
-                $this->inputs['lastname'] = $inputs['lastname'];
-                $this->inputs['avatar'] = empty($inputs['avatar']) ? "assets/img/user.png" : $inputs['avatar'];
-                $this->inputs['uuid'] = UUIDModel::v4();
-                $this->Result = true;
+
+                if (!$this->getUserCPF($inputs['cpf'])) {
+                    $this->inputs['cpf'] = UtilitiesModel::numCPF($inputs['cpf']);
+                    $this->inputs['name'] = $inputs['name'];
+                    $this->inputs['lastname'] = $inputs['lastname'];
+                    $this->inputs['avatar'] = empty($inputs['avatar']) ? "assets/img/user.png" : $inputs['avatar'];
+                    $this->inputs['uuid'] = UUIDModel::v4();
+                    $this->Result = true;
+                } else {
+                    $this->Result = false;
+                    $this->Error['msg'] = "Opss! O CPF informado já foi cadastrado para outro cliente.";
+                }
             } else {
                 $this->Result = false;
                 $this->Error['msg'] = "Opss! CPF inválido!";
@@ -145,7 +153,7 @@ class  ClientModel
     }
 
     /**
-     * <b>Verificar Ação:</b> 
+     * Verificar Ação
      * 
      * @return bool 
      */
@@ -155,7 +163,7 @@ class  ClientModel
     }
 
     /**
-     * <b>Obter Erro:</b> 
+     * Obter Erro
      * 
      * @return array|Object 
      */

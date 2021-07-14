@@ -40,6 +40,14 @@ function logFim()
     echo "\n\nFim --- " . date("H:i:s") . "\n";
 }
 
+//remover quebra de linha
+function removerQuebraLinha($str){   
+    $str = str_replace("\n", "", $str);
+    $str = str_replace("\r", "", $str);
+    $str = preg_replace('/\s/',' ',$str);
+    return $str;
+}
+
 echo "\nEscolha um tipo de usuário para cadastrar:";
 echo "\n 1 - Atendente.";
 echo "\n 2 - Cliente";
@@ -61,23 +69,23 @@ switch (trim($resp)) {
         echo "\n\nInforme os dados do novo usuário.";
 
         echo "\n\nNome: ";
-        $resp = inputResp();
+        $resp = removerQuebraLinha(inputResp());
         $params["name"] = $resp;
 
         echo "\nSobrenome: ";
-        $resp = inputResp();
+        $resp = removerQuebraLinha(inputResp());
         $params["lastname"] = $resp;
 
         echo "\nCPF: ";
-        $resp = inputResp();
+        $resp = removerQuebraLinha(inputResp());
         $params["cpf"] = $resp;
 
         echo "\nAvatar (link da imagem): ";
-        $resp = inputResp();
+        $resp = removerQuebraLinha(inputResp());
         $params["avatar"] = $resp;
 
         echo "\nInforme a chave secreta: ";
-        $resp = inputResp();
+        $resp = removerQuebraLinha(inputResp());
        
         if(trim($resp) === JWT_SECRET){
             $attendant->saveAttendant($params);
@@ -94,23 +102,23 @@ switch (trim($resp)) {
         echo "\n\nInforme os dados do novo usuário.";
 
         echo "\n\nNome: ";
-        $resp = inputResp();
+        $resp = removerQuebraLinha(inputResp());
         $params["name"] = $resp;
 
         echo "\nSobrenome: ";
-        $resp = inputResp();
+        $resp = removerQuebraLinha(inputResp());
         $params["lastname"] = $resp;
 
         echo "\nCPF: ";
-        $resp = inputResp();
+        $resp = removerQuebraLinha(inputResp());
         $params["cpf"] = $resp;
 
         echo "\nAvatar (link da imagem): ";
-        $resp = inputResp();
+        $resp = removerQuebraLinha(inputResp());
         $params["avatar"] = $resp;
 
         echo "\nInforme a chave secreta: ";
-        $resp = inputResp();
+        $resp = removerQuebraLinha(inputResp());
        
         if(trim($resp) === JWT_SECRET){
             $client->saveClient($params);
