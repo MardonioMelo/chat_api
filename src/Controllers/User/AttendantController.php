@@ -24,20 +24,21 @@ class AttendantController
     }
 
     /**
-     * Cadastrar atendente 
+     * Cadastrar um atendente 
      *
      * @param Request $request
      * @param Response $response
-     * @return void
+     * @return static
      */
     public function createAttendant(Request $request, Response $response)
     {
-        $params = (array)$request->getParsedBody();
         $this->jwt->checkToken($request);
 
         if (!empty($this->jwt->getError()['data']->type) && $this->jwt->getError()['data']->type === "attendant") {
 
-            $this->attendant_model->saveAttendant($params);
+            $data = (array)$request->getParsedBody();
+
+            $this->attendant_model->createAttendant($data);
             $result['result'] = $this->attendant_model->getResult();
             $result['error'] = $this->attendant_model->getError();
         } else {
@@ -50,21 +51,108 @@ class AttendantController
     }
 
     /**
-     * Consultar cadastro do atendente 
+     * Consultar um cadastro 
      *
      * @param Request $request
      * @param Response $response
-     * @return void
+     * @param array $params
+     * @return static
      */
-    public function readAttendant(Request $request, Response $response, $params)
-    {       
+    public function readAttendant(Request $request, Response $response, array $params)
+    {
         $this->jwt->checkToken($request);
 
         if (!empty($this->jwt->getError()['data']->type) && $this->jwt->getError()['data']->type === "attendant") {
-           
-            $id = (int) UtilitiesModel::filterParams($params)['id'];            
+
+            $id = (int) UtilitiesModel::filterParams($params)['id'];
 
             $this->attendant_model->readAttendant($id);
+            $result['result'] = $this->attendant_model->getResult();
+            $result['error'] = $this->attendant_model->getError();
+        } else {
+            $result['result'] = false;
+            $result['error'] = "Você não tem permissão para consultar atendentes!";
+        }
+
+        $response->getBody()->write(json_encode($result));
+        return $response->withHeader('Content-Type', 'application/json');
+    }
+
+    /**
+     * Atualizar cadastro completo 
+     *
+     * @param Request $request
+     * @param Response $response
+     * @param array $params
+     * @return static
+     */
+    public function updateAttendant(Request $request, Response $response, array $params)
+    {
+        $this->jwt->checkToken($request);
+
+        if (!empty($this->jwt->getError()['data']->type) && $this->jwt->getError()['data']->type === "attendant") {
+
+            $id = (int) UtilitiesModel::filterParams($params)['id'];
+            $data = UtilitiesModel::filterParams(UtilitiesModel::getPATCH());
+
+            $this->attendant_model->updateAttendant($id, $data);
+            $result['result'] = $this->attendant_model->getResult();
+            $result['error'] = $this->attendant_model->getError();
+        } else {
+            $result['result'] = false;
+            $result['error'] = "Você não tem permissão para atualizar atendentes!";
+        }
+
+        $response->getBody()->write(json_encode($result));
+        return $response->withHeader('Content-Type', 'application/json');
+    }
+
+    /**
+     * Deletar um cadastro 
+     *
+     * @param Request $request
+     * @param Response $response
+     * @param array $params
+     * @return static
+     */
+    public function deleteAttendant(Request $request, Response $response, array $params)
+    {
+        $this->jwt->checkToken($request);
+
+        if (!empty($this->jwt->getError()['data']->type) && $this->jwt->getError()['data']->type === "attendant") {
+
+            $id = (int) UtilitiesModel::filterParams($params)['id'];
+
+            $this->attendant_model->deleteAttendant($id);
+            $result['result'] = $this->attendant_model->getResult();
+            $result['error'] = $this->attendant_model->getError();
+        } else {
+            $result['result'] = false;
+            $result['error'] = "Você não tem permissão para deletar atendentes!";
+        }
+
+        $response->getBody()->write(json_encode($result));
+        return $response->withHeader('Content-Type', 'application/json');
+    }
+
+    /**
+     * Consultar todos os cadastro de atendentes
+     *
+     * @param Request $request
+     * @param Response $response   
+     * @return static
+     */
+    public function readAllAttendant(Request $request, Response $response)
+    {
+        $this->jwt->checkToken($request);
+
+        if (!empty($this->jwt->getError()['data']->type) && $this->jwt->getError()['data']->type === "attendant") {
+        
+            $params = UtilitiesModel::filterParams($request->getQueryParams());        
+            $limit = (int) $params['limit'];
+            $offset = (int) $params['offset'];
+
+            $this->attendant_model->readAllAttendant($limit, $offset);
             $result['result'] = $this->attendant_model->getResult();
             $result['error'] = $this->attendant_model->getError();
         } else {

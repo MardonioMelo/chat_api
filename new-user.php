@@ -88,7 +88,7 @@ switch (trim($resp)) {
         $resp = removerQuebraLinha(inputResp());
        
         if(trim($resp) === JWT_SECRET){
-            $attendant->saveAttendant($params);
+            $attendant->createAttendant($params);
             echo "\n\n" . $attendant->getError()['msg'];
         }else{
             echo "\n\nChave secreta inválida, tente novamente!";

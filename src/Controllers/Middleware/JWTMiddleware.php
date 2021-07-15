@@ -1,6 +1,6 @@
 <?php
 
-namespace Src\Controllers\JWT;
+namespace Src\Controllers\Middleware;
 
 use Slim\Psr7\Response;
 use Src\Models\JWTModel;

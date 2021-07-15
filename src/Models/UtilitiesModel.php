@@ -62,7 +62,55 @@ class UtilitiesModel
     public static function filterParams($params = []): array
     {
         return array_filter($params, function ($str) {
-            return preg_replace( "/\r|\n/", "",  trim(strip_tags($str)));
+            return preg_replace("/\r|\n/", "",  trim(strip_tags($str)));
         });
+    }
+
+    /**
+     * Obter os dados de requisições PUT
+     *
+     * @return array
+     */
+    public static function getPUT(): array
+    {
+        $put = array();
+
+        if (!strcasecmp($_SERVER['REQUEST_METHOD'], 'PUT')) {
+            parse_str(file_get_contents('php://input'), $put);
+        }
+
+        return $put;
+    }
+
+    /**
+     * Obter os dados de requisições DELETE
+     *
+     * @return array
+     */
+    public static function getDELETE(): array
+    {
+        $delete = array();
+
+        if (!strcasecmp($_SERVER['REQUEST_METHOD'], 'DELETE')) {
+            parse_str(file_get_contents('php://input'), $delete);
+        }
+
+        return $delete;
+    }
+
+    /**
+     * Obter os dados de requisições PATCH
+     *
+     * @return array
+     */
+    public static function getPATCH(): array
+    {
+        $patch = array();
+
+        if (!strcasecmp($_SERVER['REQUEST_METHOD'], 'PATCH')) {
+            parse_str(file_get_contents('php://input'), $patch);
+        }
+
+        return $patch;
     }
 }

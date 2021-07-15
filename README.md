@@ -155,6 +155,33 @@ Exemplo de envio:
     }         
 > 
 
+<b>Consultar Cadastro de Atendente</b><br>
+
+Apenas os atendentes tem permissão para consultar o cadastro de outros atendentes ou clientes.
+
+Exemplo de envio:   
+- GET: localhost/chatbot_api/api/attendant/{id}
+>   
+    Dados via GET: id do atendente          
+
+    Dados de retorno: 
+    {
+        "result": true,
+        "error": {
+            "msg": "Sucesso!",
+            "data": {
+                "id": 1,
+                "cpf": 10234567890,
+                "name": "João",
+                "lastname": "Silva",
+                "avatar": "../imagem.png",
+                "created_at": "14/07/2021"
+                "updated_at": "14/07/2021"
+            }
+        }
+    }           
+> 
+
 <b>Cadastro de Cliente</b><br>
 
 Exemplo de envio:   
