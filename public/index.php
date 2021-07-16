@@ -12,11 +12,5 @@ $app = AppFactory::create();
 # Desativar erros em produção
 #$app->addErrorMiddleware(false, true, true);
 
-# Define o caminho base
-$app->setBasePath("/chatbot_api");
-
-//$chatbot = new \App\Controllers\Bot\BotController();
-//$chatbot->widget();
-
 # Rotas do App
 require '../src/routes/api.php';

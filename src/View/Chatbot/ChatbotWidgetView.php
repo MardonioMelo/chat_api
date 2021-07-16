@@ -4,6 +4,8 @@ namespace Src\View\Chatbot;
 
 use Src\View\DefaultView\DefaultView;
 
+use const Ratchet\VERSION;
+
 /**
  * Class para administrar view do chatbot
  */
@@ -49,7 +51,7 @@ class ChatbotWidgetView extends DefaultView
             "{{botimg}}",
             "{{url}}",
             "{{home}}"
-        ];       
+        ];
 
         $this->setDataName($data_var);
         $this->setData($data);

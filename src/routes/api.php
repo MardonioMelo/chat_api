@@ -9,6 +9,9 @@ use Src\Controllers\Home\DashboardController;
 use Src\Controllers\User\AttendantController;
 
 
+# Define o caminho base
+$app->setBasePath("/chatbot_api");
+
 $app->options('/{routes:.+}', function ($request, $response, $args) {
     return $response;
 });
@@ -26,11 +29,6 @@ $app->add(function ($request, $handler) {
 // Inicio das rotas
 // --------------------------+
 
-// View do chat
-$app->get('/home/{id}', DashboardController::class . ":home")->add(new JWTMiddleware());
-$app->get('/bot', BotController::class . ":widget")->add(new JWTMiddleware());
-// Rotas POST
-$app->post('/bot', BotController::class . ":chatBot")->add(new JWTMiddleware());
 // JWT
 $app->post(API_VERSION . '/token', JWTController::class . ":createToken");
 // Atendente
@@ -39,12 +37,16 @@ $app->get(API_VERSION . '/attendant', AttendantController::class . ":readAllAtte
 $app->get(API_VERSION . '/attendant/{id}', AttendantController::class . ":readAttendant")->add(new JWTMiddleware());
 $app->patch(API_VERSION . '/attendant/{id}', AttendantController::class . ":updateAttendant")->add(new JWTMiddleware());
 $app->delete(API_VERSION . '/attendant/{id}', AttendantController::class . ":deleteAttendant")->add(new JWTMiddleware());
-
 // Cliente
 $app->post(API_VERSION . '/client', ClientController::class . ":createClient")->add(new JWTMiddleware());
 // Mensagens
 $app->post(API_VERSION . '/history/read', DashboardController::class . ":msgHistory")->add(new JWTMiddleware());
 
+// View do chat
+$app->get('/home/{id}', DashboardController::class . ":home")->add(new JWTMiddleware());
+$app->get('/bot', BotController::class . ":widget")->add(new JWTMiddleware());
+// Rotas POST
+$app->post('/bot', BotController::class . ":chatBot")->add(new JWTMiddleware());
 
 // --------------------------+
 // Fim da rotas

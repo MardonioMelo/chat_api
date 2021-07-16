@@ -151,10 +151,11 @@ class AttendantController
             $params = UtilitiesModel::filterParams($request->getQueryParams());        
             $limit = (int) $params['limit'];
             $offset = (int) $params['offset'];
+            $uri = $request->getUri()->getPath();
 
-            $this->attendant_model->readAllAttendant($limit, $offset);
+            $this->attendant_model->readAllAttendant($limit, $offset, $uri);
             $result['result'] = $this->attendant_model->getResult();
-            $result['error'] = $this->attendant_model->getError();
+            $result['error'] = $this->attendant_model->getError();           
         } else {
             $result['result'] = false;
             $result['error'] = "Você não tem permissão para consultar atendentes!";

@@ -123,24 +123,30 @@ class  AttendantModel
      *
      * @param integer $limit
      * @param integer $offset
+     * @param string $uri
      * @return void
      */
-    public function readAllAttendant(int $limit = 10, int $offset = 0): void
+    public function readAllAttendant(int $limit = 10, int $offset = 0, $uri = ""): void
     {
-
-
         if ($limit == 0) {
             $this->Result = false;
-            $this->Error['msg'] = "O limite deve ser maior que zero, tente novamente!";
+            $this->Error['msg'] = "O limite deve ser maior que 0 (zero), tente novamente!";
         } else {
+
             $attendants = $this->tab_chat_attendant->find()->limit($limit)->offset($offset)->fetch("attendant_id ASC");
 
             if ($attendants) {
+             
+                $count = $this->tab_chat_attendant->find()->count();
+                $links = UtilitiesModel::paginationLink(HOME . $uri, $limit, $offset, $count);
+
                 $this->Result = true;
                 $this->Error['msg'] = "Sucesso!";
                 $this->Error['data'] = $this->passeAllDataArray($attendants);
+                $this->Error['count'] =  $count;
+                $this->Error['next'] = $links['next'];
+                $this->Error['previous'] = $links['previous'];
             } else {
-
                 $attendants = $this->tab_chat_attendant->find()->limit(10)->offset(0)->fetch("attendant_id ASC");
 
                 if ($attendants) {
@@ -153,6 +159,8 @@ class  AttendantModel
             }
         }
     }
+
+
 
     /**
      * Organizar dados para envio  
@@ -167,7 +175,6 @@ class  AttendantModel
         if ($obj) {
             foreach ($obj as $key => $arr) {
                 $result[$key]['id'] = $arr->data()->attendant_id;
-                $result[$key]['uuid'] = $arr->data()->attendant_uuid;
                 $result[$key]['cpf'] = $arr->data()->attendant_cpf;
                 $result[$key]['name'] = $arr->data()->attendant_name;
                 $result[$key]['lastname'] = $arr->data()->attendant_lastname;

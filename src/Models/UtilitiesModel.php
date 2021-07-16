@@ -2,6 +2,8 @@
 
 namespace Src\Models;
 
+use PhpParser\Node\Expr\StaticCall;
+
 /**
  * Class de utilidades com métodos em comum no sistema
  */
@@ -112,5 +114,23 @@ class UtilitiesModel
         }
 
         return $patch;
+    }
+
+    /**
+     * Gerar links de paginação Next e Previous
+     *
+     * @param string $url
+     * @param integer $limit
+     * @param integer $offset
+     * @param integer $count
+     * @return array
+     */
+    public static function paginationLink(string $url, int $limit, int $offset, int $count):array
+    {
+        $link = Array();
+        $link['next'] = ($limit + $offset) > $count ? null : $url . "?offset=" . ($limit + $offset) . "&limit=" . $limit;
+        $offset_pre = str_replace("-", "", $limit - $offset);
+        $link['previous'] = (int) $offset === 0 ? null : $url . "?offset=" . $offset_pre  . "&limit=" . $limit;
+        return $link;
     }
 }
