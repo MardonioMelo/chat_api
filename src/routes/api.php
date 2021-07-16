@@ -71,7 +71,7 @@ try {
     } elseif ($e->getMessage() === "Malformed UTF-8 characters") {
         $msg = "Caracteres UTF-8 malformados";
     } else {
-        $msg = "Erro 404 - Not Found!";
+        $msg = "Erro 404 - Não encontrado!";
     }
 
     $result = array(

@@ -122,7 +122,7 @@ class AttendantController
         if (!empty($this->jwt->getError()['data']->type) && $this->jwt->getError()['data']->type === "attendant") {
 
             $id = (int) UtilitiesModel::filterParams($params)['id'];
-
+            die("aqui");
             $this->attendant_model->deleteAttendant($id);
             $result['result'] = $this->attendant_model->getResult();
             $result['error'] = $this->attendant_model->getError();
@@ -149,8 +149,8 @@ class AttendantController
         if (!empty($this->jwt->getError()['data']->type) && $this->jwt->getError()['data']->type === "attendant") {
         
             $params = UtilitiesModel::filterParams($request->getQueryParams());        
-            $limit = (int) $params['limit'];
-            $offset = (int) $params['offset'];
+            $limit = empty($params['limit'])? 0 : (int) $params['limit'];
+            $offset =  empty($params['offset'])? 0 : (int) $params['offset'];
             $uri = $request->getUri()->getPath();
 
             $this->attendant_model->readAllAttendant($limit, $offset, $uri);

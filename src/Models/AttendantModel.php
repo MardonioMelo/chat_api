@@ -16,8 +16,7 @@ class  AttendantModel
     private $Error;
     private $Result;
     private $inputs;
-    private $attendant;
-
+  
     /**
      * Declara a classe ChatAttendant na inicialização
      */
@@ -81,11 +80,10 @@ class  AttendantModel
     {
         $this->checkInputs(UtilitiesModel::filterParams($data), $id);
         if ($this->Result) {
-
-            $this->getUserCPF($data['cpf']);
-            if ($id > 0 && $this->attendant) {
-                $this->tab_chat_attendant->attendant_id = $this->attendant->attendant_id;
-                $this->tab_chat_attendant->attendant_uuid = $this->attendant->attendant_uuid;
+            $attendant = $this->getUser($id);        
+            if ($id > 0 && $attendant) {
+                $this->tab_chat_attendant->attendant_id = $attendant->attendant_id;
+                $this->tab_chat_attendant->attendant_uuid = $attendant->attendant_uuid;
                 $this->tab_chat_attendant->attendant_cpf = $this->inputs['cpf'];
                 $this->tab_chat_attendant->attendant_name = $this->inputs['name'];
                 $this->tab_chat_attendant->attendant_lastname = $this->inputs['lastname'];
@@ -136,13 +134,13 @@ class  AttendantModel
             $attendants = $this->tab_chat_attendant->find()->limit($limit)->offset($offset)->fetch("attendant_id ASC");
 
             if ($attendants) {
-             
+
                 $count = $this->tab_chat_attendant->find()->count();
                 $links = UtilitiesModel::paginationLink(HOME . $uri, $limit, $offset, $count);
 
                 $this->Result = true;
                 $this->Error['msg'] = "Sucesso!";
-                $this->Error['data'] = $this->passeAllDataArray($attendants);
+                $this->Error['data'] = $this->passeAllDataArray($attendants, HOME . $uri);
                 $this->Error['count'] =  $count;
                 $this->Error['next'] = $links['next'];
                 $this->Error['previous'] = $links['previous'];
@@ -160,15 +158,14 @@ class  AttendantModel
         }
     }
 
-
-
     /**
      * Organizar dados para envio  
      *
      * @param Object $obj
+     * @param null|string $url
      * @return array
      */
-    public function passeAllDataArray($obj): array
+    public function passeAllDataArray($obj, $url = null): array
     {
         $result = [];
 
@@ -181,6 +178,9 @@ class  AttendantModel
                 $result[$key]['avatar'] = $arr->data()->attendant_avatar;
                 $result[$key]['updated_at'] = date("d/m/Y", strtotime($arr->data()->updated_at));
                 $result[$key]['created_at'] = date("d/m/Y", strtotime($arr->data()->created_at));
+                if ($url) {
+                    $result[$key]['url'] = $url . '/' .  $arr->data()->attendant_id;
+                }
             }
         }
         return $result;
@@ -207,20 +207,15 @@ class  AttendantModel
      * Consultar dados de um usuário pelo CPF
      *
      * @param string $cpf
-     * @param int|null $id
      * @return null|Object
      */
-    public function getUserCPF(string $cpf, $id = null)
+    public function getUserCPF(string $cpf)
     {
         $cpf = UtilitiesModel::numCPF($cpf);
-        if ($cpf) {
-            $this->attendant = $this->tab_chat_attendant->find("attendant_cpf = :cpf AND attendant_id <> :id", "cpf=$cpf&id=$id")->fetch();
-        } else {
-            $this->attendant = $this->tab_chat_attendant->find("attendant_cpf = :cpf", "cpf=$cpf")->fetch();
-        }
+        $attendant = $this->tab_chat_attendant->find("attendant_cpf = :cpf", "cpf=$cpf")->fetch();
 
-        if ($this->attendant) {
-            return $this->attendant->data();
+        if ($attendant) {
+            return $attendant->data();
         } else {
             return false;
         }
@@ -254,7 +249,13 @@ class  AttendantModel
 
             if (UtilitiesModel::validateCPF($data['cpf'])) {
 
-                if (!$this->getUserCPF($data['cpf'], $id)) {
+                if ($id) {
+                    $attendant = $this->tab_chat_attendant->find("attendant_id <> :id AND attendant_cpf = :cpf", "id=$id&cpf=".$data['cpf'])->fetch();
+                } else {
+                    $attendant = $this->getUserCPF($data['cpf']);
+                }               
+
+                if (!$attendant) {
                     $this->inputs['cpf'] = UtilitiesModel::numCPF($data['cpf']);
                     $this->inputs['name'] = $data['name'];
                     $this->inputs['lastname'] = $data['lastname'];
