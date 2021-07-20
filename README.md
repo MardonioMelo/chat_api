@@ -129,8 +129,7 @@ Exemplo de envio:
 O name | lastname | avatar: são opcionais porque só serão utilizados quando a API tiver que cadastrar um usuário que não existe no db e que informou um CPF válido no campo uuid, nesse caso o name e lastname passam a ser obrigatórios..
 
 <b>Cadastrar Atendente</b><br>
-
-https://viewer.diagrams.net/?highlight=0000ff&edit=_blank&layers=1&nav=1&page-id=psJkvXa7-np5yWx2_JBS&title=Diagrama%20do%20Chat#Uhttps%3A%2F%2Fdrive.google.com%2Fuc%3Fid%3D13BHcugWv8KVK3ha1CztGjqo_SD-VmPBF%26export%3Ddownload
+Diagrama: https://viewer.diagrams.net/?highlight=0000ff&edit=_blank&layers=1&nav=1&page-id=psJkvXa7-np5yWx2_JBS&title=Diagrama%20do%20Chat#Uhttps%3A%2F%2Fdrive.google.com%2Fuc%3Fid%3D13BHcugWv8KVK3ha1CztGjqo_SD-VmPBF%26export%3Ddownload
 
 Apenas os atendentes tem permissão para cadastrar outros atendentes ou clientes.
 
@@ -163,7 +162,8 @@ Apenas os atendentes tem permissão para consultar o cadastro de outros atendent
 Exemplo de envio:   
 - GET: localhost/chatbot_api/api/attendant/{id}
 >   
-    Dados via GET: id do atendente          
+    Dados via GET: id do atendente   
+           
 
     Dados de retorno: 
     {
@@ -188,9 +188,10 @@ Exemplo de envio:
 Apenas os atendentes tem permissão para cadastrar outros atendentes ou clientes.
 
 Exemplo de envio:   
-- POST: localhost/chatbot_api/api/attendant
->   
-    Dados via POST:   
+- PUT: localhost/chatbot_api/api/attendant/{id}
+>      
+    Content-Type: application/x-www-form-urlencoded. 
+    Dados:
         cpf: 123.456.789-10    
         name: "João"  
         lastname: "Junior"     
