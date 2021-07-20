@@ -112,7 +112,7 @@ class  AttendantModel
             $this->Error['data']['id'] = $attendant->attendant_id;
         } else {
             $this->Result = false;
-            $this->Error['msg'] = "Opss! O ID informado não existe ou o atendente foi excluído.";
+            $this->Error['msg'] = "Opss! O cadastro não existe ou já foi excluído.";
         }
     }
 

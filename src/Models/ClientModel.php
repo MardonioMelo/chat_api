@@ -31,16 +31,129 @@ class  ClientModel
      * @param Array $params ["name" => "", "lastname" => "", "avatar" => "", "cpf" => ""]
      * @return void
      */
-    public function saveClient(array $params): void
+    public function createClient(array $data): void
     {
-        $this->checkInputs(UtilitiesModel::filterParams($params));
+        $this->checkInputs(UtilitiesModel::filterParams($data));
         if ($this->Result) {
             $this->tab_chat_client->client_uuid = $this->inputs['uuid'];
             $this->tab_chat_client->client_cpf = $this->inputs['cpf'];
             $this->tab_chat_client->client_name = $this->inputs['name'];
             $this->tab_chat_client->client_lastname = $this->inputs['lastname'];
             $this->tab_chat_client->client_avatar =  $this->inputs['avatar'];
-            $this->saveCreate();
+            $this->saveData();
+        }
+    }
+/**
+     * Consultar um cadastro 
+     *   
+     * @param int $id
+     * @return void
+     */
+    public function readClient(int $id): void
+    {
+        $client = $this->getUser($id);
+        if ($id > 0 && $client) {
+            $this->Result = true;
+            $this->Error['msg'] = "Sucesso!";
+            $this->Error['data']['id'] = $client->client_id;
+            $this->Error['data']['cpf'] = $client->client_cpf;
+            $this->Error['data']['name'] = $client->client_name;
+            $this->Error['data']['lastname'] = $client->client_lastname;
+            $this->Error['data']['avatar'] = $client->client_avatar;
+            $this->Error['data']['created_at'] = date("d/m/Y", strtotime($client->created_at));
+            $this->Error['data']['updated_at'] = date("d/m/Y", strtotime($client->updated_at));
+        } else {
+            $this->Result = false;
+            $this->Error['msg'] = "Opss! O ID informado não existe ou o cliente foi excluído.";
+        }
+    }
+
+    /**
+     * Atualizar todos os dados de um cadastro
+     *   
+     * @param int $id
+     * @param array $data
+     * @return void
+     */
+    public function updateClient(int $id, array $data): void
+    {
+        $this->checkInputs(UtilitiesModel::filterParams($data), $id);
+        if ($this->Result) {
+            $client = $this->getUser($id);        
+            if ($id > 0 && $client) {
+                $this->tab_chat_client->client_id = $client->client_id;
+                $this->tab_chat_client->client_uuid = $client->client_uuid;
+                $this->tab_chat_client->client_cpf = $this->inputs['cpf'];
+                $this->tab_chat_client->client_name = $this->inputs['name'];
+                $this->tab_chat_client->client_lastname = $this->inputs['lastname'];
+                $this->tab_chat_client->client_avatar =  $this->inputs['avatar'];
+                $this->updateData();
+            } else {
+                $this->Result = false;
+                $this->Error['msg'] = "Opss! O ID informado não existe ou o cliente foi excluído.";
+            }
+        }
+    }
+
+    /**
+     * Consultar um cadastro 
+     *   
+     * @param int $id
+     * @return void
+     */
+    public function deleteClient(int $id): void
+    {
+        $client = $this->getUser($id);
+        if ($id > 0 && $client) {
+            $this->deleteData($id);
+            $this->Result = true;
+            $this->Error['msg'] = "Cadastro excluído com sucesso!";
+            $this->Error['data']['id'] = $client->client_id;
+        } else {
+            $this->Result = false;
+            $this->Error['msg'] = "Opss! O cadastro não existe ou já foi excluído.";
+        }
+    }
+
+    /**
+     * Consultar todos os cadastros
+     *
+     * @param integer $limit
+     * @param integer $offset
+     * @param string $uri
+     * @return void
+     */
+    public function readAllClient(int $limit = 10, int $offset = 0, $uri = ""): void
+    {
+        if ($limit == 0) {
+            $this->Result = false;
+            $this->Error['msg'] = "O limite deve ser maior que 0 (zero), tente novamente!";
+        } else {
+
+            $clients = $this->tab_chat_client->find()->limit($limit)->offset($offset)->fetch("client_id ASC");
+
+            if ($clients) {
+
+                $count = $this->tab_chat_client->find()->count();
+                $links = UtilitiesModel::paginationLink(HOME . $uri, $limit, $offset, $count);
+
+                $this->Result = true;
+                $this->Error['msg'] = "Sucesso!";
+                $this->Error['data'] = $this->passeAllDataArray($clients, HOME . $uri);
+                $this->Error['count'] =  $count;
+                $this->Error['next'] = $links['next'];
+                $this->Error['previous'] = $links['previous'];
+            } else {
+                $clients = $this->tab_chat_client->find()->limit(10)->offset(0)->fetch("client_id ASC");
+
+                if ($clients) {
+                    $this->Result = false;
+                    $this->Error['msg'] = "Não existem cadastros no limite e deslocamento informados, tente outra margem de consulta!";
+                } else {
+                    $this->Result = false;
+                    $this->Error['msg'] = "Não existem clientes cadastrados!";
+                }
+            }
         }
     }
 
@@ -48,22 +161,25 @@ class  ClientModel
      * Organizar dados para envio  
      *
      * @param Object $obj
+     * @param null|string $url
      * @return array
      */
-    public function passeAllDataArray($obj): array
+    public function passeAllDataArray($obj, $url = null): array
     {
         $result = [];
 
         if ($obj) {
             foreach ($obj as $key => $arr) {
-                $result[$key]['client_id'] = $arr->data()->client_id;
-                $result[$key]['client_uuid'] = $arr->data()->client_uuid;
-                $result[$key]['client_cpf'] = $arr->data()->client_cpf;
-                $result[$key]['client_name'] = $arr->data()->client_name;
-                $result[$key]['client_lastname'] = $arr->data()->client_lastname;
-                $result[$key]['client_avatar'] = $arr->data()->client_avatar;
-                $result[$key]['client_updated_at'] = $arr->data()->client_updated_at;
-                $result[$key]['client_created_at'] = $arr->data()->client_created_at;
+                $result[$key]['id'] = $arr->data()->client_id;
+                $result[$key]['cpf'] = $arr->data()->client_cpf;
+                $result[$key]['name'] = $arr->data()->client_name;
+                $result[$key]['lastname'] = $arr->data()->client_lastname;
+                $result[$key]['avatar'] = $arr->data()->client_avatar;
+                $result[$key]['updated_at'] = date("d/m/Y", strtotime($arr->data()->updated_at));
+                $result[$key]['created_at'] = date("d/m/Y", strtotime($arr->data()->created_at));
+                if ($url) {
+                    $result[$key]['url'] = $url . '/' .  $arr->data()->client_id;
+                }
             }
         }
         return $result;
@@ -107,7 +223,7 @@ class  ClientModel
     /**
      * Consultar dados de um usuário pelo ID
      *
-     * @param integer $id
+     * @param integer $uuid
      * @return null|Object
      */
     public function getUser(int $id)
@@ -122,20 +238,27 @@ class  ClientModel
     /**
      * Verificar e validar os dados para cadastro
      *
-     * @param array $inputs
+     * @param array $data
+     * @param int|null $id
      * @return void
      */
-    public function checkInputs(array $inputs)
+    public function checkInputs(array $data, $id = null)
     {
-        if (!empty($inputs['cpf']) && !empty($inputs['name']) && !empty($inputs['lastname'])) {
+        if (!empty($data['cpf']) && !empty($data['name']) && !empty($data['lastname'])) {
 
-            if (UtilitiesModel::validateCPF($inputs['cpf'])) {
+            if (UtilitiesModel::validateCPF($data['cpf'])) {
 
-                if (!$this->getUserCPF($inputs['cpf'])) {
-                    $this->inputs['cpf'] = UtilitiesModel::numCPF($inputs['cpf']);
-                    $this->inputs['name'] = $inputs['name'];
-                    $this->inputs['lastname'] = $inputs['lastname'];
-                    $this->inputs['avatar'] = empty($inputs['avatar']) ? "assets/img/user.png" : $inputs['avatar'];
+                if ($id) {
+                    $client = $this->tab_chat_client->find("client_id <> :id AND client_cpf = :cpf", "id=$id&cpf=".$data['cpf'])->fetch();
+                } else {
+                    $client = $this->getUserCPF($data['cpf']);
+                }               
+
+                if (!$client) {
+                    $this->inputs['cpf'] = UtilitiesModel::numCPF($data['cpf']);
+                    $this->inputs['name'] = $data['name'];
+                    $this->inputs['lastname'] = $data['lastname'];
+                    $this->inputs['avatar'] = empty($data['avatar']) ? "assets/img/user.png" : $data['avatar'];
                     $this->inputs['uuid'] = UUIDModel::v4();
                     $this->Result = true;
                 } else {
@@ -148,7 +271,7 @@ class  ClientModel
             }
         } else {
             $this->Result = false;
-            $this->Error['msg'] = "Opss! Informe os campos obrigatórios";
+            $this->Error['msg'] = "Opss! Informe os campos obrigatórios.";
         }
     }
 
@@ -177,7 +300,7 @@ class  ClientModel
      *
      * @return string
      */
-    private function saveCreate(): void
+    private function saveData(): void
     {
         $result = $this->tab_chat_client->save();
 
@@ -191,5 +314,38 @@ class  ClientModel
             $this->Error['msg'] = $this->tab_chat_client->fail()->getMessage();
             $this->Error['data'] = null;
         }
+    }
+
+    /**
+     * Atualizar dados no banco de dados
+     *
+     * @return string
+     */
+    private function updateData(): void
+    {
+        $result = $this->tab_chat_client->save();
+
+        if ($result) {
+            $this->Result = true;
+            $this->Error['msg'] = "Atualização realizada com sucesso!";
+            $this->Error['data']['id'] = $this->tab_chat_client->client_id;
+            $this->Error['data']['updated_at'] = date("d/m/Y", strtotime($this->tab_chat_client->updated_at));
+        } else {
+            $this->Result = false;
+            $this->Error['msg'] = $this->tab_chat_client->fail()->getMessage();
+            $this->Error['data'] = null;
+        }
+    }
+
+    /**
+     * Deletar cadastro de um usuário pelo ID
+     *
+     * @param integer $uuid
+     * @return void
+     */
+    public function deleteData(int $id)
+    {
+        $user = $this->tab_chat_client->find("client_id = :id", "id=$id")->fetch();
+        $user->destroy();
     }
 }

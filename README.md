@@ -21,15 +21,14 @@ API para chat e chatbot de suporte, ainda em desenvolvimento.
 - [x] Criar tabela de usuários (usuário,nome,imagem,instituição,email).
 - [x] Criar tabela de atendentes.
 - [x] Autentificação JWT.
-- [x] Rota para criação do 1º token JWT
-- [x] Rota para criação do 2º token JWT 
+- [x] Rota para gerar token JWT
 
 
 <i><b>E o andamento do bot?</b> Algumas coisas do bot já foram feitas/iniciadas como a implementação das lib's PHP nlp-tools e botman, por hora, essa parte está aguardando o desenvolvimento do chat para dar continuidade o desenvolvimento do bot.</i>
 
 ## Etapas do Desenvolvimento
 O projeto foi separado entre o front-end e o back-end.<br>
-Este repositório contém apenas o back-end de todo o projeto. O front-end está em outro repositório sendo desenvolvimento em VueJs.
+Este repositório contém apenas o back-end de todo o projeto. O front-end está em outro repositório sendo desenvolvimento em Vue3.
 
 A primeira etapa do back-end será o desenvolvimento do chat e a segunda será o desenvolvimento do chatbot com NLP. 
 
@@ -129,7 +128,9 @@ Exemplo de envio:
 
 O name | lastname | avatar: são opcionais porque só serão utilizados quando a API tiver que cadastrar um usuário que não existe no db e que informou um CPF válido no campo uuid, nesse caso o name e lastname passam a ser obrigatórios..
 
-<b>Cadastro de Atendente</b><br>
+<b>Cadastrar Atendente</b><br>
+
+https://viewer.diagrams.net/?highlight=0000ff&edit=_blank&layers=1&nav=1&page-id=psJkvXa7-np5yWx2_JBS&title=Diagrama%20do%20Chat#Uhttps%3A%2F%2Fdrive.google.com%2Fuc%3Fid%3D13BHcugWv8KVK3ha1CztGjqo_SD-VmPBF%26export%3Ddownload
 
 Apenas os atendentes tem permissão para cadastrar outros atendentes ou clientes.
 
@@ -155,7 +156,7 @@ Exemplo de envio:
     }         
 > 
 
-<b>Consultar Cadastro de Atendente</b><br>
+<b>Consultar um Cadastro </b><br>
 
 Apenas os atendentes tem permissão para consultar o cadastro de outros atendentes ou clientes.
 
@@ -180,6 +181,32 @@ Exemplo de envio:
             }
         }
     }           
+> 
+
+<b>Atualizar Atendente</b><br>
+
+Apenas os atendentes tem permissão para cadastrar outros atendentes ou clientes.
+
+Exemplo de envio:   
+- POST: localhost/chatbot_api/api/attendant
+>   
+    Dados via POST:   
+        cpf: 123.456.789-10    
+        name: "João"  
+        lastname: "Junior"     
+        avatar: "http://sitedeimagem/imagem.png" - opcional          
+
+    Dados de retorno: 
+    {
+        "result": true,
+        "error": {
+            "msg": "Cadastro realizado com sucesso!",
+            "data": {
+                "id": "...",
+                "uuid": "..."
+            }
+        }
+    }         
 > 
 
 <b>Cadastro de Cliente</b><br>

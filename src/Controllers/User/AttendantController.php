@@ -93,7 +93,7 @@ class AttendantController
         if (!empty($this->jwt->getError()['data']->type) && $this->jwt->getError()['data']->type === "attendant") {
 
             $id = (int) UtilitiesModel::filterParams($params)['id'];
-            $data = UtilitiesModel::filterParams(UtilitiesModel::getPATCH());
+            $data = UtilitiesModel::filterParams(UtilitiesModel::getPUT());
 
             $this->attendant_model->updateAttendant($id, $data);
             $result['result'] = $this->attendant_model->getResult();
@@ -121,8 +121,7 @@ class AttendantController
 
         if (!empty($this->jwt->getError()['data']->type) && $this->jwt->getError()['data']->type === "attendant") {
 
-            $id = (int) UtilitiesModel::filterParams($params)['id'];
-            die("aqui");
+            $id = (int) UtilitiesModel::filterParams($params)['id'];          
             $this->attendant_model->deleteAttendant($id);
             $result['result'] = $this->attendant_model->getResult();
             $result['error'] = $this->attendant_model->getError();
@@ -136,7 +135,7 @@ class AttendantController
     }
 
     /**
-     * Consultar todos os cadastro de atendentes
+     * Consultar todos os cadastros
      *
      * @param Request $request
      * @param Response $response   

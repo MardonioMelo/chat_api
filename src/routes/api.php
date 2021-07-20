@@ -35,10 +35,14 @@ $app->post(API_VERSION . '/token', JWTController::class . ":createToken");
 $app->post(API_VERSION . '/attendant', AttendantController::class . ":createAttendant")->add(new JWTMiddleware());
 $app->get(API_VERSION . '/attendant', AttendantController::class . ":readAllAttendant")->add(new JWTMiddleware());
 $app->get(API_VERSION . '/attendant/{id}', AttendantController::class . ":readAttendant")->add(new JWTMiddleware());
-$app->patch(API_VERSION . '/attendant/{id}', AttendantController::class . ":updateAttendant")->add(new JWTMiddleware());
+$app->put(API_VERSION . '/attendant/{id}', AttendantController::class . ":updateAttendant")->add(new JWTMiddleware());
 $app->delete(API_VERSION . '/attendant/{id}', AttendantController::class . ":deleteAttendant")->add(new JWTMiddleware());
 // Cliente
 $app->post(API_VERSION . '/client', ClientController::class . ":createClient")->add(new JWTMiddleware());
+$app->get(API_VERSION . '/client', ClientController::class . ":readAllClient")->add(new JWTMiddleware());
+$app->get(API_VERSION . '/client/{id}', ClientController::class . ":readClient")->add(new JWTMiddleware());
+$app->put(API_VERSION . '/client/{id}', ClientController::class . ":updateClient")->add(new JWTMiddleware());
+$app->delete(API_VERSION . '/client/{id}', ClientController::class . ":deleteClient")->add(new JWTMiddleware());
 // Mensagens
 $app->post(API_VERSION . '/history/read', DashboardController::class . ":msgHistory")->add(new JWTMiddleware());
 
