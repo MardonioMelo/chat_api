@@ -271,7 +271,7 @@ class  ClientModel
             }
         } else {
             $this->Result = false;
-            $this->Error['msg'] = "Opss! Informe os campos obrigatórios.";
+            $this->Error['msg'] = "Opss! Informe os campos obrigatórios para realizar o cadastro.";
         }
     }
 

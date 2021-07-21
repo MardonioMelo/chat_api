@@ -154,12 +154,11 @@ class  MsgModel
 
         if ($obj) {
             foreach ($obj as $key => $arr) {
-                $result[$key]['chat_user_id'] = $arr->data()->chat_user_id;
-                $result[$key]['chat_user_dest_id'] = $arr->data()->chat_user_dest_id;
-                $result[$key]['chat_text'] = $arr->data()->chat_text;
-                $result[$key]['chat_type'] = $arr->data()->chat_type;
-                $result[$key]['chat_date'] = $arr->data()->chat_date;
-                $result[$key]['chat_attachment'] = $arr->data()->chat_attachment;
+                $result[$key]['origin'] = $arr->data()->chat_user_id;
+                $result[$key]['destiny'] = $arr->data()->chat_user_dest_id;
+                $result[$key]['text'] = $arr->data()->chat_text;
+                $result[$key]['type'] = $arr->data()->chat_type;
+                $result[$key]['date'] = $arr->data()->chat_date;             
             }
         }
         return $result;

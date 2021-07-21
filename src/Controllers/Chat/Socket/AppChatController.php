@@ -218,7 +218,7 @@ class AppChatController implements MessageComponentInterface
      *
      * @return string
      */
-    public function saveMsgDB(): string
+    public function saveMsgDB()
     {
         $this->msg_model = new MsgModel();
         $this->msg_model->saveMsg($this->msg_obj->userId, $this->msg_obj->userDestId, $this->msg_obj->text);

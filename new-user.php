@@ -121,7 +121,7 @@ switch (trim($resp)) {
         $resp = removerQuebraLinha(inputResp());
        
         if(trim($resp) === JWT_SECRET){
-            $client->saveClient($params);
+            $client->createClient($params);
             echo "\n\n" . $client->getError()['msg'];
         }else{
             echo "\n\nChave secreta inválida, tente novamente!";

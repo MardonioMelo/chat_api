@@ -16,8 +16,8 @@ API para chat e chatbot de suporte, ainda em desenvolvimento.
 - [x] Rota para gerar token JWT
 - [x] Criar sala de espera dos clientes para atendimento e sala para os atendentes.
 - [x] Consultar dados dos clientes e atendentes.
-- [ ] Receber e salvar dados da abertura do atendimento no db.
 - [ ] Listar clientes da sala de espera por ordem de chegada.
+- [ ] Receber e salvar dados da abertura do atendimento no db.
 - [ ] Retirar cliente da sala de espera ao iniciar o atendimento.
 - [ ] Receber dados de avaliação do atendimento, salvar e finalizar a sessão do cliente.
 - [ ] Criar span de envio para o cliente da posição dele na fila de espera.
@@ -118,7 +118,7 @@ Exemplo de envio:
 
     Dados de retorno: 
         {
-            "result": true,
+            "result": true|false,
             "error": {
                 "header": "Authorization",
                 "token": "Bearer ...token...",
@@ -155,7 +155,7 @@ Exemplo de envio:
 
     Dados de retorno: 
     {
-        "result": true,
+        "result": bool,
         "error": {
             "msg": string,
             "data": {
@@ -189,7 +189,7 @@ Exemplo de envio:
 
     Dados de retorno: 
     {
-        "result": true,
+        "result": bool,
         "error": {
             "msg": string,
             "data": {
@@ -236,7 +236,7 @@ Exemplo de envio:
 
     Dados de retorno: 
     {
-        "result": true,
+        "result": bool,
         "error": {
             "msg": string,
             "data": [
@@ -295,7 +295,7 @@ Exemplo de envio:
 
     Dados de retorno: 
     {
-        "result": true,
+        "result": bool,
         "error": {
             "msg": string,
             "data": {
@@ -334,7 +334,7 @@ Exemplo de envio:
 
     Dados de retorno: 
     {
-        "result": true,
+        "result": bool,
         "error": {
             "msg": string,
             "data": {
@@ -375,27 +375,26 @@ Exemplo de envio:
         limit: int
         offset: int
 
-    Dados de retorno: [
-        {
-            "chat_user_id":"1",
-            "chat_user_dest_id":"2",
-            "chat_text":"Como vai?",
-            "chat_type":"text",
-            "chat_date":"2021-06-17 01:13:45",
-            "chat_attachment":""
-        },
-        {   "chat_user_id":"2",
-            "chat_user_dest_id":"1",
-            "chat_text":"Bem e vc?",
-            "chat_type":"text",
-            "chat_date":"2021-06-17 01:15:21",
-            "chat_attachment":""
-        },
-        ...
-    ]          
+    Dados de retorno: 
+    {
+        "result": bool,
+        "error": {
+            "msg": string,
+            "data": [
+                {
+                    "origin": int,
+                    "destiny": int,
+                    "text": string,
+                    "type": string,
+                    "date": string                   
+                }
+            ],
+            "count": int,
+            "next": string,
+            "previous": string
+    }
+}       
 > 
-
-
 
 <b>Exemplo de implementação no cliente</b>
 

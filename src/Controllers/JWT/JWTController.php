@@ -106,7 +106,7 @@ class JWTController
         $this->user = $this->client_model->getUserUUID($this->data['uuid']);
 
         if ($this->user) {
-            $this->createTokenClient();
+            $this->createTokenClient();           
         } else {
             $this->result['result'] = false;
 
@@ -117,7 +117,7 @@ class JWTController
                     $this->createTokenClient();
                 } else {
                     $this->data['cpf'] = $this->data['uuid'];
-                    $this->client_model->saveClient($this->data);
+                    $this->client_model->createClient($this->data);
 
                     if ($this->client_model->getResult()) {
                         $this->user = $this->client_model->getUserUUID($this->client_model->getError()['data']['uuid']);
