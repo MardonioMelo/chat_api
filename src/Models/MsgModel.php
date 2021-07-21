@@ -49,11 +49,13 @@ class  MsgModel
     /**
      * Consultar Histórico de mensagens de um intervalo de tempo.
      * Informe o id do remetente, id do destinatário, data de inicio e fim da troca de mensagens.
+     * Você pode definir o limit e o offset também
      *
      * @param array $data 
+     * @param string $uri
      * @return void
      */
-    public function getHistory(array $data): void
+    public function getHistory(array $data, string $uri): void
     {
         $this->setParams($data);
 
@@ -62,14 +64,28 @@ class  MsgModel
             $history = $this->readHistory(
                 $this->params['ori'],
                 $this->params['des'],
-                $this->params['sta'],
-                $this->params['end']
+                $this->params['sta_usa'],
+                $this->params['end_usa'],
+                $this->params['limit'],
+                $this->params['offset']
             );
 
-            $this->Result = $this->tab_chat_msg->getError();
-            $this->Error['data'] =  $this->tab_chat_msg->getResult() ?
-                $this->passeAllDataArrayHistory($this->tab_chat_msg->getResult()) : [];
-            $this->Error['msg'] = "Sucesso!";
+            $count = $this->tab_chat_msg->find()->count();
+            $other = "&ori=" . $this->params['ori'] . "&des=" . $this->params['des'] . "&sta=" . $this->params['sta'] . "&end=" . $this->params['end'];
+            $links = UtilitiesModel::paginationLink(HOME . $uri, $this->params['limit'], $this->params['offset'], $count, $other);
+
+            if ($history) {
+                $this->Result = true;
+                $this->Error['msg'] = "Sucesso!";
+                $this->Error['data'] = $this->passeAllDataArrayHistory($history);
+                $this->Error['count'] =  $count;
+                $this->Error['next'] = $links['next'];
+                $this->Error['previous'] = $links['previous'];
+            } else {
+                $this->Result = false;
+                $this->Error['data'] = [];
+                $this->Error['msg'] = "Não existem cadastros para os parâmetros informados!";
+            }
         }
     }
 
@@ -89,19 +105,22 @@ class  MsgModel
             if ($sta && $end) {
                 $this->params['ori'] = (int) $data['ori'];
                 $this->params['des'] = (int) $data['des'];
-                $this->params['sta'] = $sta;
-                $this->params['end'] = $end;
+                $this->params['sta'] = $data['sta'];
+                $this->params['end'] = $data['end'];
+                $this->params['sta_usa'] = $sta;
+                $this->params['end_usa'] = $end;
+                $this->params['limit'] = empty($data['limit']) ? 100 : (int) $data['limit'];
+                $this->params['offset'] = empty($data['offset']) ? 0 : (int) $data['offset'];
                 $this->Result = true;
             } else {
                 $this->Result = false;
-                $this->Error['msg'] = "Opss! Uma das datas informadas não é válida.";
+                $this->Error['msg'] = "Opss! Data invalida, informe uma data válida.";
             }
         } else {
             $this->Result = false;
             $this->Error['msg'] = "Opss! Informe todos os parâmetros obrigatórios.";
         }
     }
-
 
     /**
      * Verificar Ação
@@ -175,10 +194,12 @@ class  MsgModel
      * @param string $dt_end = data e hora fim
      * @return object
      */
-    private function readHistory(int $user_id, int $user_dest_id, string $dt_start, string $dt_end)
+    private function readHistory(int $user_id, int $user_dest_id, string $dt_start, string $dt_end, int $limit = 100, int $offset = 0)
     {
+
         $query_col = "(chat_user_id = :a AND chat_user_dest_id = :b OR chat_user_id = :c AND chat_user_dest_id = :d) AND chat_date BETWEEN :e AND :f";
         $query_value = "a={$user_id}&b={$user_dest_id}&c={$user_id}&d={$user_dest_id}&e={$dt_start}&f={$dt_end}";
-        $this->tab_chat_msg->readCol($query_col, $query_value);
+
+        return $this->tab_chat_msg->find($query_col, $query_value)->limit($limit)->offset($offset)->fetch("client_id ASC");
     }
 }

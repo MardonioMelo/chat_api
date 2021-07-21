@@ -123,19 +123,21 @@ class UtilitiesModel
      * @param integer $limit
      * @param integer $offset
      * @param integer $count
+     * @param string $other
      * @return array
      */
-    public static function paginationLink(string $url, int $limit, int $offset, int $count): array
+    public static function paginationLink(string $url, int $limit, int $offset, int $count, $other = ""): array
     {
         $link = array();
-        $link['next'] = ($limit + $offset) > $count ? null : $url . "?offset=" . ($limit + $offset) . "&limit=" . $limit;
+        $link['next'] = ($limit + $offset) > $count ? null : $url . "?offset=" . ($limit + $offset) . "&limit=" . $limit . $other;
         $offset_pre = str_replace("-", "", $limit - $offset);
-        $link['previous'] = (int) $offset === 0 ? null : $url . "?offset=" . $offset_pre  . "&limit=" . $limit;
+        $link['previous'] = (int) $offset === 0 ? null : $url . "?offset=" . $offset_pre  . "&limit=" . $limit . $other;
+
         return $link;
     }
 
     /**
-     * Passar data do formato BR para o formato USA e verificar se é valida.
+     * Passar data do formato BR (01/30/2020) para o formato (30/01/2020), verificar se é valida e retorna em formato (2020-01-30).
      * 
      * @param string $date
      * @return boll|string
@@ -145,7 +147,7 @@ class UtilitiesModel
         $usa = explode("-", str_replace("/", "-", $date));
 
         if ((int)$usa[2] > 2020) {
-            return checkdate((int) $usa[1], (int)$usa[0], (int)$usa[2]) ? $usa[1] . "/" . $usa[0] . "/" . $usa[2] : false;
+            return checkdate((int) $usa[1], (int)$usa[0], (int)$usa[2]) ? $usa[2] . "-" . $usa[1] . "-" . $usa[0] : false;
         } else {
             return false;
         }

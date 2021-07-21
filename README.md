@@ -7,21 +7,21 @@ API para chat e chatbot de suporte, ainda em desenvolvimento.
 - [x] Criar servidor WebSocket para chat.
 - [x] Criar tabela para salvar as conversas do chat/chatbot.
 - [x] Estabelecer conexão reservada e troca de mensagens entre o atendente o cliente.
-- [x] Consulta do histórico de conversas por atendente/cliente/data e hora de inicio e fim.
+- [x] Consulta do histórico de conversas por atendente/cliente/data e hora de inicio e fim com limit e offset.
 - [x] Consultar quantidade de usuários online no total (atendentes + clientes)
-- [ ] Receber e salvar dados da abertura do atendimento no db.
-- [x] Criar sala de espera dos clientes para atendimento e sala para os atendentes.
-- [ ] Listar clientes da sala de espera por ordem de chegada.
-- [ ] Retirar cliente da sala de espera ao iniciar o atendimento.
-- [ ] Receber dados de avaliação do atendimento, salvar e finalizar a sessão do cliente.
-- [ ] Consultar dados dos clientes.
-- [ ] Mudar status do atendimento.
-- [ ] Criar span de envio para o cliente da posição dele na fila de espera.
 - [x] Criar tabela de atendimento (atendente,cliente,status,assunto,avaliação,data-hora-inicio,data-hora-fim).
 - [x] Criar tabela de usuários (usuário,nome,imagem,instituição,email).
 - [x] Criar tabela de atendentes.
 - [x] Autentificação JWT.
 - [x] Rota para gerar token JWT
+- [x] Criar sala de espera dos clientes para atendimento e sala para os atendentes.
+- [x] Consultar dados dos clientes e atendentes.
+- [ ] Receber e salvar dados da abertura do atendimento no db.
+- [ ] Listar clientes da sala de espera por ordem de chegada.
+- [ ] Retirar cliente da sala de espera ao iniciar o atendimento.
+- [ ] Receber dados de avaliação do atendimento, salvar e finalizar a sessão do cliente.
+- [ ] Criar span de envio para o cliente da posição dele na fila de espera.
+- [ ] Mudar status do atendimento.
 
 
 <i><b>E o andamento do bot?</b> Algumas coisas do bot já foram feitas/iniciadas como a implementação das lib's PHP nlp-tools e botman, por hora, essa parte está aguardando o desenvolvimento do chat para dar continuidade o desenvolvimento do bot.</i>
@@ -134,6 +134,15 @@ Diagrama: https://viewer.diagrams.net/?highlight=0000ff&edit=_blank&layers=1&nav
 
 Apenas os atendentes tem permissão para cadastrar outros atendentes ou clientes.
 
+Descrição da requisição
+- cpf: CPF do novo atendente.
+- nome: Nome do novo atendente.
+- lastname: Sobrenome do novo atendente.
+- avatar: link de uma imagem do atendente - opcional.
+- Header: Deve ser informado no cabeçalho da requisição no campo Authorization um token JWT valido obtido anteriormente
+ex.: Authorization:  Bearer ...token...
+- Body: Deve ser informado no cabeçalho da requisição no campo Content-Type o valor "multipart/form-data".
+
 Exemplo de envio:   
 - POST: localhost/chatbot_api/api/attendant
 >   
@@ -157,9 +166,20 @@ Exemplo de envio:
     }         
 > 
 
+Descrição da resposta
+- result: true ou false.
+- error - data - id: ID do cadastro.
+- error - data - uuid: UUID do cadastro.
+- error - msg: Mensagem informativa do resultado.
+
 <b>Consultar um Cadastro </b><br>
 
 Apenas os atendentes tem permissão para consultar o cadastro de outros atendentes ou clientes.
+
+Descrição da requisição
+- ID: id do atendente no final da rota.
+- Header: Deve ser informado no cabeçalho da requisição no campo Authorization um token JWT valido obtido anteriormente ex.: Authorization:  Bearer ...token...
+- Body: Deve ser informado no cabeçalho da requisição no campo Content-Type o valor "none"
 
 Exemplo de envio:   
 - GET: localhost/chatbot_api/api/attendant/{id}
@@ -185,9 +205,26 @@ Exemplo de envio:
     }           
 > 
 
+Descrição da resposta
+- result: true ou false.
+- error - data - id: ID do cadastro.
+- error - data - cpf: CPF do atendente.
+- error - data - name: Nome.
+- error - data - lastname: Sobrenome.
+- error - data - avatar: Link da imagem
+- error - data - created_at: data de cadastro
+- error - data - updated_at: data de atualização
+
 <b>Consultar Todos Cadastros </b><br>
 
 Apenas os atendentes tem permissão para consultar o cadastro de outros atendentes ou clientes.
+
+Descrição da requisição
+- limit: limite de registros que serão consultados
+- offset: deslocamento, inicio da contagem dos registros a partir do primeiro registro cadastrado.
+- Header: Deve ser informado no cabeçalho da requisição no campo Authorization um token JWT - valido obtido anteriormente
+ex.: Authorization:  Bearer ...token...
+- Body: Deve ser informado no cabeçalho da requisição no campo Content-Type o valor "none"
 
 Exemplo de envio:   
 - GET: localhost/chatbot_api/api/attendant?limit=10&offset=0
@@ -220,9 +257,30 @@ Exemplo de envio:
 }         
 > 
 
+Descrição da resposta
+- result: true ou false.
+- error - data[ ] - id: ID do cadastro
+- error - data[ ] - cpf: CPF do atendente.
+- error - data[ ] - name: Nome.
+- error - data[ ] - lastname: Sobrenome.
+- error - data[ ] - avatar: Link da imagem
+- error - data[ ] - created_at: data de cadastro
+- error - data[ ] - updated_at: data de atualização
+
+
 <b>Atualizar Atendente</b><br>
 
 Apenas os atendentes tem permissão para atualizar outros atendentes ou clientes.
+
+Descrição da requisição
+- ID: id do atendente no final da rota.
+- cpf: CPF do atendente.
+- nome: Nome do atendente.
+- lastname: Sobrenome do atendente.
+- avatar: link de uma imagem do atendente - opcional.
+- Header: Deve ser informado no cabeçalho da requisição no campo Authorization um token JWT valido obtido anteriormente
+ex.: Authorization:  Bearer ...token...
+- Body: Deve ser informado no cabeçalho da requisição no campo Content-Type o valor "application/x-www-form-urlencoded".
 
 Exemplo de envio:   
 - PUT: localhost/chatbot_api/api/attendant/{id}
@@ -248,9 +306,25 @@ Exemplo de envio:
     }         
 > 
 
+Descrição da resposta
+- result: true ou false.
+- error - data - id: ID do cadastro.
+- error - data - cpf: CPF do atendente.
+- error - data - name: Nome.
+- error - data - lastname: Sobrenome.
+- error - data - avatar: Link da imagem
+- error - data - created_at: data de cadastro
+- error - data - updated_at: data de atualização
+
 <b>Deletar Atendente</b><br>
 
 Apenas os atendentes tem permissão para deletar outros atendentes ou clientes.
+
+Descrição da requisição
+- ID: id do atendente no final da rota.
+- Header: Deve ser informado no cabeçalho da requisição no campo Authorization um token JWT valido obtido anteriormente
+ex.: Authorization:  Bearer ...token...
+- Body: Deve ser informado no cabeçalho da requisição no campo Content-Type o valor "none"
 
 Exemplo de envio:   
 - DELETE: localhost/chatbot_api/api/attendant/{id}
@@ -270,6 +344,10 @@ Exemplo de envio:
     }         
 > 
 
+Descrição da resposta
+- result: true ou false.
+- error - data - id: ID do cadastro.
+
 Recomenda-se que os usuários sejam cadastrados através das rotas citadas acima, porém o mesmo poderá ser cadastrado via terminal caso prefira. Esse recurso só deve ser usado para testes, quando ainda não há uma interface para cadastro do usuário ou quando não existem usuários do tipo atendente cadastrado.
 
 >
@@ -284,16 +362,18 @@ Diagrama: https://viewer.diagrams.net/?highlight=0000ff&edit=_blank&layers=1&nav
 
 <b>Consultar Histórico de Mensagens</b><br>
 
- Informe o id do remetente, id do destinatário, data de inicio e fim da troca de mensagens.
+Informe o id do remetente, id do destinatário, data de inicio e fim da troca de mensagens.
 
 Exemplo de envio:   
-- localhost:81/chatbot_api/api/history?ori={id_user_origem}&des={id_user_destino}&sta={dt_inicio}&end={dt_fim}
+- localhost:81/chatbot_api/api/history?ori={id_user_origem}&des={id_user_destino}&sta={dt_inicio}&end={dt_fim}&limit={limit}&offset={offset}
 >   
     Dados via GET:     
         ori: int - id do remetente
         des: int - id do destinatário
-        sta: string - data de inicio (01-01-2021)
-        end: string - data de fim (28-02-2021)
+        sta: string - data de inicio 
+        end: string - data de fim 
+        limit: int
+        offset: int
 
     Dados de retorno: [
         {

@@ -59,7 +59,8 @@ class DashboardController
         if (!empty($this->jwt->getError()['data']->type) && $this->jwt->getError()['data']->type === "attendant") {
 
             $params = UtilitiesModel::filterParams($request->getQueryParams());
-            $this->msg_model->getHistory($params);
+            $uri = $request->getUri()->getPath();
+            $this->msg_model->getHistory($params, $uri);
 
             $result['result'] = $this->msg_model->getResult();
             $result['error'] = $this->msg_model->getError();
