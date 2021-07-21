@@ -125,12 +125,29 @@ class UtilitiesModel
      * @param integer $count
      * @return array
      */
-    public static function paginationLink(string $url, int $limit, int $offset, int $count):array
+    public static function paginationLink(string $url, int $limit, int $offset, int $count): array
     {
-        $link = Array();
+        $link = array();
         $link['next'] = ($limit + $offset) > $count ? null : $url . "?offset=" . ($limit + $offset) . "&limit=" . $limit;
         $offset_pre = str_replace("-", "", $limit - $offset);
         $link['previous'] = (int) $offset === 0 ? null : $url . "?offset=" . $offset_pre  . "&limit=" . $limit;
         return $link;
+    }
+
+    /**
+     * Passar data do formato BR para o formato USA e verificar se é valida.
+     * 
+     * @param string $date
+     * @return boll|string
+     */
+    public static function validDateBrForUSA(string $date)
+    {
+        $usa = explode("-", str_replace("/", "-", $date));
+
+        if ((int)$usa[2] > 2020) {
+            return checkdate((int) $usa[1], (int)$usa[0], (int)$usa[2]) ? $usa[1] . "/" . $usa[0] . "/" . $usa[2] : false;
+        } else {
+            return false;
+        }
     }
 }

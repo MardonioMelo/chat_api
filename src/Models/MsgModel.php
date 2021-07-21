@@ -13,6 +13,7 @@ class  MsgModel
     private $tab_chat_msg;
     private $Error;
     private $Result;
+    private $params;
 
     /**
      * Declara a classe ChatMsg na inicialização
@@ -40,44 +41,84 @@ class  MsgModel
         $this->tab_chat_msg->chat_text = (string) trim(strip_tags($text));
         $this->tab_chat_msg->chat_drive = (string) $drive;
         $this->tab_chat_msg->chat_type = (string) $type;
-        $this->tab_chat_msg->chat_attachment = (string)$attachment;           
+        $this->tab_chat_msg->chat_attachment = (string)$attachment;
 
         $this->saveCreate();
     }
 
     /**
      * Consultar Histórico de mensagens de um intervalo de tempo.
+     * Informe o id do remetente, id do destinatário, data de inicio e fim da troca de mensagens.
      *
-     * @param integer $user_id
-     * @param integer $user_dest_id
-     * @param string $dt_start = data e hora inicio
-     * @param string $dt_end = data e hora fim
-     * @return object
+     * @param array $data 
+     * @return void
      */
-    public function readHistory(int $user_id, int $user_dest_id, string $dt_start, string $dt_end)
-    {       
-        $query_col = "(chat_user_id = :a AND chat_user_dest_id = :b OR chat_user_id = :c AND chat_user_dest_id = :d) AND chat_date BETWEEN :e AND :f";
-        $query_value = "a={$user_id}&b={$user_dest_id}&c={$user_id}&d={$user_dest_id}&e={$dt_start}&f={$dt_end}";       
-        $this->tab_chat_msg->readCol($query_col, $query_value);
+    public function getHistory(array $data): void
+    {
+        $this->setParams($data);
 
-        return $this->tab_chat_msg->getResult();
+        if ($this->getResult()) {
+
+            $history = $this->readHistory(
+                $this->params['ori'],
+                $this->params['des'],
+                $this->params['sta'],
+                $this->params['end']
+            );
+
+            $this->Result = $this->tab_chat_msg->getError();
+            $this->Error['data'] =  $this->tab_chat_msg->getResult() ?
+                $this->passeAllDataArrayHistory($this->tab_chat_msg->getResult()) : [];
+            $this->Error['msg'] = "Sucesso!";
+        }
     }
 
     /**
-     * <b>Verificar Ação:</b> Retorna TRUE se ação for efetuada ou FALSE se não. Para verificar erros
-     * execute um getError();
-     * @return string $Var = True(com o id) or False
+     * Verificar e validar os parâmetros
+     *
+     * @param array $data  
+     * @return void
      */
-    public function getResult(): string
+    public function setParams(array $data)
+    {
+        if (!empty($data['ori']) && !empty($data['des']) && !empty($data['sta']) && !empty($data['end'])) {
+
+            $sta = UtilitiesModel::validDateBrForUSA($data['sta']);
+            $end = UtilitiesModel::validDateBrForUSA($data['end']);
+
+            if ($sta && $end) {
+                $this->params['ori'] = (int) $data['ori'];
+                $this->params['des'] = (int) $data['des'];
+                $this->params['sta'] = $sta;
+                $this->params['end'] = $end;
+                $this->Result = true;
+            } else {
+                $this->Result = false;
+                $this->Error['msg'] = "Opss! Uma das datas informadas não é válida.";
+            }
+        } else {
+            $this->Result = false;
+            $this->Error['msg'] = "Opss! Informe todos os parâmetros obrigatórios.";
+        }
+    }
+
+
+    /**
+     * Verificar Ação
+     * 
+     * @return bool 
+     */
+    public function getResult(): bool
     {
         return $this->Result;
     }
 
     /**
-     * <b>Obter Erro:</b> Retorna um string com o erro.
-     * @return string $Error = String com o erro
+     * Obter Erro
+     * 
+     * @return array|Object 
      */
-    public function getError(): string
+    public function getError()
     {
         return $this->Error;
     }
@@ -97,7 +138,7 @@ class  MsgModel
                 $result[$key]['chat_user_id'] = $arr->data()->chat_user_id;
                 $result[$key]['chat_user_dest_id'] = $arr->data()->chat_user_dest_id;
                 $result[$key]['chat_text'] = $arr->data()->chat_text;
-                $result[$key]['chat_type'] = $arr->data()->chat_type;             
+                $result[$key]['chat_type'] = $arr->data()->chat_type;
                 $result[$key]['chat_date'] = $arr->data()->chat_date;
                 $result[$key]['chat_attachment'] = $arr->data()->chat_attachment;
             }
@@ -123,5 +164,21 @@ class  MsgModel
             $this->Error = $this->tab_chat_msg->fail()->getMessage();
         }
     }
-    
+
+
+    /**
+     * Consultar Histórico de mensagens de um intervalo de tempo.
+     *
+     * @param integer $user_id
+     * @param integer $user_dest_id
+     * @param string $dt_start = data e hora inicio
+     * @param string $dt_end = data e hora fim
+     * @return object
+     */
+    private function readHistory(int $user_id, int $user_dest_id, string $dt_start, string $dt_end)
+    {
+        $query_col = "(chat_user_id = :a AND chat_user_dest_id = :b OR chat_user_id = :c AND chat_user_dest_id = :d) AND chat_date BETWEEN :e AND :f";
+        $query_value = "a={$user_id}&b={$user_dest_id}&c={$user_id}&d={$user_dest_id}&e={$dt_start}&f={$dt_end}";
+        $this->tab_chat_msg->readCol($query_col, $query_value);
+    }
 }

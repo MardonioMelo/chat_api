@@ -107,7 +107,8 @@ Para o usuário obter o token de autorização ele deverá estar previamente cad
 Exemplo de envio:   
 - POST: localhost/chatbot_api/api/token
 >   
-    Dados via POST:     
+    Content-Type: multipart/form-data
+    Dados:     
         uuid: "290b7b75-b949-4643-9e11-1cc2214a6882" ou o número do CPF              
         type: "client" ou "attendant"    
         public: "ffc6wwq2eb25f5asasf11a7f1b7546cb3ca"
@@ -136,20 +137,21 @@ Apenas os atendentes tem permissão para cadastrar outros atendentes ou clientes
 Exemplo de envio:   
 - POST: localhost/chatbot_api/api/attendant
 >   
-    Dados via POST:   
-        cpf: 123.456.789-10    
-        name: "João"  
-        lastname: "Junior"     
-        avatar: "http://sitedeimagem/imagem.png" - opcional          
+    Content-Type: multipart/form-data
+    Dados:   
+        cpf: string    
+        name: string  
+        lastname: string     
+        avatar: string - opcional          
 
     Dados de retorno: 
     {
         "result": true,
         "error": {
-            "msg": "Cadastro realizado com sucesso!",
+            "msg": string,
             "data": {
-                "id": "...",
-                "uuid": "..."
+                "id": int,
+                "uuid": string
             }
         }
     }         
@@ -162,84 +164,158 @@ Apenas os atendentes tem permissão para consultar o cadastro de outros atendent
 Exemplo de envio:   
 - GET: localhost/chatbot_api/api/attendant/{id}
 >   
-    Dados via GET: id do atendente   
-           
+    Content-Type: none
+    Informar o id do cadastro no final da rota            
 
     Dados de retorno: 
     {
         "result": true,
         "error": {
-            "msg": "Sucesso!",
+            "msg": string,
             "data": {
                 "id": 1,
-                "cpf": 10234567890,
-                "name": "João",
-                "lastname": "Silva",
-                "avatar": "../imagem.png",
-                "created_at": "14/07/2021"
-                "updated_at": "14/07/2021"
+                "cpf": int,
+                "name": string,
+                "lastname": string,
+                "avatar": string,
+                "created_at": string
+                "updated_at": string
             }
         }
     }           
 > 
 
-<b>Atualizar Atendente</b><br>
+<b>Consultar Todos Cadastros </b><br>
 
-Apenas os atendentes tem permissão para cadastrar outros atendentes ou clientes.
+Apenas os atendentes tem permissão para consultar o cadastro de outros atendentes ou clientes.
 
 Exemplo de envio:   
-- PUT: localhost/chatbot_api/api/attendant/{id}
->      
-    Content-Type: application/x-www-form-urlencoded. 
+- GET: localhost/chatbot_api/api/attendant?limit=10&offset=0
+>   
+    Content-Type: none
     Dados:
-        cpf: 123.456.789-10    
-        name: "João"  
-        lastname: "Junior"     
-        avatar: "http://sitedeimagem/imagem.png" - opcional          
+        limit: int
+        offset: int         
 
     Dados de retorno: 
     {
         "result": true,
         "error": {
-            "msg": "Cadastro realizado com sucesso!",
+            "msg": string,
+            "data": [
+                {
+                    "id": ',               
+                    "cpf": int,
+                    "name": "string",
+                    "lastname": "string",
+                    "avatar": "string",
+                    "updated_at": "string",
+                    "created_at": "string"
+                }, ...   
+            ],
+        "count": int,
+        "next": "string",
+        "previous": "string"
+    }
+}         
+> 
+
+<b>Atualizar Atendente</b><br>
+
+Apenas os atendentes tem permissão para atualizar outros atendentes ou clientes.
+
+Exemplo de envio:   
+- PUT: localhost/chatbot_api/api/attendant/{id}
+>      
+    Informar o id do cadastro no final da rota 
+    Content-Type: application/x-www-form-urlencoded. 
+    Dados:
+        cpf: string    
+        name: string  
+        lastname: string     
+        avatar: string - opcional          
+
+    Dados de retorno: 
+    {
+        "result": true,
+        "error": {
+            "msg": string,
             "data": {
-                "id": "...",
-                "uuid": "..."
+                "id": int,
+                "updated_at":string
             }
         }
     }         
 > 
 
-<b>Cadastro de Cliente</b><br>
+<b>Deletar Atendente</b><br>
+
+Apenas os atendentes tem permissão para deletar outros atendentes ou clientes.
 
 Exemplo de envio:   
-- POST: localhost/chatbot_api/api/client
->   
-    Dados via POST:   
-        cpf: 123.456.789-10  
-        name: "Maria"  
-        lastname: "Oliveira"     
-        avatar: "http://sitedeimagem/imagem.png" - opcional            
+- DELETE: localhost/chatbot_api/api/attendant/{id}
+>      
+    Informar o id do cadastro no final da rota 
+    Content-Type: none.    
 
     Dados de retorno: 
     {
         "result": true,
         "error": {
-            "msg": "Cadastro realizado com sucesso!",
+            "msg": string,
             "data": {
-                "id": "10",
-                "uuid": "46b3a264-4ff1-464c-821f-aa9c389b620f"
+                "id": int              
             }
         }
-    }            
+    }         
 > 
 
-E recomendado que os usuários sejam cadastrados através das rotas citadas acima, porem o mesmo poderá ser cadastrado via terminal também. 
-Esse recurso só deve ser usado para testes, quando ainda não há uma interface para cadastro do usuário ou quando não existem usuários do tipo atendente cadastrado.
+Recomenda-se que os usuários sejam cadastrados através das rotas citadas acima, porém o mesmo poderá ser cadastrado via terminal caso prefira. Esse recurso só deve ser usado para testes, quando ainda não há uma interface para cadastro do usuário ou quando não existem usuários do tipo atendente cadastrado.
 
 >
     php new-user.php
 >
+
+<b>CRUD de Clientes</b><br>
+
+O cadastro, consulta, atualização e delete de clientes segue o mesmo fluxo e método do cadastro de atendentes apenas substituindo na rota o  <i>"attendant"</i> por <i>"client"</i>.
+
+Diagrama: https://viewer.diagrams.net/?highlight=0000ff&edit=_blank&layers=1&nav=1&page-id=N9ksTu93cD9Ls4vZaQYz&title=Diagrama%20do%20Chat#Uhttps%3A%2F%2Fdrive.google.com%2Fuc%3Fid%3D13BHcugWv8KVK3ha1CztGjqo_SD-VmPBF%26export%3Ddownload
+
+<b>Consultar Histórico de Mensagens</b><br>
+
+ Informe o id do remetente, id do destinatário, data de inicio e fim da troca de mensagens.
+
+Exemplo de envio:   
+- localhost:81/chatbot_api/api/history?ori={id_user_origem}&des={id_user_destino}&sta={dt_inicio}&end={dt_fim}
+>   
+    Dados via GET:     
+        ori: int - id do remetente
+        des: int - id do destinatário
+        sta: string - data de inicio (01-01-2021)
+        end: string - data de fim (28-02-2021)
+
+    Dados de retorno: [
+        {
+            "chat_user_id":"1",
+            "chat_user_dest_id":"2",
+            "chat_text":"Como vai?",
+            "chat_type":"text",
+            "chat_date":"2021-06-17 01:13:45",
+            "chat_attachment":""
+        },
+        {   "chat_user_id":"2",
+            "chat_user_dest_id":"1",
+            "chat_text":"Bem e vc?",
+            "chat_type":"text",
+            "chat_date":"2021-06-17 01:15:21",
+            "chat_attachment":""
+        },
+        ...
+    ]          
+> 
+
+
 
 <b>Exemplo de implementação no cliente</b>
 
@@ -247,7 +323,7 @@ Criar um aquivo js e importa-lo na home da pagina após o login do usuário.<br>
 Confira um exemplo de implementação pasta ./examples
 <br><br>
 
-<b>PORT do WebSocket</b><br>
+<b>WebSocket</b><br>
 
 SERVER_CHAT_PORT = porta de conexão com o servidor websocket. Essa porta pode ser configurada no arquivo src\config\app.php
 
@@ -301,36 +377,7 @@ Exemplos para consulta da quantidade online:
 
 Os dados de retorno seguem a mesma estrutura de envio caso o outro user esteja offline.
 
-<b>Consultar Histórico de Mensagens</b><br>
 
-Exemplo de envio:   
-- localhost/api/history/read
->   
-    Dados via POST:     
-        user_id: 1  
-        user_dest_id: 2     
-        dt_start: "2021-06-15 06:00"  
-        dt_end: "2021-06-16 18:00"  
-
-    Dados de retorno: [
-        {
-            "chat_user_id":"1",
-            "chat_user_dest_id":"2",
-            "chat_text":"Como vai?",
-            "chat_type":"text",
-            "chat_date":"2021-06-17 01:13:45",
-            "chat_attachment":""
-        },
-        {   "chat_user_id":"2",
-            "chat_user_dest_id":"1",
-            "chat_text":"Bem e vc?",
-            "chat_type":"text",
-            "chat_date":"2021-06-17 01:15:21",
-            "chat_attachment":""
-        },
-        ...
-    ]          
-> 
 
 
 ## Comandos

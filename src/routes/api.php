@@ -44,7 +44,7 @@ $app->get(API_VERSION . '/client/{id}', ClientController::class . ":readClient")
 $app->put(API_VERSION . '/client/{id}', ClientController::class . ":updateClient")->add(new JWTMiddleware());
 $app->delete(API_VERSION . '/client/{id}', ClientController::class . ":deleteClient")->add(new JWTMiddleware());
 // Mensagens
-$app->post(API_VERSION . '/history/read', DashboardController::class . ":msgHistory")->add(new JWTMiddleware());
+$app->get(API_VERSION . '/history', DashboardController::class . ":msgHistory")->add(new JWTMiddleware());
 
 // View do chat
 $app->get('/home/{id}', DashboardController::class . ":home")->add(new JWTMiddleware());
@@ -57,8 +57,8 @@ $app->post('/bot', BotController::class . ":chatBot")->add(new JWTMiddleware());
 // --------------------------+
 
 /**
- * Catch-all route to serve a 404 Not Found page if none of the routes match
- * NOTE: make sure this route is defined last
+ * Rota pega-tudo para exibir uma página 404 não encontrada se nenhuma das rotas corresponder
+ * NOTA: certifique-se de que esta rota seja definida por último
  */
 $app->map(['GET', 'POST', 'PUT', 'DELETE', 'PATCH'], '/{routes:.+}', function ($request, $response) {
     throw new HttpNotFoundException($request);
