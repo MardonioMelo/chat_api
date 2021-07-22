@@ -196,6 +196,7 @@ Exemplo de envio:
             "data": {
                 "id": 1,
                 "cpf": int,
+                "uuid": string,
                 "name": string,
                 "lastname": string,
                 "avatar": string,
@@ -210,6 +211,7 @@ Descrição da resposta
 - result: true ou false.
 - error - data - id: ID do cadastro.
 - error - data - cpf: CPF do atendente.
+- error - data - uuid: UUID do atendente.
 - error - data - name: Nome.
 - error - data - lastname: Sobrenome.
 - error - data - avatar: Link da imagem
@@ -244,6 +246,7 @@ Exemplo de envio:
                 {
                     "id": ',               
                     "cpf": int,
+                    "uuid": string,
                     "name": "string",
                     "lastname": "string",
                     "avatar": "string",
@@ -262,6 +265,7 @@ Descrição da resposta
 - result: true ou false.
 - error - data[ ] - id: ID do cadastro
 - error - data[ ] - cpf: CPF do atendente.
+- error - data[ ] - uuid: UUID do atendente.
 - error - data[ ] - name: Nome.
 - error - data[ ] - lastname: Sobrenome.
 - error - data[ ] - avatar: Link da imagem
