@@ -50,7 +50,7 @@ class JWTController
             if (!empty($this->data['uuid']) && !empty($this->data['type'])) {
 
                 if ($this->data['type'] === "attendant") {
-                    $this->createTokenAttendant();
+                    $this->checkAttendant();
                 } else {
                     $this->checkClient();
                 }
@@ -70,29 +70,45 @@ class JWTController
      *   
      * @return void
      */
-    private function createTokenAttendant(): void
+    private function checkAttendant(): void
     {
         $this->user = $this->attendant_model->getUserUUID($this->data['uuid']);
 
         if ($this->user) {
-            $this->jwt->createToken([
-                "uuid" => $this->user->attendant_uuid,
-                "name" => $this->user->attendant_name,
-                "type" => "attendant"
-            ], 43200);
-
-            if ($this->jwt->getResult()) {
-
-                $this->result['result'] = $this->jwt->getResult();
-                $this->result['error'] = $this->jwt->getError();
-                unset($this->result['error']['this->data']);
-            } else {
-                $this->result['result'] = $this->jwt->getResult();
-                $this->result['error'] = $this->jwt->getError();
-            }
+            $this->createTokenAttendant();
         } else {
-            $this->result['result'] = false;
-            $this->result['error'] = "O usuário não existe!";
+            $this->user = $this->attendant_model->getUserCPF($this->data['uuid']);
+
+            if ($this->user) {
+                $this->createTokenAttendant();
+            } else {
+                $this->result['result'] = false;
+                $this->result['error'] = "O usuário não existe!";
+            }
+        }
+    }
+
+    /**
+     * Criar token para um atendente
+     *
+     * @return void
+     */
+    private function createTokenAttendant():void
+    {
+        $this->jwt->createToken([
+            "uuid" => $this->user->attendant_uuid,
+            "name" => $this->user->attendant_name,
+            "type" => "attendant"
+        ], 43200);
+
+        if ($this->jwt->getResult()) {
+
+            $this->result['result'] = $this->jwt->getResult();
+            $this->result['error'] = $this->jwt->getError();
+            unset($this->result['error']['this->data']);
+        } else {
+            $this->result['result'] = $this->jwt->getResult();
+            $this->result['error'] = $this->jwt->getError();
         }
     }
 
@@ -106,7 +122,7 @@ class JWTController
         $this->user = $this->client_model->getUserUUID($this->data['uuid']);
 
         if ($this->user) {
-            $this->createTokenClient();           
+            $this->createTokenClient();
         } else {
             $this->result['result'] = false;
 

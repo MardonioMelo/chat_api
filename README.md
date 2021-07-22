@@ -16,8 +16,8 @@ API para chat e chatbot de suporte, ainda em desenvolvimento.
 - [x] Rota para gerar token JWT
 - [x] Criar sala de espera dos clientes para atendimento e sala para os atendentes.
 - [x] Consultar dados dos clientes e atendentes.
-- [ ] Listar clientes da sala de espera por ordem de chegada.
 - [ ] Receber e salvar dados da abertura do atendimento no db.
+- [ ] Listar clientes da sala de espera por ordem de chegada.
 - [ ] Retirar cliente da sala de espera ao iniciar o atendimento.
 - [ ] Receber dados de avaliação do atendimento, salvar e finalizar a sessão do cliente.
 - [ ] Criar span de envio para o cliente da posição dele na fila de espera.
@@ -359,7 +359,7 @@ Recomenda-se que os usuários sejam cadastrados através das rotas citadas acima
 
 O cadastro, consulta, atualização e delete de clientes segue o mesmo fluxo e método do cadastro de atendentes apenas substituindo na rota o  <i>"attendant"</i> por <i>"client"</i>.
 
-[Clique aqui](https://viewer.diagrams.net/?highlight=0000ff&edit=_blank&layers=1&nav=1&page-id=N9ksTu93cD9Ls4vZaQYz&title=Diagrama%20do%20Chat#Uhttps%3A%2F%2Fdrive.google.com%2Fuc%3Fid%3D13BHcugWv8KVK3ha1CztGjqo_SD-VmPBF%26export%3Ddownload) para ver o diagrama do CRUD dos clientes
+[Clique aqui](https://viewer.diagrams.net/?highlight=0000ff&edit=_blank&layers=1&nav=1&page-id=7SM0Ji58Qv2cIDF6IUad&title=Diagrama%20do%20Chat#Uhttps%3A%2F%2Fdrive.google.com%2Fuc%3Fid%3D13BHcugWv8KVK3ha1CztGjqo_SD-VmPBF%26export%3Ddownload) para ver o diagrama do CRUD dos clientes
 
 <b>Consultar Histórico de Mensagens</b><br>
 
