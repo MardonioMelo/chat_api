@@ -104,25 +104,27 @@ Para o usuário obter o token de autorização ele deverá estar previamente cad
 
 <b>Criar token do usuário</b><br>
 
+[Clique aqui](https://viewer.diagrams.net/?highlight=0000ff&edit=_blank&layers=1&nav=1&title=Diagrama%20do%20Chat#Uhttps%3A%2F%2Fdrive.google.com%2Fuc%3Fid%3D13BHcugWv8KVK3ha1CztGjqo_SD-VmPBF%26export%3Ddownload) para ver o Diagrama de geração do token
+
 Exemplo de envio:   
 - POST: localhost/chatbot_api/api/token
 >   
     Content-Type: multipart/form-data
     Dados:     
-        uuid: "290b7b75-b949-4643-9e11-1cc2214a6882" ou o número do CPF              
-        type: "client" ou "attendant"    
-        public: "ffc6wwq2eb25f5asasf11a7f1b7546cb3ca"
-        name: "Junior - opcional" 
-        avatar: "link de uma imagem do usuário - opcional"
-        lastname: "sobrenome do usuário - opcional"
+        uuid: string              
+        type: string    
+        public: string
+        name: string 
+        avatar: string
+        lastname: string
 
     Dados de retorno: 
         {
-            "result": true|false,
+            "result": bool,
             "error": {
-                "header": "Authorization",
-                "token": "Bearer ...token...",
-                "msg": "Token gerado com sucesso!"
+                "header": string,
+                "token": string,
+                "msg": string
             }
         } 
 > 
@@ -130,18 +132,17 @@ Exemplo de envio:
 O name | lastname | avatar: são opcionais porque só serão utilizados quando a API tiver que cadastrar um usuário que não existe no db e que informou um CPF válido no campo uuid, nesse caso o name e lastname passam a ser obrigatórios..
 
 <b>Cadastrar Atendente</b><br>
-Diagrama: https://viewer.diagrams.net/?highlight=0000ff&edit=_blank&layers=1&nav=1&page-id=psJkvXa7-np5yWx2_JBS&title=Diagrama%20do%20Chat#Uhttps%3A%2F%2Fdrive.google.com%2Fuc%3Fid%3D13BHcugWv8KVK3ha1CztGjqo_SD-VmPBF%26export%3Ddownload
+
+[Clique aqui](https://viewer.diagrams.net/?highlight=0000ff&edit=_blank&layers=1&nav=1&page-id=psJkvXa7-np5yWx2_JBS&title=Diagrama%20do%20Chat#Uhttps%3A%2F%2Fdrive.google.com%2Fuc%3Fid%3D13BHcugWv8KVK3ha1CztGjqo_SD-VmPBF%26export%3Ddownload) para ver o Diagrama do CRUD dos atendentes.
 
 Apenas os atendentes tem permissão para cadastrar outros atendentes ou clientes.
 
 Descrição da requisição
-- cpf: CPF do novo atendente.
-- nome: Nome do novo atendente.
-- lastname: Sobrenome do novo atendente.
-- avatar: link de uma imagem do atendente - opcional.
-- Header: Deve ser informado no cabeçalho da requisição no campo Authorization um token JWT valido obtido anteriormente
-ex.: Authorization:  Bearer ...token...
-- Body: Deve ser informado no cabeçalho da requisição no campo Content-Type o valor "multipart/form-data".
+- uuid: ID único gerado pelo sistema no momento do cadastro do usuário. Caso o usuário não tenha o UUID então deve informar o CPF no lugar.
+- name: Nome do usuário.
+type: tipo de usuário (client ou attendant).
+- public: chave publica padrão definida pelo administrador do sistema.
+name | lastname | avatar: são opcionais porque só serão utilizados quando a API tiver que cadastrar um usuário que não existe no db e que informou um CPF válido no campo uuid, nesse caso o name e lastname passam a ser obrigatórios.
 
 Exemplo de envio:   
 - POST: localhost/chatbot_api/api/attendant
@@ -168,9 +169,9 @@ Exemplo de envio:
 
 Descrição da resposta
 - result: true ou false.
-- error - data - id: ID do cadastro.
-- error - data - uuid: UUID do cadastro.
-- error - msg: Mensagem informativa do resultado.
+- error - header: Nome do campo no cabeçalho onde deverá informar o token nas requisições as demais rotas da API. Ex.: Authorization.
+- error - token: Token que deverá informar no cabeçalho das requisições. Ex.: Bearer ...token...
+- error - msg: Mensagem informativa do resultado. 
 
 <b>Consultar um Cadastro </b><br>
 
@@ -358,7 +359,7 @@ Recomenda-se que os usuários sejam cadastrados através das rotas citadas acima
 
 O cadastro, consulta, atualização e delete de clientes segue o mesmo fluxo e método do cadastro de atendentes apenas substituindo na rota o  <i>"attendant"</i> por <i>"client"</i>.
 
-Diagrama: https://viewer.diagrams.net/?highlight=0000ff&edit=_blank&layers=1&nav=1&page-id=N9ksTu93cD9Ls4vZaQYz&title=Diagrama%20do%20Chat#Uhttps%3A%2F%2Fdrive.google.com%2Fuc%3Fid%3D13BHcugWv8KVK3ha1CztGjqo_SD-VmPBF%26export%3Ddownload
+[Clique aqui](https://viewer.diagrams.net/?highlight=0000ff&edit=_blank&layers=1&nav=1&page-id=N9ksTu93cD9Ls4vZaQYz&title=Diagrama%20do%20Chat#Uhttps%3A%2F%2Fdrive.google.com%2Fuc%3Fid%3D13BHcugWv8KVK3ha1CztGjqo_SD-VmPBF%26export%3Ddownload) para ver o diagrama do CRUD dos clientes
 
 <b>Consultar Histórico de Mensagens</b><br>
 
@@ -408,18 +409,23 @@ SERVER_CHAT_PORT = porta de conexão com o servidor websocket. Essa porta pode s
 
 Exemplos para troca de mensagens: 
 >
-    ws://localhost:SERVER_CHAT_PORT/api/... 
+    ws://localhost:SERVER_CHAT_PORT/api/attendant
+    ws://localhost:SERVER_CHAT_PORT/api/client
+
+    - Header: Deve ser informado no cabeçalho da requisição no campo Authorization um token JWT valido obtido anteriormente ex.: Authorization:  Bearer ...token...
 >
+
+Apos a conexão bem sucedida com o servidor de chat, já será possível enviar mensagens ou requisições de informações conforme estrutura dos dados enviados.
 
 <b>Troca de Mensagens</b><br>
 
 Exemplos para troca de mensagens: 
-- ws://localhost:8081/api/attendant
-- ws://localhost:8081/api/client
-
 >    
+    - ws://localhost:8081/api/attendant
+    - ws://localhost:8081/api/client
+    
     Dados via POST:     
-    Dados de envio: {  
+    {  
         "cmd": "msg",   
         "driver": "web",  
         "userId": 1,  
@@ -455,9 +461,6 @@ Exemplos para consulta da quantidade online:
 > 
 
 Os dados de retorno seguem a mesma estrutura de envio caso o outro user esteja offline.
-
-
-
 
 ## Comandos
 

@@ -57,6 +57,7 @@ class  AttendantModel
             $this->Result = true;
             $this->Error['msg'] = "Sucesso!";
             $this->Error['data']['id'] = $attendant->attendant_id;
+            $this->Error['data']['uuid'] = $attendant->attendant_uuid;
             $this->Error['data']['cpf'] = $attendant->attendant_cpf;
             $this->Error['data']['name'] = $attendant->attendant_name;
             $this->Error['data']['lastname'] = $attendant->attendant_lastname;
@@ -173,6 +174,7 @@ class  AttendantModel
             foreach ($obj as $key => $arr) {
                 $result[$key]['id'] = $arr->data()->attendant_id;
                 $result[$key]['cpf'] = $arr->data()->attendant_cpf;
+                $result[$key]['uuid'] = $arr->data()->attendant_uuid;
                 $result[$key]['name'] = $arr->data()->attendant_name;
                 $result[$key]['lastname'] = $arr->data()->attendant_lastname;
                 $result[$key]['avatar'] = $arr->data()->attendant_avatar;

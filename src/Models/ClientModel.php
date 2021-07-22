@@ -57,6 +57,7 @@ class  ClientModel
             $this->Error['msg'] = "Sucesso!";
             $this->Error['data']['id'] = $client->client_id;
             $this->Error['data']['cpf'] = $client->client_cpf;
+            $this->Error['data']['uuid'] = $client->client_uuid;
             $this->Error['data']['name'] = $client->client_name;
             $this->Error['data']['lastname'] = $client->client_lastname;
             $this->Error['data']['avatar'] = $client->client_avatar;
@@ -172,6 +173,7 @@ class  ClientModel
             foreach ($obj as $key => $arr) {
                 $result[$key]['id'] = $arr->data()->client_id;
                 $result[$key]['cpf'] = $arr->data()->client_cpf;
+                $result[$key]['uuid'] = $arr->data()->client_uuid;
                 $result[$key]['name'] = $arr->data()->client_name;
                 $result[$key]['lastname'] = $arr->data()->client_lastname;
                 $result[$key]['avatar'] = $arr->data()->client_avatar;
