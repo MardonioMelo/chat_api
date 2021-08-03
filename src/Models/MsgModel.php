@@ -26,22 +26,22 @@ class  MsgModel
     /**
      * Salva mensagem do chat no banco de dados
      *
-     * @param Int $user_id
-     * @param Int $user_dest_id
+     * @param String $user_id
+     * @param String $user_dest_id
      * @param String $text
      * @param String $drive
      * @param String $chat_type
      * @param String $attachment
      * @return void
      */
-    public function saveMsg(Int $user_id, Int $user_dest_id, String $text, String $drive = "web", String $type = "text", String $attachment = null): void
+    public function saveMsg(string $user_uuid, string $user_dest_uuid, String $text, String $drive = "web", String $type = "text", String $attachment = null): void
     {
-        $this->tab_chat_msg->chat_user_id = (int) $user_id;
-        $this->tab_chat_msg->chat_user_dest_id = (int) $user_dest_id;
-        $this->tab_chat_msg->chat_text = (string) trim(strip_tags($text));
-        $this->tab_chat_msg->chat_drive = (string) $drive;
-        $this->tab_chat_msg->chat_type = (string) $type;
-        $this->tab_chat_msg->chat_attachment = (string)$attachment;
+        $this->tab_chat_msg->chat_user_uuid = $user_uuid;
+        $this->tab_chat_msg->chat_user_dest_uuid = $user_dest_uuid;
+        $this->tab_chat_msg->chat_text = trim(strip_tags($text));
+        $this->tab_chat_msg->chat_drive = $drive;
+        $this->tab_chat_msg->chat_type = $type;
+        $this->tab_chat_msg->chat_attachment = $attachment;
 
         $this->saveCreate();
     }
@@ -154,11 +154,12 @@ class  MsgModel
 
         if ($obj) {
             foreach ($obj as $key => $arr) {
-                $result[$key]['origin'] = $arr->data()->chat_user_id;
-                $result[$key]['destiny'] = $arr->data()->chat_user_dest_id;
+                $result[$key]['call'] = $arr->data()->chat_call_id;
+                $result[$key]['origin'] = $arr->data()->chat_user_uuid;
+                $result[$key]['destiny'] = $arr->data()->chat_user_dest_uuid;
                 $result[$key]['text'] = $arr->data()->chat_text;
                 $result[$key]['type'] = $arr->data()->chat_type;
-                $result[$key]['date'] = $arr->data()->chat_date;             
+                $result[$key]['date'] = $arr->data()->chat_date;
             }
         }
         return $result;
@@ -186,19 +187,26 @@ class  MsgModel
 
     /**
      * Consultar Histórico de mensagens de um intervalo de tempo.
-     *
-     * @param integer $user_id
-     * @param integer $user_dest_id
-     * @param string $dt_start = data e hora inicio
-     * @param string $dt_end = data e hora fim
-     * @return object
+     *   
+     * @param string $user_uuid
+     * @param string $user_dest_uuid
+     * @param string $dt_start
+     * @param string $dt_end
+     * @param int $limit
+     * @param int $offset
+     * @param int $call_id
+     * @return void
      */
-    private function readHistory(int $user_id, int $user_dest_id, string $dt_start, string $dt_end, int $limit = 100, int $offset = 0)
+    private function readHistory(string $user_uuid, string $user_dest_uuid, string $dt_start, string $dt_end, int $limit = 100, int $offset = 0, int $call_id = 0)
     {
+        $query_col = "(chat_user_uuid = :a AND chat_user_dest_uuid = :b OR chat_user_uuid = :c AND chat_user_dest_uuid = :d) AND chat_date BETWEEN :e AND :f";
+        $query_value = "a={$user_uuid}&b={$user_dest_uuid}&c={$user_uuid}&d={$user_dest_uuid}&e={$dt_start}&f={$dt_end}";
 
-        $query_col = "(chat_user_id = :a AND chat_user_dest_id = :b OR chat_user_id = :c AND chat_user_dest_id = :d) AND chat_date BETWEEN :e AND :f";
-        $query_value = "a={$user_id}&b={$user_dest_id}&c={$user_id}&d={$user_dest_id}&e={$dt_start}&f={$dt_end}";
+        if ($call_id !== 0) {
+            $query_col .= " AND chat_call_id = :g ";
+            $query_value .= "&g={$call_id}";
+        }
 
-        return $this->tab_chat_msg->find($query_col, $query_value)->limit($limit)->offset($offset)->fetch("client_id ASC");
+        return $this->tab_chat_msg->find($query_col, $query_value)->limit($limit)->offset($offset)->fetch("chat_id ASC");
     }
 }

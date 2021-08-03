@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Tempo de geração: 24-Jun-2021 às 19:27
+-- Tempo de geração: 03-Ago-2021 às 19:33
 -- Versão do servidor: 10.4.19-MariaDB
 -- versão do PHP: 7.4.19
 
@@ -29,8 +29,8 @@ SET time_zone = "+00:00";
 
 CREATE TABLE `chat_call` (
   `call_id` int(11) NOT NULL,
-  `call_user_id` int(11) NOT NULL COMMENT 'Id do atendente.',
-  `call_user_dest_id` int(11) NOT NULL COMMENT 'Id do cliente.',
+  `call_user_uuid` varchar(40) NOT NULL COMMENT 'UUID do atendente.',
+  `call_user_dest_uuid` varchar(40) NOT NULL COMMENT 'UUID do cliente.',
   `call_objective` varchar(255) DEFAULT NULL COMMENT 'Assunto do atendimento.',
   `call_status` int(2) NOT NULL DEFAULT 1 COMMENT 'Status do atendimento.',
   `call_date_start` timestamp NULL DEFAULT NULL COMMENT 'Data e hora UTC do inicio do atendimento.',

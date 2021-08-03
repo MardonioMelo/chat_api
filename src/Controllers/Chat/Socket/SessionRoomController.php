@@ -41,14 +41,14 @@ class SessionRoomController
      *  Adicionar usuário em uma sala
      *
      * @param integer $resourceId
-     * @param integer $user_id
+     * @param string $user_uuid
      * @param string $name_room
      * @return void
      */
-    public function addUserRoom(int $resourceId, int $user_id, string $name_room = "limbo"): void
+    public function addUserRoom(int $resourceId, string $user_uuid, string $name_room = "limbo"): void
     {
         $arr = $this->session->get($name_room);
-        $arr[$this->pre_key . $resourceId] = $user_id;
+        $arr[$this->pre_key . $resourceId] = $user_uuid;
         $this->session->set($name_room, $arr);
     }
 
@@ -70,12 +70,12 @@ class SessionRoomController
      * Adicionar usuário na lista de usuários geral
      *
      * @param int $resourceId
-     * @param int $user_id
+     * @param string $user_uuid
      * @return void
      */
-    public function addUserList(int $resourceId, int $user_id): void
+    public function addUserList(int $resourceId, string $user_uuid): void
     {
-        $this->addUserRoom($resourceId, $user_id,  'list');
+        $this->addUserRoom($resourceId, $user_uuid,  'list');
     }
 
     /**
@@ -93,12 +93,12 @@ class SessionRoomController
      * Adicionar usuário na sala de clientes
      *
      * @param int $resourceId
-     * @param int $user_id
+     * @param string $user_uuid
      * @return void
      */
-    public function addUserClient(int $resourceId, int $user_id): void
+    public function addUserClient(int $resourceId, string $user_uuid): void
     {
-        $this->addUserRoom($resourceId, $user_id,  'client');
+        $this->addUserRoom($resourceId, $user_uuid,  'client');
     }
 
     /**
@@ -116,12 +116,12 @@ class SessionRoomController
      * Adicionar usuário na sala de clientes
      *
      * @param int $resourceId
-     * @param int $user_id
+     * @param string $user_uuid
      * @return void
      */
-    public function addUserAttendant(int $resourceId, int $user_id): void
+    public function addUserAttendant(int $resourceId, string $user_uuid): void
     {
-        $this->addUserRoom($resourceId, $user_id,  'attendant');
+        $this->addUserRoom($resourceId, $user_uuid,  'attendant');
     }
 
     /**
@@ -134,19 +134,16 @@ class SessionRoomController
     {
         $this->removeUserRoom($resourceId, 'attendant');
     }
-    
+
     /**
-     * Obter e retornar o id do usuário a partir do id da conexão
+     * Obter e retornar o uuid do usuário a partir do id da conexão
      *
      * @param integer $resourceId
-     * @param string $name_room
-     * @return integer
+     * @param string $name_room    
      */
-    public function getUserId(int $resourceId, string $name_room = "list"): int
+    public function getUserId(int $resourceId, string $name_room = "list")
     {
-        $arr = $this->session->get($name_room);
-        $id = $arr[$this->pre_key . $resourceId];
-        return (int) $id + 0;
+        return $this->session->get($name_room)["{$this->pre_key}{$resourceId}"];
     }
 
     /**
@@ -158,7 +155,7 @@ class SessionRoomController
      */
     public function checkUserSession(int $resourceId, string $name_room = "list"): bool
     {
-        if ($this->getUserId($resourceId, $name_room) > 0) {
+        if (!empty($this->getUserId($resourceId, $name_room))) {
             return true;
         } else {
             return false;
@@ -171,7 +168,7 @@ class SessionRoomController
      * @param integer $resourceId
      * @return void
      */
-    public function removeUserAllRoom(int $resourceId):void
+    public function removeUserAllRoom(int $resourceId): void
     {
         $this->removeUserAttendant($resourceId);
         $this->removeUserClient($resourceId);

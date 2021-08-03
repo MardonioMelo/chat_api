@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Tempo de geração: 12-Jul-2021 às 19:50
+-- Tempo de geração: 03-Ago-2021 às 19:32
 -- Versão do servidor: 10.4.19-MariaDB
 -- versão do PHP: 7.4.19
 
@@ -29,7 +29,7 @@ SET time_zone = "+00:00";
 
 CREATE TABLE `chat_attendant` (
   `attendant_id` int(11) NOT NULL,
-  `attendant_uuid` varchar(255) NOT NULL COMMENT 'id único gerado pelo sistema',
+  `attendant_uuid` varchar(40) NOT NULL COMMENT 'id único gerado pelo sistema',
   `attendant_cpf` varchar(11) NOT NULL COMMENT 'CPF sem pontuação',
   `attendant_name` varchar(50) NOT NULL COMMENT 'Nome do usuário',
   `attendant_lastname` varchar(50) NOT NULL COMMENT 'Sobrenome',

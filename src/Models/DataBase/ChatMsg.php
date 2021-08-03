@@ -19,8 +19,8 @@ class ChatMsg extends DataLayer
     parent::__construct(
       "chat_msg",
       [
-        "chat_user_id",
-        "chat_user_dest_id",
+        "chat_user_uuid",
+        "chat_user_dest_uuid",
         "chat_text"
       ],
       "chat_id",

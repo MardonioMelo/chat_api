@@ -63,7 +63,7 @@ class AppChatController implements MessageComponentInterface
 
                     $user = $this->attendant_model->getUserUUID($user_token->uuid);                  
                     if ($user) {
-                        $this->newConnection($conn, (int)$user->attendant_id, "attendant", $user_token->name);
+                        $this->newConnection($conn, $user_token->uuid, "attendant", $user_token->name);
                     } else {
                         $conn->close();
                         $this->log_model->setLog("Opss! Usuário invalido.\n");
@@ -74,7 +74,7 @@ class AppChatController implements MessageComponentInterface
 
                     $user = $this->client_model->getUserUUID($user_token->uuid);
                     if ($user) {
-                        $this->newConnection($conn, (int)$user->client_id, "client", $user_token->name);
+                        $this->newConnection($conn, $user_token->uuid, "client", $user_token->name);
                     } else {
                         $conn->close();
                         $this->log_model->setLog("Opss! Usuário invalido.\n");
@@ -113,15 +113,23 @@ class AppChatController implements MessageComponentInterface
         $this->msg_obj = json_decode($msg);
 
         switch ($this->msg_obj->cmd) {
-           
+
+            case 'request_call':
+                //Check session               
+                $this->log_model->setLog($this->session_model->checkUserSession($from->resourceId, $this->msg_obj->user_uuid));
+                $this->log_model->setLog("Total Online: {$this->qtdUsersServer()} \n");
+                $this->log_model->setLog("Origem user: " . $this->msg_obj->user_uuid . " | Destino user: " . $this->msg_obj->user_dest_uuid . " \n");
+                //Send msg
+                $this->searchUserSendMsg($from, "client");
+                break;
             case 'msg':
                 //Check session               
-                $this->log_model->setLog($this->session_model->checkUserSession($from->resourceId, $this->msg_obj->userId));
+                $this->log_model->setLog($this->session_model->checkUserSession($from->resourceId, $this->msg_obj->user_uuid));
                 $this->log_model->setLog("Total Online: {$this->qtdUsersServer()} \n");
-                $this->log_model->setLog("Origem user: " . $this->msg_obj->userId . " | Destino user: " . $this->msg_obj->userDestId . " \n");
+                $this->log_model->setLog("Origem user: " . $this->msg_obj->user_uuid . " | Destino user: " . $this->msg_obj->user_dest_uuid . " \n");
                 //Send msg
-                $this->searchUserSendMsg($from);
-                break;
+                $this->searchUserSendMsg($from, $this->msg_obj->user_dest_type);
+                break;         
             case 'n_on':
                 $this->msg_obj->qtd = $this->qtdUsersServer();
                 $from->send(json_encode($this->msg_obj));
@@ -193,23 +201,24 @@ class AppChatController implements MessageComponentInterface
      * Procurar destinatária na memoria e enviar a mensagem ao mesmo
      *
      * @param ConnectionInterface $from
+     * @param string $room
      * @return void
      */
-    public function searchUserSendMsg(ConnectionInterface $from): void
-    {
-        $status_save = $this->saveMsgDB();
+    public function searchUserSendMsg(ConnectionInterface $from, string $room): void
+    {       
+        $status_msg = $this->saveMsgDB();
         $result = false;
         foreach ($this->clients as $client) { //Liste os users alocados na memória e procure o destinatário
 
-            if ($from !== $client) {   // O remetente não é o destinatário 
-                $destiny_id = $this->session_model->getUserId($client->resourceId) + 0;
-
-                if ((int) $this->msg_obj->userDestId === $destiny_id) {  // O destinatária corresponde ao id informado do destinatário
+            if ($from !== $client) {   // O remetente não é o destinatário                
+               $destiny_id = $this->session_model->getUserId($client->resourceId, $room);              
+               
+                if ($this->msg_obj->user_dest_uuid === $destiny_id) {  // O destinatária corresponde ao id informado do destinatário
 
                     $client->send(json_encode($this->msg_obj));  // Envie msg para o destinatário   
                     $result = true;
                     $this->log_model->setLog("Origem resourceId " . $from->resourceId . " | Destino resourceId: " . $client->resourceId  . "\n");
-                }
+                }               
             }
         }
 
@@ -221,7 +230,7 @@ class AppChatController implements MessageComponentInterface
         }
 
         $this->log_model->setLog("Mensagem: " . $this->msg_obj->text . "\n");
-        $this->log_model->setLog("Status: " . $status_save);
+        $this->log_model->setLog("Status: " . $status_msg);
     }
 
     /**
@@ -232,7 +241,7 @@ class AppChatController implements MessageComponentInterface
     public function saveMsgDB()
     {
         $this->msg_model = new MsgModel();
-        $this->msg_model->saveMsg($this->msg_obj->userId, $this->msg_obj->userDestId, $this->msg_obj->text);
+        $this->msg_model->saveMsg($this->msg_obj->user_uuid, $this->msg_obj->user_dest_uuid, $this->msg_obj->text);
         return $this->msg_model->getError();
     }
 
@@ -240,15 +249,15 @@ class AppChatController implements MessageComponentInterface
      * Armazene nova conexão para enviar mensagens mais tarde     
      *
      * @param ConnectionInterface $conn
-     * @param int $user_id
+     * @param string $user_uuid
      * @return void
      */
-    public function newConnection(ConnectionInterface  $conn, int $user_id, $name_room, $user_name): void
+    public function newConnection(ConnectionInterface  $conn, string $user_uuid, string $name_room, string $user_name): void
     {
         $this->log_model->resetLog();
         $this->clients->attach($conn);
-        $this->session_model->addUserList($conn->resourceId, $user_id);
-        $this->session_model->addUserRoom($conn->resourceId, $user_id, $name_room);
-        $this->log_model->setLog("New Connection ({$conn->resourceId}) | id ({$user_id}) | name ({$user_name}).\n");
+        $this->session_model->addUserList($conn->resourceId, $user_uuid);
+        $this->session_model->addUserRoom($conn->resourceId, $user_uuid, $name_room);
+        $this->log_model->setLog("New Connection ({$conn->resourceId}) | id ({$user_uuid}) | name ({$user_name}).\n");
     }
 }

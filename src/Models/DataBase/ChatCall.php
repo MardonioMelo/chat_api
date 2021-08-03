@@ -19,8 +19,8 @@ class ChatCall extends DataLayer
         parent::__construct(
             "chat_call",
             [
-                "call_user_id",
-                "call_user_dest_id",             
+                "call_user_uuid",
+                "call_user_dest_uuid",             
                 "call_date_start"
             ],
             "call_id",

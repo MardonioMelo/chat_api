@@ -430,14 +430,14 @@ Exemplos para troca de mensagens:
     
     Dados via POST:     
     {  
-        "cmd": "msg",   
-        "driver": "web",  
-        "userId": 1,  
-        "userDestId": 2,    
-        "text": "ola 1",    
-        "type": "text", 
-        "time": "10:30",    
-        "attachment":null  
+        "cmd": string,  //comando
+        "driver": string, //web
+        "user_uuid": string, //uuid do user de origem
+        "user_uuid_dest": string, //uuid do user de destino  
+        "text": string, //mensagem   
+        "type": string, //text - tipo de mensagem 
+        "time": string, //hora    
+        "attachment": object|null //null - outros atributos do chatbot
     } 
 
     Dados de retorno: N/A.    

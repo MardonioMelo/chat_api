@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Tempo de geração: 24-Jun-2021 às 19:28
+-- Tempo de geração: 03-Ago-2021 às 19:34
 -- Versão do servidor: 10.4.19-MariaDB
 -- versão do PHP: 7.4.19
 
@@ -29,8 +29,9 @@ SET time_zone = "+00:00";
 
 CREATE TABLE `chat_msg` (
   `chat_id` int(20) NOT NULL,
-  `chat_user_id` int(11) NOT NULL COMMENT 'Id do usuário que enviou a mensagem.',
-  `chat_user_dest_id` int(11) NOT NULL COMMENT 'Id do usuário que recebeu a mensagem.',
+  `chat_call_id` int(20) NOT NULL COMMENT 'Id da ligação entre atendente e cliente',
+  `chat_user_uuid` varchar(40) NOT NULL COMMENT 'UUID do usuário que enviou a mensagem.',
+  `chat_user_dest_uuid` varchar(40) NOT NULL COMMENT 'UUID do usuário que recebeu a mensagem.',
   `chat_text` text NOT NULL COMMENT 'Mensagem ou texto do conteúdo enviado',
   `chat_drive` varchar(10) NOT NULL DEFAULT 'web' COMMENT 'Meio de comunicação para o componente BotMan.',
   `chat_type` varchar(10) NOT NULL DEFAULT 'text' COMMENT 'Tipo de mensagem.',
