@@ -113,6 +113,7 @@ class AppChatController implements MessageComponentInterface
         $this->msg_obj = json_decode($msg);
 
         switch ($this->msg_obj->cmd) {
+           
             case 'msg':
                 //Check session               
                 $this->log_model->setLog($this->session_model->checkUserSession($from->resourceId, $this->msg_obj->userId));
@@ -124,7 +125,17 @@ class AppChatController implements MessageComponentInterface
             case 'n_on':
                 $this->msg_obj->qtd = $this->qtdUsersServer();
                 $from->send(json_encode($this->msg_obj));
-                $this->log_model->setLog("Total Online: {$this->qtdUsersServer()} \n");
+                $this->log_model->setLog("Total Online: {$this->msg_obj->qtd} \n");
+                break;
+            case 'n_on_clients':
+                $this->msg_obj->qtd = count($this->session_model->getUsersRoom("client"));
+                $from->send(json_encode($this->msg_obj));
+                $this->log_model->setLog("Total Clientes: {$this->msg_obj->qtd} \n");
+                break;
+            case 'n_on_attendants':              
+                $this->msg_obj->qtd = count($this->session_model->getUsersRoom("attendant"));
+                $from->send(json_encode($this->msg_obj));
+                $this->log_model->setLog("Total Atendentes: {$this->msg_obj->qtd} \n");
                 break;
             default:
                 $from->send('{"text":"Comando não reconhecido!"}');

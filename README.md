@@ -442,6 +442,7 @@ Exemplos para troca de mensagens:
 
     Dados de retorno: N/A.    
 > 
+Os dados de retorno seguem a mesma estrutura de envio caso o outro user esteja offline.
 
 <b>Quantidade Online</b><br>
 
@@ -452,19 +453,43 @@ Exemplos para consulta da quantidade online:
 >    
     Dados via POST:     
     Dados: {  
-        "cmd": "n_on",          
-        "userId": 1,          
+        "cmd": "n_on",    
         "qtd": ""    
     }   
 
     Dados de retorno: {  
-        "cmd": "n_on",          
-        "userId": 1,          
+        "cmd": "n_on",     
         "qtd": 16   
     }     
 > 
 
-Os dados de retorno seguem a mesma estrutura de envio caso o outro user esteja offline.
+>    
+    Dados via POST:     
+    Dados: {  
+        "cmd": "n_on_attendants",    
+        "qtd": ""    
+    }   
+
+    Dados de retorno: {  
+        "cmd": "n_on_attendants",     
+        "qtd": 16   
+    }     
+> 
+
+>    
+    Dados via POST:     
+    Dados: {  
+        "cmd": "n_on_clients",    
+        "qtd": ""    
+    }   
+
+    Dados de retorno: {  
+        "cmd": "n_on_clients",     
+        "qtd": 16   
+    }     
+> 
+
+
 
 ## Comandos
 
