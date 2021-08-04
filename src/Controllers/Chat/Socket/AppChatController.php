@@ -52,21 +52,22 @@ class AppChatController implements MessageComponentInterface
     {
         $this->log_model->resetLog();
         $this->jwt->checkToken($conn->httpRequest);
-        
+
         if ($this->jwt->getResult()) {
             $rota = strip_tags($conn->httpRequest->getRequestTarget());
             $user_token = $this->jwt->getError()['data'];
 
             switch ($rota) {
 
-                case '/api/attendant':                 
+                case '/api/attendant':
 
-                    $user = $this->attendant_model->getUserUUID($user_token->uuid);                  
+                    $user = $this->attendant_model->getUserUUID($user_token->uuid);
                     if ($user) {
                         $this->newConnection($conn, $user_token->uuid, "attendant", $user_token->name);
                     } else {
-                        $conn->close();
+                        $conn->send(json_encode(["result" => false, "Error" => ["msg" => "Opss! Usuário invalido."]]));
                         $this->log_model->setLog("Opss! Usuário invalido.\n");
+                        $conn->close();
                     }
                     break;
 
@@ -76,14 +77,16 @@ class AppChatController implements MessageComponentInterface
                     if ($user) {
                         $this->newConnection($conn, $user_token->uuid, "client", $user_token->name);
                     } else {
-                        $conn->close();
+                        $conn->send(json_encode(["result" => false, "Error" => ["msg" => "Opss! Usuário invalido."]]));
                         $this->log_model->setLog("Opss! Usuário invalido.\n");
-                    }                   
+                        $conn->close();
+                    }
                     break;
 
                 default:
-                    $conn->close();
+                    $conn->send(json_encode(["result" => false, "Error" => ["msg" => "Opss! URL invalida. " . $rota]]));
                     $this->log_model->setLog("Opss! URL invalida.\n" . $rota);
+                    $conn->close();
                     break;
             }
 
@@ -92,7 +95,7 @@ class AppChatController implements MessageComponentInterface
             $this->log_model->setLog("Total Atendentes: " . count($this->session_model->getUsersRoom("attendant")) . "\n");
             $this->log_model->setLog("Total Clientes: " . count($this->session_model->getUsersRoom("client")) . "\n");
         } else {
-            $conn->send(json_encode(["Result" => false, "Error" => $this->jwt->getError()]));
+            $conn->send(json_encode(["result" => false, "Error" => $this->jwt->getError()]));
             $this->log_model->setLog($this->jwt->getError() . "\n");
             $conn->close();
         }
@@ -111,44 +114,59 @@ class AppChatController implements MessageComponentInterface
     {
         $this->log_model->resetLog();
         $this->msg_obj = json_decode($msg);
+        $this->jwt->checkToken($from->httpRequest);
 
-        switch ($this->msg_obj->cmd) {
+        try {
+            switch ($this->msg_obj->cmd) {
 
-            case 'request_call':
-                //Check session               
-                $this->log_model->setLog($this->session_model->checkUserSession($from->resourceId, $this->msg_obj->user_uuid));
-                $this->log_model->setLog("Total Online: {$this->qtdUsersServer()} \n");
-                $this->log_model->setLog("Origem user: " . $this->msg_obj->user_uuid . " | Destino user: " . $this->msg_obj->user_dest_uuid . " \n");
-                //Send msg
-                $this->searchUserSendMsg($from, "client");
-                break;
-            case 'msg':
-                //Check session               
-                $this->log_model->setLog($this->session_model->checkUserSession($from->resourceId, $this->msg_obj->user_uuid));
-                $this->log_model->setLog("Total Online: {$this->qtdUsersServer()} \n");
-                $this->log_model->setLog("Origem user: " . $this->msg_obj->user_uuid . " | Destino user: " . $this->msg_obj->user_dest_uuid . " \n");
-                //Send msg
-                $this->searchUserSendMsg($from, $this->msg_obj->user_dest_type);
-                break;         
-            case 'n_on':
-                $this->msg_obj->qtd = $this->qtdUsersServer();
-                $from->send(json_encode($this->msg_obj));
-                $this->log_model->setLog("Total Online: {$this->msg_obj->qtd} \n");
-                break;
-            case 'n_on_clients':
-                $this->msg_obj->qtd = count($this->session_model->getUsersRoom("client"));
-                $from->send(json_encode($this->msg_obj));
-                $this->log_model->setLog("Total Clientes: {$this->msg_obj->qtd} \n");
-                break;
-            case 'n_on_attendants':              
-                $this->msg_obj->qtd = count($this->session_model->getUsersRoom("attendant"));
-                $from->send(json_encode($this->msg_obj));
-                $this->log_model->setLog("Total Atendentes: {$this->msg_obj->qtd} \n");
-                break;
-            default:
-                $from->send('{"text":"Comando não reconhecido!"}');
-                $this->log_model->setLog("Comando não reconhecido!\n");
-                break;
+                case 'msg':
+                    if (
+                        $this->jwt->getError()['data']->type == "client" && $this->msg_obj->user_dest_type == "client"
+                        || $this->msg_obj->user_dest_type != "client" && $this->msg_obj->user_dest_type != "attendant"
+                    ) {
+                        $from->send(json_encode(["result" => false, "Error" => ["msg" => "Opss! Você não tem permissão para enviar mensagens para este usuário."]]));
+                        $this->log_model->setLog("Não é permitido um cliente enviar mensagem para outro cliente!\n");
+                    } else {
+                        $this->log_model->setLog($this->session_model->checkUserSession($from->resourceId, $this->msg_obj->user_uuid));
+                        $this->log_model->setLog("Total Online: {$this->qtdUsersServer()} \n");
+                        $this->log_model->setLog("Origem user: " . $this->msg_obj->user_uuid . " | Destino user: " . $this->msg_obj->user_dest_uuid . " \n");
+                        $this->searchUserSendMsg($from, $this->msg_obj->user_dest_type);
+                    }
+                    break;
+                case 'request_call':
+                    $this->log_model->setLog($this->session_model->checkUserSession($from->resourceId, $this->msg_obj->user_uuid));
+                    $this->log_model->setLog("Total Online: {$this->qtdUsersServer()} \n");
+                    $this->log_model->setLog("Origem user: " . $this->msg_obj->user_uuid . " | Destino user: " . $this->msg_obj->user_dest_uuid . " \n");
+                    $this->searchUserSendMsg($from, "client");
+                    break;
+                case 'n_on':
+                    $this->msg_obj->qtd = $this->qtdUsersServer();
+                    $from->send(json_encode($this->msg_obj));
+                    $this->log_model->setLog("Total Online: {$this->msg_obj->qtd} \n");
+                    break;
+                case 'n_on_clients':
+                    $this->msg_obj->qtd = count($this->session_model->getUsersRoom("client"));
+                    $from->send(json_encode($this->msg_obj));
+                    $this->log_model->setLog("Total Clientes: {$this->msg_obj->qtd} \n");
+                    break;
+                case 'n_on_attendants':
+                    $this->msg_obj->qtd = count($this->session_model->getUsersRoom("attendant"));
+                    $from->send(json_encode($this->msg_obj));
+                    $this->log_model->setLog("Total Atendentes: {$this->msg_obj->qtd} \n");
+                    break;
+                default:
+                    $from->send('{"text":"Comando não reconhecido!"}');
+                    $this->log_model->setLog("Comando não reconhecido!\n");
+                    break;
+            }
+        } catch (\Throwable $e) {
+
+            $result = array();
+            $result["result"] = false;
+            $result["error"]['msg'] = "Comando não reconhecido. Verifique se todos os campos e dados foram informados corretamente!";
+            $result["error"]["data"] = [];
+
+            $from->send(json_encode($result));
         }
 
         $this->log_model->printLog();
@@ -205,20 +223,20 @@ class AppChatController implements MessageComponentInterface
      * @return void
      */
     public function searchUserSendMsg(ConnectionInterface $from, string $room): void
-    {       
+    {
         $status_msg = $this->saveMsgDB();
         $result = false;
         foreach ($this->clients as $client) { //Liste os users alocados na memória e procure o destinatário
 
             if ($from !== $client) {   // O remetente não é o destinatário                
-               $destiny_id = $this->session_model->getUserId($client->resourceId, $room);              
-               
+                $destiny_id = $this->session_model->getUserId($client->resourceId, $room);
+
                 if ($this->msg_obj->user_dest_uuid === $destiny_id) {  // O destinatária corresponde ao id informado do destinatário
 
                     $client->send(json_encode($this->msg_obj));  // Envie msg para o destinatário   
                     $result = true;
                     $this->log_model->setLog("Origem resourceId " . $from->resourceId . " | Destino resourceId: " . $client->resourceId  . "\n");
-                }               
+                }
             }
         }
 
