@@ -11,8 +11,7 @@ use Ratchet\ConnectionInterface;
 use Src\Models\JWTModel;
 use Ratchet\MessageComponentInterface;
 use Src\Controllers\Chat\Socket\SessionRoomController;
-
-
+use Src\Models\UtilitiesModel;
 
 class AppChatController implements MessageComponentInterface
 {
@@ -31,9 +30,9 @@ class AppChatController implements MessageComponentInterface
      *
      * @param boolean $on_log
      */
-    public function __construct(bool $on_log = false)
+    public function __construct()
     {
-        $this->log_model = new LogModel($on_log);
+        $this->log_model = new LogModel(true, false);
         $this->clients = new \SplObjectStorage;
         $this->session_model = new SessionRoomController();
         $this->call_model = new CallModel();
@@ -65,7 +64,7 @@ class AppChatController implements MessageComponentInterface
                     if ($user) {
                         $this->newConnection($conn, $user_token->uuid, "attendant", $user_token->name);
                     } else {
-                        $conn->send(json_encode(["result" => false, "Error" => ["msg" => "Opss! Usuário invalido."]]));
+                        $conn->send(json_encode(["result" => false, "Error" => ["msg" => "Opss! Usuário inválido."]]));
                         $this->log_model->setLog("Opss! Usuário invalido.\n");
                         $conn->close();
                     }
@@ -115,58 +114,50 @@ class AppChatController implements MessageComponentInterface
         $this->log_model->resetLog();
         $this->msg_obj = json_decode($msg);
         $this->jwt->checkToken($from->httpRequest);
+        $msg_error = "Comando não reconhecido. Verifique se todos os campos e dados foram informados corretamente!";
 
         try {
             switch ($this->msg_obj->cmd) {
 
                 case 'msg':
-                    if (
-                        $this->jwt->getError()['data']->type == "client" && $this->msg_obj->user_dest_type == "client"
-                        || $this->msg_obj->user_dest_type != "client" && $this->msg_obj->user_dest_type != "attendant"
-                    ) {
-                        $from->send(json_encode(["result" => false, "Error" => ["msg" => "Opss! Você não tem permissão para enviar mensagens para este usuário."]]));
-                        $this->log_model->setLog("Não é permitido um cliente enviar mensagem para outro cliente!\n");
+                    $orig_type = $this->jwt->getError()['data']->type;
+                    $dest_type = $this->msg_obj->user_dest_type;
+
+                    if ($orig_type == "client" && $dest_type == "client" || $dest_type != "client" && $dest_type != "attendant") {
+                        $msg = "Não é permitido um cliente enviar mensagem para outro cliente.";
+                        $this->log_model->setLog($msg . "\n");
+                        $from->send(UtilitiesModel::dataFormatForSend(false, $msg));
                     } else {
-                        $this->log_model->setLog($this->session_model->checkUserSession($from->resourceId, $this->msg_obj->user_uuid));
-                        $this->log_model->setLog("Total Online: {$this->qtdUsersServer()} \n");
-                        $this->log_model->setLog("Origem user: " . $this->msg_obj->user_uuid . " | Destino user: " . $this->msg_obj->user_dest_uuid . " \n");
-                        $this->searchUserSendMsg($from, $this->msg_obj->user_dest_type);
+                        $this->searchUserSendMsg($from);
                     }
                     break;
+
                 case 'request_call':
-                    $this->log_model->setLog($this->session_model->checkUserSession($from->resourceId, $this->msg_obj->user_uuid));
-                    $this->log_model->setLog("Total Online: {$this->qtdUsersServer()} \n");
-                    $this->log_model->setLog("Origem user: " . $this->msg_obj->user_uuid . " | Destino user: " . $this->msg_obj->user_dest_uuid . " \n");
-                    $this->searchUserSendMsg($from, "client");
+                    // Cadastrar solicitação de abertura de atendimento.
                     break;
+
                 case 'n_on':
-                    $this->msg_obj->qtd = $this->qtdUsersServer();
-                    $from->send(json_encode($this->msg_obj));
-                    $this->log_model->setLog("Total Online: {$this->msg_obj->qtd} \n");
+                    $this->log_model->setLog("Comando n_on - sucesso! \n");
+                    $from->send(UtilitiesModel::dataFormatForSend(true, "Sucesso!", ['n_on' => $this->qtdUsersServer()]));
                     break;
+
                 case 'n_on_clients':
-                    $this->msg_obj->qtd = count($this->session_model->getUsersRoom("client"));
-                    $from->send(json_encode($this->msg_obj));
-                    $this->log_model->setLog("Total Clientes: {$this->msg_obj->qtd} \n");
+                    $this->log_model->setLog("Comando n_on_clients - sucesso! \n");
+                    $from->send(UtilitiesModel::dataFormatForSend(true, "Sucesso!", ['n_on_clients' => count($this->session_model->getUsersRoom("client"))]));
                     break;
+
                 case 'n_on_attendants':
-                    $this->msg_obj->qtd = count($this->session_model->getUsersRoom("attendant"));
-                    $from->send(json_encode($this->msg_obj));
-                    $this->log_model->setLog("Total Atendentes: {$this->msg_obj->qtd} \n");
+                    $this->log_model->setLog("Comando n_on_attendants - sucesso! \n");
+                    $from->send(UtilitiesModel::dataFormatForSend(true, "Sucesso!", ['n_on_attendants' => count($this->session_model->getUsersRoom("attendant"))]));
                     break;
+
                 default:
-                    $from->send('{"text":"Comando não reconhecido!"}');
-                    $this->log_model->setLog("Comando não reconhecido!\n");
+                    $this->log_model->setLog($msg_error . "\n");
+                    $from->send($from->send(UtilitiesModel::dataFormatForSend(false, $msg_error)));
                     break;
             }
         } catch (\Throwable $e) {
-
-            $result = array();
-            $result["result"] = false;
-            $result["error"]['msg'] = "Comando não reconhecido. Verifique se todos os campos e dados foram informados corretamente!";
-            $result["error"]["data"] = [];
-
-            $from->send(json_encode($result));
+            $from->send(UtilitiesModel::dataFormatForSend(false, $msg_error));
         }
 
         $this->log_model->printLog();
@@ -218,37 +209,47 @@ class AppChatController implements MessageComponentInterface
     /**
      * Procurar destinatária na memoria e enviar a mensagem ao mesmo
      *
-     * @param ConnectionInterface $from
-     * @param string $room
+     * @param ConnectionInterface $from 
      * @return void
      */
-    public function searchUserSendMsg(ConnectionInterface $from, string $room): void
+    public function searchUserSendMsg(ConnectionInterface $from): void
     {
-        $status_msg = $this->saveMsgDB();
-        $result = false;
+        $status_msg = $this->saveMsgDB();      
+
+        $online = false;
         foreach ($this->clients as $client) { //Liste os users alocados na memória e procure o destinatário
 
             if ($from !== $client) {   // O remetente não é o destinatário                
-                $destiny_id = $this->session_model->getUserId($client->resourceId, $room);
+                $destiny_uuid = $this->session_model->getUser($client->resourceId, $this->msg_obj->user_dest_type);
 
-                if ($this->msg_obj->user_dest_uuid === $destiny_id) {  // O destinatária corresponde ao id informado do destinatário
-
-                    $client->send(json_encode($this->msg_obj));  // Envie msg para o destinatário   
-                    $result = true;
-                    $this->log_model->setLog("Origem resourceId " . $from->resourceId . " | Destino resourceId: " . $client->resourceId  . "\n");
+                if ($this->msg_obj->user_dest_uuid == $destiny_uuid) {  // O destinatária corresponde ao uuid informado do destinatário   
+                    $this->log_model->setLog(
+                        "Total Online: {$this->qtdUsersServer()} \n"
+                            . "Origem user: " . $this->msg_obj->user_uuid . "\nDestino user: " . $this->msg_obj->user_dest_uuid . " \n"
+                            . "Origem resourceId " . $from->resourceId . "\nDestino resourceId: " . $client->resourceId  . "\n"
+                            . "Mensagem: " . $this->msg_obj->text . "\n"
+                            . "Status mensagem: " . $status_msg . "\n"
+                    );
+                    $client->send(UtilitiesModel::dataFormatForSend(true, "Sucesso!", [
+                        "cmd" => $this->msg_obj->cmd,
+                        "driver" => $this->msg_obj->driver,
+                        "user_uuid" => $this->msg_obj->user_uuid,
+                        "user_type" => $this->jwt->getError()['data']->type,
+                        "text" => $this->msg_obj->text,
+                        "type" => $this->msg_obj->type,
+                        "time" => $this->msg_obj->time,
+                        "attachment" => $this->msg_obj->attachment,
+                    ]));
+                    $online = true;
                 }
             }
         }
 
-        //Resposta caso o destinatário esteja offline
-        if ($result === false) {
-            $this->msg_obj->text = "A mensagem foi enviada mas o usuário está offline.";
-            $from->send(json_encode($this->msg_obj));
-            $this->log_model->setLog("User offline\n");
+        //Resposta caso o destinatário esteja offline       
+        if ($online === false) {
+            $this->log_model->setLog("Status do user: Offline\n");
+            $client->send(UtilitiesModel::dataFormatForSend(false, "A mensagem foi enviada, mas o usuário está offline!"));
         }
-
-        $this->log_model->setLog("Mensagem: " . $this->msg_obj->text . "\n");
-        $this->log_model->setLog("Status: " . $status_msg);
     }
 
     /**

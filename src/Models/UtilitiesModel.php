@@ -152,4 +152,21 @@ class UtilitiesModel
             return false;
         }
     }
+
+    /**
+     * Formatar dados na estrutura padrão para response
+     *
+     * @param boolean $result
+     * @param string $msg
+     * @param array $data
+     * @return string
+     */
+    public static function dataFormatForSend(bool $result, string $msg, array $data = []): string
+    {
+        $result = array();
+        $result["result"] = false;
+        $result["error"]['msg'] = $msg;
+        $result["error"]["data"] = $data;
+        return json_encode($result);
+    }
 }

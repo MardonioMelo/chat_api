@@ -138,11 +138,11 @@ class SessionRoomController
     /**
      * Obter e retornar o uuid do usuário a partir do id da conexão
      *
-     * @param integer $resourceId
+     * @param int $resourceId
      * @param string $name_room    
      */
-    public function getUserId(int $resourceId, string $name_room = "list")
-    {
+    public function getUser(int $resourceId, string $name_room = "list")
+    {       
         return $this->session->get($name_room)["{$this->pre_key}{$resourceId}"];
     }
 
@@ -154,8 +154,8 @@ class SessionRoomController
      * @return bool
      */
     public function checkUserSession(int $resourceId, string $name_room = "list"): bool
-    {
-        if (!empty($this->getUserId($resourceId, $name_room))) {
+    {       
+        if (!empty($this->getUser((int)$resourceId, $name_room))) {
             return true;
         } else {
             return false;
