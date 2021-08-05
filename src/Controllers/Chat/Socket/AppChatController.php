@@ -64,8 +64,7 @@ class AppChatController implements MessageComponentInterface
                     if ($user) {
                         $this->newConnection($conn, $user_token->uuid, "attendant", $user_token->name);
                     } else {
-                        $conn->send(json_encode(["result" => false, "Error" => ["msg" => "Opss! Usuário inválido."]]));
-                        $this->log_model->setLog("Opss! Usuário invalido.\n");
+                        $conn->send(UtilitiesModel::dataFormatForSend(false, "Opss! Usuário invalido.")); 
                         $conn->close();
                     }
                     break;
@@ -76,15 +75,13 @@ class AppChatController implements MessageComponentInterface
                     if ($user) {
                         $this->newConnection($conn, $user_token->uuid, "client", $user_token->name);
                     } else {
-                        $conn->send(json_encode(["result" => false, "Error" => ["msg" => "Opss! Usuário invalido."]]));
-                        $this->log_model->setLog("Opss! Usuário invalido.\n");
+                        $conn->send(UtilitiesModel::dataFormatForSend(false, "Opss! Usuário invalido."));                       
                         $conn->close();
                     }
                     break;
 
-                default:
-                    $conn->send(json_encode(["result" => false, "Error" => ["msg" => "Opss! URL invalida. " . $rota]]));
-                    $this->log_model->setLog("Opss! URL invalida.\n" . $rota);
+                default:           
+                    $conn->send(UtilitiesModel::dataFormatForSend(false, "Opss! URL invalida. " . $rota));    
                     $conn->close();
                     break;
             }
@@ -93,9 +90,8 @@ class AppChatController implements MessageComponentInterface
             $this->log_model->setLog("Total Online: {$this->qtdUsersServer()} \n");
             $this->log_model->setLog("Total Atendentes: " . count($this->session_model->getUsersRoom("attendant")) . "\n");
             $this->log_model->setLog("Total Clientes: " . count($this->session_model->getUsersRoom("client")) . "\n");
-        } else {
-            $conn->send(json_encode(["result" => false, "Error" => $this->jwt->getError()]));
-            $this->log_model->setLog($this->jwt->getError() . "\n");
+        } else {       
+            $conn->send(UtilitiesModel::dataFormatForSend(false, $this->jwt->getError()["msg"], $this->jwt->getError()["data"]));           
             $conn->close();
         }
 

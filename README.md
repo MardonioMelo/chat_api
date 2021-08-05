@@ -16,12 +16,14 @@ API para chat e chatbot de suporte, ainda em desenvolvimento.
 - [x] Rota para gerar token JWT
 - [x] Criar sala de espera dos clientes para atendimento e sala para os atendentes.
 - [x] Consultar dados dos clientes e atendentes.
-- [ ] Receber e salvar dados da abertura do atendimento no db.
-- [ ] Listar clientes da sala de espera por ordem de chegada.
-- [ ] Retirar cliente da sala de espera ao iniciar o atendimento.
-- [ ] Receber dados de avaliação do atendimento, salvar e finalizar a sessão do cliente.
-- [ ] Criar span de envio para o cliente da posição dele na fila de espera.
-- [ ] Mudar status do atendimento.
+- [ ] Receber fomulário da solicitação do atendimento e salvar dados da abertura do atendimento na tabela de call.
+- [ ] Salvar mensagem da abertura do atendimento na tabela de mensagens.
+- [ ] Enviar para o cliente o numero dele na fila de espera toda vez que um cliente entrar na sala de espera.
+- [ ] Enviar para os atendentes a lista de espera por ordem de chegada atualizada toda vez que um novo cliente entrar.
+- [ ] Retirar cliente da sala de espera ao enviar mensagem para o cliente e iniciar o atendimento.
+- [ ] Criar sala com o id do cliente ao iniciar o atendimento e adicionar o atendente e o cliente nessa sala para troca de mensagens.
+- [ ] Finalizar Atendimento - Enviar formulário de avaliação para o cliente, deletar sala do cliente.
+- [ ] Receber e salvar dados da avaliação do atendimento na tabela de call, enviar mensagem de obrigado e desconectar cliente.
 
 
 <i><b>E o andamento do bot?</b> Algumas coisas do bot já foram feitas/iniciadas como a implementação das lib's PHP nlp-tools e botman, por hora, essa parte está aguardando o desenvolvimento do chat para dar continuidade o desenvolvimento do bot.</i>
@@ -441,9 +443,37 @@ Exemplos para troca de mensagens:
         "attachment": null //null - outros atributos do chatbot
     }  
 
-    Dados de retorno: N/A.    
+    Dados de retorno: N/A.  
+
+    Os dados de retorno caso o outro user esteja offline:
+    {
+        "result": false,
+        "error": {
+            "msg": "A mensagem foi enviada, mas o usuário está offline!",
+            "data": []
+        }
+    }
+
+    Dados enviados ao outro user:
+    {
+        "result": false,
+        "error": {
+            "msg": "Sucesso!",
+            "data": {
+                "cmd": "msg",
+                "driver": "web",
+                "user_uuid": "e0baef38-99b0-407d-ba5a-8e76547da088",
+                "user_type": "attendant",
+                "text": "ola fi",
+                "type": "text",
+                "time": "",
+                "attachment": null
+            }
+        }
+    }  
+    
 > 
-Os dados de retorno seguem a mesma estrutura de envio caso o outro user esteja offline.
+
 
 <b>Quantidade Online</b><br>
 
@@ -454,14 +484,19 @@ Exemplos para consulta da quantidade online:
 >    
     Dados via POST:     
     Dados: {  
-        "cmd": "n_on",    
-        "qtd": ""    
+        "cmd": "n_on"       
     }   
 
-    Dados de retorno: {  
-        "cmd": "n_on",     
-        "qtd": 16   
-    }     
+    Dados de retorno: 
+    {
+        "result": false,
+        "error": {
+            "msg": "Sucesso!",
+            "data": {
+                "n_on": 1
+            }
+        }
+    }
 > 
 
 >    
