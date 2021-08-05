@@ -482,8 +482,9 @@ Exemplos para consulta da quantidade online:
 - ws://localhost:8081/api/client 
 
 >    
+    Número total de usuários online
     Dados via POST:     
-    Dados: {  
+    {  
         "cmd": "n_on"       
     }   
 
@@ -500,31 +501,42 @@ Exemplos para consulta da quantidade online:
 > 
 
 >    
-    Dados via POST:     
-    Dados: {  
-        "cmd": "n_on_attendants",    
-        "qtd": ""    
+    Número total de atendentes online
+    Dados via POST:   
+    {  
+        "cmd": "n_on_attendants"        
     }   
 
-    Dados de retorno: {  
-        "cmd": "n_on_attendants",     
-        "qtd": 16   
-    }     
+    Dados de retorno: 
+    {
+        "result": false,
+        "error": {
+            "msg": "Sucesso!",
+            "data": {
+                "n_on_attendants": 1
+            }
+        }
+    }
 > 
 
 >    
-    Dados via POST:     
-    Dados: {  
-        "cmd": "n_on_clients",    
-        "qtd": ""    
+    Número total de clientes online
+    Dados via POST:   
+    {  
+        "cmd": "n_on_clients",       
     }   
 
-    Dados de retorno: {  
-        "cmd": "n_on_clients",     
-        "qtd": 16   
+    Dados de retorno: 
+    {
+        "result": false,
+        "error": {
+            "msg": "Sucesso!",
+            "data": {
+                "n_on_clients": 0
+            }
+        }
     }     
 > 
-
 
 
 ## Comandos

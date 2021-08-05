@@ -128,8 +128,14 @@ class AppChatController implements MessageComponentInterface
                     }
                     break;
 
-                case 'request_call':
+                case 'call_create':
                     // Cadastrar solicitação de abertura de atendimento.
+                    $this->call_model->createCall($this->msg_obj->user_uuid, $this->msg_obj->objective);
+                    $from->send(UtilitiesModel::dataFormatForSend(true, "ok"));
+                    break;
+                
+                case 'call_init':
+                    // Iniciar o atendimento.
                     break;
 
                 case 'n_on':

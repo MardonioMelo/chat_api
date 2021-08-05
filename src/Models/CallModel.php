@@ -25,20 +25,16 @@ class  CallModel
     /**
      * Salva dados do atendimento no banco de dados
      *
-     * @param Int $user_id
-     * @param Int $user_dest_id
+     * @param Int $user_id 
      * @param String $objective
-     * @param Int $status
-     * @param String $date_start
+     * @param Int $status  
      * @return void
      */
-    public function createCall(Int $user_id, Int $user_dest_id, String $objective, Int $status = 1, String $date_start): void
+    public function createCall(Int $user_id, String $objective, Int $status = 1): void
     {
-        $this->tab_chat_call->call_user_id = (int) $user_id;
-        $this->tab_chat_call->call_user_dest_id = (int) $user_dest_id;
+        $this->tab_chat_call->call_user_id = (int) $user_id;   
         $this->tab_chat_call->call_objective = (string) $objective;
-        $this->setStatus($status);
-        $this->tab_chat_call->call_date_start = (string) $date_start;
+        $this->setStatus($status); 
 
         $this->saveCreate();
     }

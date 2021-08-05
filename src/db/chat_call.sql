@@ -30,7 +30,7 @@ SET time_zone = "+00:00";
 CREATE TABLE `chat_call` (
   `call_id` int(11) NOT NULL,
   `call_user_uuid` varchar(40) NOT NULL COMMENT 'UUID do atendente.',
-  `call_user_dest_uuid` varchar(40) NOT NULL COMMENT 'UUID do cliente.',
+  `call_user_dest_uuid` varchar(40) DEFAULT NULL COMMENT 'UUID do cliente.',
   `call_objective` varchar(255) DEFAULT NULL COMMENT 'Assunto do atendimento.',
   `call_status` int(2) NOT NULL DEFAULT 1 COMMENT 'Status do atendimento.',
   `call_date_start` timestamp NULL DEFAULT NULL COMMENT 'Data e hora UTC do inicio do atendimento.',
