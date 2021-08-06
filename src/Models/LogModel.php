@@ -43,12 +43,12 @@ class LogModel
     {
         if ($this->history) {
             $history === true ?: popen('cls', 'w');
-        }       
+        }
 
         if ($this->on_log) {
             $in = "\n---------" . date("d/m/Y H:i:s") . "------------\n";
             $out = "\n----------------------------------------\n";
-            echo $in . $this->log . "\nMemory: " . memory_get_usage() . " bytes" . $out;
+            print_r($in . $this->log .  "\nMemory: " . memory_get_usage() . " bytes\nPID: " . getmypid() . $out);
         }
     }
 

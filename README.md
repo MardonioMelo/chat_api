@@ -415,10 +415,10 @@ SERVER_CHAT_PORT = porta de conexão com o servidor websocket. Essa porta pode s
 Rotas do servidor WebSocket: 
 >
     ws://localhost:SERVER_CHAT_PORT/api/attendant //rota do atendente
-    Ex.: ws://localhost:8081/api/attendan
+    Ex.: localhost:8081/api/attendan
 
     ws://localhost:SERVER_CHAT_PORT/api/client    //rota do cliente   
-    Ex.: ws://localhost:8081/api/client
+    Ex.: localhost:8081/api/client
 
     - Header: Deve ser informado no cabeçalho da requisição no campo Authorization um token JWT valido obtido anteriormente ex.: Authorization:  Bearer ...token...
 >
@@ -493,7 +493,8 @@ Exemplos para consulta da quantidade online:
         "error": {
             "msg": "Sucesso!",
             "data": {
-                "n_on": 1
+                "cmd": "n_on",
+                "n_on": 2
             }
         }
     }
@@ -512,6 +513,7 @@ Exemplos para consulta da quantidade online:
         "error": {
             "msg": "Sucesso!",
             "data": {
+                "cmd": "n_on_attendants",
                 "n_on_attendants": 1
             }
         }
@@ -531,7 +533,8 @@ Exemplos para consulta da quantidade online:
         "error": {
             "msg": "Sucesso!",
             "data": {
-                "n_on_clients": 0
+                "cmd": "n_on_clients",
+                "n_on_clients": 1
             }
         }
     }     
