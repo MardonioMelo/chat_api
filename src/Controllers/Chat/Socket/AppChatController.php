@@ -64,7 +64,7 @@ class AppChatController implements MessageComponentInterface
                     if ($user) {
                         $this->newConnection($conn, $user_token->uuid, "attendant", $user_token->name);
                     } else {
-                        $conn->send(UtilitiesModel::dataFormatForSend(false, "Opss! Usuário invalido.")); 
+                        $conn->send(UtilitiesModel::dataFormatForSend(false, "Opss! Usuário invalido."));
                         $conn->close();
                     }
                     break;
@@ -75,13 +75,13 @@ class AppChatController implements MessageComponentInterface
                     if ($user) {
                         $this->newConnection($conn, $user_token->uuid, "client", $user_token->name);
                     } else {
-                        $conn->send(UtilitiesModel::dataFormatForSend(false, "Opss! Usuário invalido."));                       
+                        $conn->send(UtilitiesModel::dataFormatForSend(false, "Opss! Usuário invalido."));
                         $conn->close();
                     }
                     break;
 
-                default:           
-                    $conn->send(UtilitiesModel::dataFormatForSend(false, "Opss! URL invalida. " . $rota));    
+                default:
+                    $conn->send(UtilitiesModel::dataFormatForSend(false, "Opss! URL invalida. " . $rota));
                     $conn->close();
                     break;
             }
@@ -90,8 +90,8 @@ class AppChatController implements MessageComponentInterface
             $this->log_model->setLog("Total Online: {$this->qtdUsersServer()} \n");
             $this->log_model->setLog("Total Atendentes: " . count($this->session_model->getUsersRoom("attendant")) . "\n");
             $this->log_model->setLog("Total Clientes: " . count($this->session_model->getUsersRoom("client")) . "\n");
-        } else {       
-            $conn->send(UtilitiesModel::dataFormatForSend(false, $this->jwt->getError()["msg"], $this->jwt->getError()["data"]));           
+        } else {
+            $conn->send(UtilitiesModel::dataFormatForSend(false, $this->jwt->getError()["msg"], $this->jwt->getError()["data"]));
             $conn->close();
         }
 
@@ -120,9 +120,7 @@ class AppChatController implements MessageComponentInterface
                     $dest_type = $this->msg_obj->user_dest_type;
 
                     if ($orig_type == "client" && $dest_type == "client" || $dest_type != "client" && $dest_type != "attendant") {
-                        $msg = "Não é permitido um cliente enviar mensagem para outro cliente.";
-                        $this->log_model->setLog($msg . "\n");
-                        $from->send(UtilitiesModel::dataFormatForSend(false, $msg));
+                        $from->send(UtilitiesModel::dataFormatForSend(false, "Não é permitido um cliente enviar mensagem para outro cliente."));
                     } else {
                         $this->searchUserSendMsg($from);
                     }
@@ -130,31 +128,31 @@ class AppChatController implements MessageComponentInterface
 
                 case 'call_create':
                     // Cadastrar solicitação de abertura de atendimento.
-                    $this->call_model->createCall($this->msg_obj->user_uuid, $this->msg_obj->objective);
-                    $from->send(UtilitiesModel::dataFormatForSend(true, "ok"));
+                    $this->call_model->createCall(json_decode($msg, true));
+                    $from->send(UtilitiesModel::dataFormatForSend(
+                        $this->call_model->getResult(),
+                        $this->call_model->getError()['msg'],
+                        $this->call_model->getResult() ?  $this->call_model->getError()['data'] : []
+                    ));
                     break;
-                
+
                 case 'call_init':
                     // Iniciar o atendimento.
                     break;
 
                 case 'n_on':
-                    $this->log_model->setLog("Comando n_on - sucesso! \n");
                     $from->send(UtilitiesModel::dataFormatForSend(true, "Sucesso!", ['n_on' => $this->qtdUsersServer()]));
                     break;
 
                 case 'n_on_clients':
-                    $this->log_model->setLog("Comando n_on_clients - sucesso! \n");
                     $from->send(UtilitiesModel::dataFormatForSend(true, "Sucesso!", ['n_on_clients' => count($this->session_model->getUsersRoom("client"))]));
                     break;
 
                 case 'n_on_attendants':
-                    $this->log_model->setLog("Comando n_on_attendants - sucesso! \n");
                     $from->send(UtilitiesModel::dataFormatForSend(true, "Sucesso!", ['n_on_attendants' => count($this->session_model->getUsersRoom("attendant"))]));
                     break;
 
                 default:
-                    $this->log_model->setLog($msg_error . "\n");
                     $from->send($from->send(UtilitiesModel::dataFormatForSend(false, $msg_error)));
                     break;
             }
@@ -217,7 +215,7 @@ class AppChatController implements MessageComponentInterface
      */
     public function searchUserSendMsg(ConnectionInterface $from): void
     {
-        $status_msg = $this->saveMsgDB();      
+        $status_msg = $this->saveMsgDB();
 
         $online = false;
         foreach ($this->clients as $client) { //Liste os users alocados na memória e procure o destinatário
