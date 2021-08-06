@@ -120,13 +120,13 @@ class AppChatController implements MessageComponentInterface
                     $dest_type = $this->msg_obj->user_dest_type;
 
                     if ($orig_type == "client" && $dest_type == "client" || $dest_type != "client" && $dest_type != "attendant") {
-                        $from->send(UtilitiesModel::dataFormatForSend(false, "Não é permitido um cliente enviar mensagem para outro cliente."));
+                        $from->send(UtilitiesModel::dataFormatForSend(false, "Não é permitido um cliente enviar mensagem para outro cliente.", ["cmd" => $this->msg_obj->cmd]));
                     } else {
                         $this->searchUserSendMsg($from);
                     }
                     break;
 
-                case 'call_create':                 
+                case 'call_create':
                     $this->call_model->createCall(json_decode($msg, true));
                     $from->send(UtilitiesModel::dataFormatForSend(
                         $this->call_model->getResult(),
@@ -140,24 +140,24 @@ class AppChatController implements MessageComponentInterface
                     break;
 
                 case 'n_on':
-                    $from->send(UtilitiesModel::dataFormatForSend(true, "Sucesso!", ['n_on' => $this->qtdUsersServer()]));
+                    $from->send(UtilitiesModel::dataFormatForSend(true, "Sucesso!", ["cmd" => $this->msg_obj->cmd, 'n_on' => $this->qtdUsersServer()]));
                     break;
 
                 case 'n_on_clients':
-                    $from->send(UtilitiesModel::dataFormatForSend(true, "Sucesso!", ['n_on_clients' => count($this->session_model->getUsersRoom("client"))]));
+                    $from->send(UtilitiesModel::dataFormatForSend(true, "Sucesso!", ["cmd" => $this->msg_obj->cmd, 'n_on_clients' => count($this->session_model->getUsersRoom("client"))]));
                     break;
 
                 case 'n_on_attendants':
-                    $from->send(UtilitiesModel::dataFormatForSend(true, "Sucesso!", ['n_on_attendants' => count($this->session_model->getUsersRoom("attendant"))]));
+                    $from->send(UtilitiesModel::dataFormatForSend(true, "Sucesso!", ["cmd" => $this->msg_obj->cmd, 'n_on_attendants' => count($this->session_model->getUsersRoom("attendant"))]));
                     break;
 
                 default:
-                    $from->send($from->send(UtilitiesModel::dataFormatForSend(false, $msg_error)));
+                    $from->send($from->send(UtilitiesModel::dataFormatForSend(false, $msg_error, ["cmd" => "error"])));
                     break;
             }
         } catch (\Throwable $e) {
             $this->log_model->setLog($e->getMessage() . "\n");
-            $from->send(UtilitiesModel::dataFormatForSend(false, $msg_error));
+            $from->send(UtilitiesModel::dataFormatForSend(false, $msg_error, ["cmd" => "error"]));
         }
 
         $this->log_model->printLog();

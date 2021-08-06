@@ -17,8 +17,7 @@ API para chat e chatbot de suporte, ainda em desenvolvimento.
 - [x] Criar sala de espera dos clientes para atendimento e sala para os atendentes.
 - [x] Consultar dados dos clientes e atendentes.
 - [x] Receber fomulário da solicitação do atendimento e salvar dados da abertura do atendimento na tabela de call.
-- [ ] Salvar mensagem da abertura do atendimento na tabela de mensagens.
-- [ ] Enviar para o cliente o numero dele na fila de espera toda vez que um cliente entrar na sala de espera.
+- [ ] Enviar para o cliente o número dele na fila de espera toda vez que um cliente entrar na sala de espera.
 - [ ] Enviar para os atendentes a lista de espera por ordem de chegada atualizada toda vez que um novo cliente entrar.
 - [ ] Retirar cliente da sala de espera ao enviar mensagem para o cliente e iniciar o atendimento.
 - [ ] Criar sala com o id do cliente ao iniciar o atendimento e adicionar o atendente e o cliente nessa sala para troca de mensagens.
@@ -413,23 +412,23 @@ Confira um exemplo de implementação pasta ./examples
 
 SERVER_CHAT_PORT = porta de conexão com o servidor websocket. Essa porta pode ser configurada no arquivo src\config\app.php
 
-Exemplos para troca de mensagens: 
+Rotas do servidor WebSocket: 
 >
-    ws://localhost:SERVER_CHAT_PORT/api/attendant
-    ws://localhost:SERVER_CHAT_PORT/api/client
+    ws://localhost:SERVER_CHAT_PORT/api/attendant //rota do atendente
+    Ex.: ws://localhost:8081/api/attendan
+
+    ws://localhost:SERVER_CHAT_PORT/api/client    //rota do cliente   
+    Ex.: ws://localhost:8081/api/client
 
     - Header: Deve ser informado no cabeçalho da requisição no campo Authorization um token JWT valido obtido anteriormente ex.: Authorization:  Bearer ...token...
 >
 
-Apos a conexão bem sucedida com o servidor de chat, já será possível enviar mensagens ou requisições de informações conforme estrutura dos dados enviados.
+Apos a conexão bem sucedida com o servidor de chat, já será possível enviar e receber informações conforme estrutura dos dados.
 
 <b>Troca de Mensagens</b><br>
 
 Exemplos para troca de mensagens: 
->    
-    - ws://localhost:8081/api/attendant
-    - ws://localhost:8081/api/client
-    
+>      
     Dados via POST:     
     {  
         "cmd": "msg",  //comando
