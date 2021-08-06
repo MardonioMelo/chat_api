@@ -25,14 +25,14 @@ class  CallModel
     /**
      * Salva dados do atendimento no banco de dados
      *
-     * @param Int $user_id 
+     * @param String $user_id 
      * @param String $objective
      * @param Int $status  
      * @return void
      */
-    public function createCall(Int $user_id, String $objective, Int $status = 1): void
+    public function createCall(string $user_uuid, String $objective, Int $status = 1): void
     {
-        $this->tab_chat_call->call_user_id = (int) $user_id;   
+        $this->tab_chat_call->call_user_uuid = (int) $user_uuid;   
         $this->tab_chat_call->call_objective = (string) $objective;
         $this->setStatus($status); 
 

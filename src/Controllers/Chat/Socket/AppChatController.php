@@ -159,6 +159,7 @@ class AppChatController implements MessageComponentInterface
                     break;
             }
         } catch (\Throwable $e) {
+            $this->log_model->setLog($e->getMessage() . "\n");
             $from->send(UtilitiesModel::dataFormatForSend(false, $msg_error));
         }
 
