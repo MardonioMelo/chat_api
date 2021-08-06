@@ -64,7 +64,7 @@ class AppChatController implements MessageComponentInterface
                     if ($user) {
                         $this->newConnection($conn, $user_token->uuid, "attendant", $user_token->name);
                     } else {
-                        $conn->send(UtilitiesModel::dataFormatForSend(false, "Opss! Usuário invalido."));
+                        $conn->send(UtilitiesModel::dataFormatForSend(false, "Opss! Usuário invalido.", ['cmd' => "connection"]));
                         $conn->close();
                     }
                     break;
@@ -75,13 +75,13 @@ class AppChatController implements MessageComponentInterface
                     if ($user) {
                         $this->newConnection($conn, $user_token->uuid, "client", $user_token->name);
                     } else {
-                        $conn->send(UtilitiesModel::dataFormatForSend(false, "Opss! Usuário invalido."));
+                        $conn->send(UtilitiesModel::dataFormatForSend(false, "Opss! Usuário invalido.", ['cmd' => "connection"]));
                         $conn->close();
                     }
                     break;
 
                 default:
-                    $conn->send(UtilitiesModel::dataFormatForSend(false, "Opss! URL invalida. " . $rota));
+                    $conn->send(UtilitiesModel::dataFormatForSend(false, "Opss! URL invalida. " . $rota, ['cmd' => "connection"]));
                     $conn->close();
                     break;
             }
@@ -91,7 +91,7 @@ class AppChatController implements MessageComponentInterface
             $this->log_model->setLog("Total Atendentes: " . count($this->session_model->getUsersRoom("attendant")) . "\n");
             $this->log_model->setLog("Total Clientes: " . count($this->session_model->getUsersRoom("client")) . "\n");
         } else {
-            $conn->send(UtilitiesModel::dataFormatForSend(false, $this->jwt->getError()["msg"], $this->jwt->getError()["data"]));
+            $conn->send(UtilitiesModel::dataFormatForSend(false, $this->jwt->getError()["msg"], ['cmd' => "connection", 'data' => $this->jwt->getError()["data"]]));
             $conn->close();
         }
 
@@ -110,6 +110,7 @@ class AppChatController implements MessageComponentInterface
         $this->log_model->resetLog();
         $this->msg_obj = json_decode($msg);
         $this->jwt->checkToken($from->httpRequest);
+        $this->msg_obj->user_uuid = $this->jwt->getError()['data']->uuid;
         $msg_error = "Comando não reconhecido. Verifique se todos os campos e dados foram informados corretamente!";
 
         try {
@@ -127,12 +128,17 @@ class AppChatController implements MessageComponentInterface
                     break;
 
                 case 'call_create':
-                    $this->call_model->createCall(json_decode($msg, true));
+                    $this->call_model->createCall(json_decode($msg, true), $this->msg_obj->cmd);
                     $from->send(UtilitiesModel::dataFormatForSend(
                         $this->call_model->getResult(),
                         $this->call_model->getError()['msg'],
-                        $this->call_model->getResult() ?  $this->call_model->getError()['data'] : []
+                        $this->call_model->getResult() ? $this->call_model->getError()['data'] : ['cmd' => $this->msg_obj->cmd]
                     ));
+                    break;
+
+                case 'n_waiting_line':
+                    $this->sendMsgAllUsers("client", 'n_waiting_line', count($this->session_model->getUsersRoom("client")));
+                    $this->sendMsgAllUsers("attendant", 'n_on_clients', count($this->session_model->getUsersRoom("client")));
                     break;
 
                 case 'call_init':
@@ -248,7 +254,7 @@ class AppChatController implements MessageComponentInterface
         //Resposta caso o destinatário esteja offline       
         if ($online === false) {
             $this->log_model->setLog("Status do user: Offline\n");
-            $client->send(UtilitiesModel::dataFormatForSend(false, "A mensagem foi enviada, mas o usuário está offline!"));
+            $client->send(UtilitiesModel::dataFormatForSend(false, "A mensagem foi enviada, mas o usuário está offline!", ["cmd" => $this->msg_obj->cmd]));
         }
     }
 
@@ -278,5 +284,21 @@ class AppChatController implements MessageComponentInterface
         $this->session_model->addUserList($conn->resourceId, $user_uuid);
         $this->session_model->addUserRoom($conn->resourceId, $user_uuid, $name_room);
         $this->log_model->setLog("New Connection ({$conn->resourceId}) | id ({$user_uuid}) | name ({$user_name}).\n");
+    }
+
+    /**
+     * Enviar mensagem para todos os clientes
+     * @param string $type
+     * @param string $cmd
+     * @param mixed $msg    
+     * @return void
+     */
+    public function sendMsgAllUsers(string $type, string $cmd, $msg): void
+    {
+        foreach ($this->clients as $client) {           
+            if($this->session_model->getUser($client->resourceId, $type) == true){
+            $client->send(UtilitiesModel::dataFormatForSend(true, "Sucesso!", ["cmd" => $cmd, $cmd => $msg]));
+            }         
+        }
     }
 }

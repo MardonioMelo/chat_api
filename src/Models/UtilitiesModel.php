@@ -163,10 +163,10 @@ class UtilitiesModel
      */
     public static function dataFormatForSend(bool $result = true, string $msg, array $data = []): string
     {
-        $result = array();
-        $result["result"] = $result;
-        $result["error"]['msg'] = $msg;
-        $result["error"]["data"] = $data;
-        return json_encode($result);
+        $response = array();
+        $response["result"] = $result;
+        $response["error"]['msg'] = $msg;
+        $response["error"]["data"] = $data;
+        return json_encode($response);
     }
 }

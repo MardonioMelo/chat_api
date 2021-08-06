@@ -17,8 +17,8 @@ API para chat e chatbot de suporte, ainda em desenvolvimento.
 - [x] Criar sala de espera dos clientes para atendimento e sala para os atendentes.
 - [x] Consultar dados dos clientes e atendentes.
 - [x] Receber fomulário da solicitação do atendimento e salvar dados da abertura do atendimento na tabela de call.
-- [ ] Enviar para o cliente o número dele na fila de espera toda vez que um cliente entrar na sala de espera.
-- [ ] Enviar para os atendentes a lista de espera por ordem de chegada atualizada toda vez que um novo cliente entrar.
+- [x] Enviar para o cliente o número dele na fila de espera toda vez que um cliente entrar na sala de espera.
+- [x] Enviar para os atendentes a lista de espera por ordem de chegada atualizada toda vez que um novo cliente entrar.
 - [ ] Retirar cliente da sala de espera ao enviar mensagem para o cliente e iniciar o atendimento.
 - [ ] Criar sala com o id do cliente ao iniciar o atendimento e adicionar o atendente e o cliente nessa sala para troca de mensagens.
 - [ ] Finalizar Atendimento - Enviar formulário de avaliação para o cliente, deletar sala do cliente.
@@ -557,7 +557,29 @@ Exemplos para consulta da quantidade online:
         "error": {
             "msg": string,
             "data": {
+                "cmd": string,
                 "id": int|string
+            }
+        }
+    }
+> 
+
+<b>Número da Fila de Espera - Call</b><br>
+Enviar para todos os clientes e atendentes o número da fila de espera.
+> 
+    Dados via POST:     
+    {  
+        "cmd": "n_waiting_line"       
+    }   
+
+    Dados de retorno: 
+    {
+        "result": bool,
+        "error": {
+            "msg": string,
+            "data": {
+                "cmd": "n_waiting_line",
+                "n_waiting_line": int
             }
         }
     }
