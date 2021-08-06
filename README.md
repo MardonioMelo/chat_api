@@ -16,7 +16,7 @@ API para chat e chatbot de suporte, ainda em desenvolvimento.
 - [x] Rota para gerar token JWT
 - [x] Criar sala de espera dos clientes para atendimento e sala para os atendentes.
 - [x] Consultar dados dos clientes e atendentes.
-- [ ] Receber fomulário da solicitação do atendimento e salvar dados da abertura do atendimento na tabela de call.
+- [x] Receber fomulário da solicitação do atendimento e salvar dados da abertura do atendimento na tabela de call.
 - [ ] Salvar mensagem da abertura do atendimento na tabela de mensagens.
 - [ ] Enviar para o cliente o numero dele na fila de espera toda vez que um cliente entrar na sala de espera.
 - [ ] Enviar para os atendentes a lista de espera por ordem de chegada atualizada toda vez que um novo cliente entrar.
@@ -490,7 +490,7 @@ Exemplos para consulta da quantidade online:
 
     Dados de retorno: 
     {
-        "result": false,
+        "result": true,
         "error": {
             "msg": "Sucesso!",
             "data": {
@@ -509,7 +509,7 @@ Exemplos para consulta da quantidade online:
 
     Dados de retorno: 
     {
-        "result": false,
+        "result": true,
         "error": {
             "msg": "Sucesso!",
             "data": {
@@ -528,7 +528,7 @@ Exemplos para consulta da quantidade online:
 
     Dados de retorno: 
     {
-        "result": false,
+        "result": true,
         "error": {
             "msg": "Sucesso!",
             "data": {
@@ -536,6 +536,29 @@ Exemplos para consulta da quantidade online:
             }
         }
     }     
+> 
+
+<b>Criar Solicitação de Atendimento - Call</b><br>
+
+> 
+    Dados via POST:     
+    {  
+        "cmd": string, //call_create
+        "driver": string, //web
+        "user_uuid": string, //uuid do cliente
+        "objective": string //assunto  
+    }   
+
+    Dados de retorno: 
+    {
+        "result": bool,
+        "error": {
+            "msg": string,
+            "data": {
+                "id": int|string
+            }
+        }
+    }
 > 
 
 

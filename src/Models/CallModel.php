@@ -16,8 +16,7 @@ class  CallModel
     private $Error;
     private $Result;
     private $inputs;
-    private $client_model;
-    private $msg_model;
+    private $client_model;  
 
     /**
      * Declara a classe ChatCall na inicialização
