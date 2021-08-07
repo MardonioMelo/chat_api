@@ -610,6 +610,81 @@ Enviar para todos os clientes e atendentes o número da fila de espera.
     }
 > 
 
+<b>Iniciar Call</b><br>
+
+> 
+    Type: application/json     
+    {  
+        "cmd": string, //call_start
+        "driver": string, //web
+        "user_uuid": string, //uuid do autor
+        "attendant_uuid": string //uuid do atendente
+        "call": int //id da call  
+    }   
+
+    Dados de retorno: 
+    {
+        "result": true,
+        "error": {
+            "msg": string,
+            "data": {
+                "id": int, //id da call
+                "cmd": "call_start"
+            }
+        }
+    }
+>
+
+<b>Finalizar Call</b><br>
+
+> 
+    Type: application/json     
+    {  
+        "cmd": string, //call_end
+        "driver": string, //web
+        "user_uuid": string, //uuid do autor       
+        "call": int //id da call  
+    }   
+
+    Dados de retorno: 
+    {
+        "result": true,
+        "error": {
+            "msg": string,
+            "data": {
+                "id": int, //id da call
+                "cmd": "call_end"
+            }
+        }
+    }
+>
+
+<b>Avaliação da Call</b><br>
+
+> 
+    Type: application/json     
+    {  
+        "cmd": string, //call_evaluation
+        "driver": string, //web
+        "user_uuid": string, //uuid do autor       
+        "call": int, //id da call  
+        "evaluation": 5
+    }   
+
+    Dados de retorno: 
+    {
+        "result": true,
+        "error": {
+            "msg": string,
+            "data": {
+                "id": int, //id da call
+                "cmd": "call_evaluation"
+            }
+        }
+    }
+>
+
+
 
 ## Comandos
 
