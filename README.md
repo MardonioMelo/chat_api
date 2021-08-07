@@ -429,7 +429,7 @@ Apos a conexão bem sucedida com o servidor de chat, já será possível enviar 
 
 Exemplos para troca de mensagens: 
 >      
-    Dados via POST:     
+    Type: application/json  
     {  
         "cmd": "msg",  //comando
         "driver": "web", //web
@@ -482,7 +482,7 @@ Exemplos para consulta da quantidade online:
 
 >    
     Número total de usuários online
-    Dados via POST:     
+    Type: application/json     
     {  
         "cmd": "n_on"       
     }   
@@ -502,7 +502,7 @@ Exemplos para consulta da quantidade online:
 
 >    
     Número total de atendentes online
-    Dados via POST:   
+    Type: application/json  
     {  
         "cmd": "n_on_attendants"        
     }   
@@ -522,7 +522,7 @@ Exemplos para consulta da quantidade online:
 
 >    
     Número total de clientes online
-    Dados via POST:   
+    Type: application/json  
     {  
         "cmd": "n_on_clients",       
     }   
@@ -543,11 +543,12 @@ Exemplos para consulta da quantidade online:
 <b>Criar Call</b><br>
 
 > 
-    Dados via POST:     
+    Type: application/json     
     {  
         "cmd": string, //call_create
         "driver": string, //web
-        "user_uuid": string, //uuid do cliente
+        "client_uuid": string, //uuid do cliente
+        "user_uuid": string, //uuid do do autor
         "objective": string //assunto  
     }   
 
@@ -567,7 +568,7 @@ Exemplos para consulta da quantidade online:
 <b>Número da Fila de Espera - Call</b><br>
 Enviar para todos os clientes e atendentes o número da fila de espera.
 > 
-    Dados via POST:     
+    Type: application/json     
     {  
         "cmd": "n_waiting_line"       
     }   
@@ -588,7 +589,7 @@ Enviar para todos os clientes e atendentes o número da fila de espera.
 <b>Cancelar Call</b><br>
 
 > 
-    Dados via POST:     
+    Type: application/json     
     {  
         "cmd": string, //call_cancel
         "driver": string, //web

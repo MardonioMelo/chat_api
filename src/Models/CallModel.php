@@ -16,26 +16,25 @@ class  CallModel
     private $Error;
     private $Result;
     private $inputs;
-    private $client_model;   
+    private $client_model;
 
 
     /**
      * Salva dados do atendimento no banco de dados
      *
      * @param Array $data ["client_uuid" => "", "objective" => ""]  
-     * @param string $cmd
-     * @param string $user_uuid = uuid do autor
+     * @param string $cmd  
      * @return void
      */
-    public function callCreate(array $data, string $cmd, string $user_uuid): void
+    public function callCreate(array $data, string $cmd): void
     {
         $this->tab_chat_call = new ChatCall();
 
         $this->checkInputsCreate(UtilitiesModel::filterParams($data));
-        if ($this->Result) {            
+        if ($this->Result) {
             $this->tab_chat_call->call_id = "";
-            $this->tab_chat_call->call_client_uuid = $this->inputs['client_uuid'];
-            $this->tab_chat_call->call_objective = $this->inputs['objective'];           
+            $this->tab_chat_call->call_client_uuid =  $this->inputs['client_uuid'];
+            $this->tab_chat_call->call_objective = $this->inputs['objective'];
             $this->saveData();
         }
         $this->Error['data']['cmd'] = $cmd;
@@ -44,7 +43,7 @@ class  CallModel
     /**
      * Cancelar atendimento.
      *
-      * @param Array $params ["client_uuid" => "", "call" => ""]   
+     * @param Array $params ["call" => ""]   
      * @param string $cmd
      * @return void
      */
@@ -53,9 +52,8 @@ class  CallModel
         $this->tab_chat_call = new ChatCall();
         $data = UtilitiesModel::filterParams($data);
 
-        if (!empty($data['call']) && !empty($data['client_uuid'])) {
+        if (!empty($data['call'])) {
             $this->tab_chat_call->call_id = (int) $data['call'];
-            $this->tab_chat_call->call_client_uuid = $data['client_uuid'];
             $this->tab_chat_call->call_status = 4;
             $this->saveData();
         } else {
@@ -68,68 +66,88 @@ class  CallModel
     /**
      * Iniciar atendimento.
      *
-      * @param Array $params ["client_uuid" => "", "call" => ""]   
+     * @param Array $params ["attendant_uuid" => "", "call" => ""]   
      * @param string $cmd
      * @return void
      */
-    public function callStart(array $data, string $cmd): void
+    public function callStart(array $data, string $cmd, string $type_autor): void
     {
         $this->tab_chat_call = new ChatCall();
         $data = UtilitiesModel::filterParams($data);
 
-        if (!empty($data['call']) && !empty($data['client_uuid']) && !empty($data['user_dest_uuid'])) {
-            $this->tab_chat_call->call_id = (int) $data['call'];
-            $this->tab_chat_call->call_client = $data['client_uuid'];
-            $this->tab_chat_call->call_user_dest_uuid = $data['user_dest_uuid'];
-            $this->tab_chat_call->call_start = date("Y-m-d H:i:s");
-            $this->tab_chat_call->call_status = 2;
-            $this->saveData();
+        if ($type_autor == "attendant") {
+            if (!empty($data['call']) && !empty($data['attendant_uuid'])) {
+                $this->tab_chat_call->call_id = (int) $data['call'];
+                $this->tab_chat_call->call_attendant_uuid = $data['attendant_uuid'];
+                $this->tab_chat_call->call_start = date("Y-m-d H:i:s");
+                $this->tab_chat_call->call_status = 2;
+                $this->saveData();
+            } else {
+                $this->Result = false;
+                $this->Error['msg'] = "Opss! Informe os campos obrigatórios para salvar.";
+            }
         } else {
             $this->Result = false;
-            $this->Error['msg'] = "Opss! Informe os campos obrigatórios para salvar.";
-        }
-        $this->Error['data']['cmd'] = $cmd;
-    }
-
-     /**
-     * Finalizar atendimento.
-     *
-      * @param Array $params ["client_uuid" => "", "call" => ""]   
-     * @param string $cmd
-     * @return void
-     */
-    public function callEnd(array $data, string $cmd): void
-    {
-        $this->tab_chat_call = new ChatCall();
-        $data = UtilitiesModel::filterParams($data);
-
-        if (!empty($data['call']) && !empty($data['client_uuid'])) {
-            $this->tab_chat_call->call_id = (int) $data['call'];
-            $this->tab_chat_call->call_client_uuid = $data['client_uuid'];
-            $this->tab_chat_call->call_end = date("Y-m-d H:i:s");
-            $this->tab_chat_call->call_status = 3;
-            $this->saveData();
-        } else {
-            $this->Result = false;
-            $this->Error['msg'] = "Opss! Informe os campos obrigatórios para salvar.";
+            $this->Error['msg'] = "Opss! Você não tem permissão para executar essa ação.";
         }
         $this->Error['data']['cmd'] = $cmd;
     }
 
     /**
-     * Registrar avaliação da call
-     *  
-     * @param Array $params ["client_uuid" => ""]
+     * Finalizar atendimento.
+     *
+     * @param Array $params ["call" => ""]   
+     * @param string $cmd
      * @return void
      */
-    public function avalCall($data): void
+    public function callEnd(array $data, string $cmd, string $type_autor): void
     {
-        $this->checkInputsCreate(UtilitiesModel::filterParams($data));
-        if ($this->Result) {
-            $this->tab_chat_call->call_id = $data['id'];
-            $this->tab_chat_call->call_evaluation = $this->inputs['call_evaluation'];
-            $this->saveData();
+        $this->tab_chat_call = new ChatCall();
+        $data = UtilitiesModel::filterParams($data);
+
+        if ($type_autor == "attendant") {
+            if (!empty($data['call'])) {
+                $this->tab_chat_call->call_id = (int) $data['call'];                
+                $this->tab_chat_call->call_end = date("Y-m-d H:i:s");
+                $this->tab_chat_call->call_status = 3;
+                $this->saveData();
+            } else {
+                $this->Result = false;
+                $this->Error['msg'] = "Opss! Informe os campos obrigatórios para salvar.";
+            }
+        } else {
+            $this->Result = false;
+            $this->Error['msg'] = "Opss! Você não tem permissão para executar essa ação.";
         }
+        $this->Error['data']['cmd'] = $cmd;
+    }
+
+    /**
+     * Avaliação do atendimento.
+     *
+     * @param Array $params ["call" => ""]   
+     * @param string $cmd
+     * @return void
+     */
+    public function callEvaluation(array $data, string $cmd, string $type_autor): void
+    {
+        $this->tab_chat_call = new ChatCall();
+        $data = UtilitiesModel::filterParams($data);
+
+        if ($type_autor == "client") {
+            if (!empty($data['call']) && !empty($data['evaluation'])) {
+                $this->tab_chat_call->call_id = (int) $data['call'];   
+                $this->tab_chat_call->call_evaluation = (int) $data['evaluation'];                       
+                $this->saveData();
+            } else {
+                $this->Result = false;
+                $this->Error['msg'] = "Opss! Informe os campos obrigatórios para salvar.";
+            }
+        } else {
+            $this->Result = false;
+            $this->Error['msg'] = "Opss! Você não tem permissão para executar essa ação.";
+        }
+        $this->Error['data']['cmd'] = $cmd;
     }
 
     /**
@@ -158,24 +176,6 @@ class  CallModel
     }
 
     /**
-     * Consultar Histórico de atendimentos de um intervalo de tempo.
-     *
-     * @param integer $client_uuid
-     * @param integer $user_dest_uuid
-     * @param string $dt_start = data e hora inicio
-     * @param string $dt_end = data e hora fim
-     * @return object
-     */
-    public function readHistory(int $client_uuid, int $user_dest_uuid, string $dt_start, string $dt_end)
-    {
-        $query_col = "(call_client_uuid = :a AND call_user_dest_uuid = :b OR call_client_uuid = :c AND call_user_dest_uuid = :d) AND chat_date_start BETWEEN :e AND :f";
-        $query_value = "a={$client_uuid}&b={$user_dest_uuid}&c={$client_uuid}&d={$user_dest_uuid}&e={$dt_start}&f={$dt_end}";
-        $this->tab_chat_call->readCol($query_col, $query_value);
-
-        return $this->tab_chat_call->getResult();
-    }
-
-    /**
      * Verificar Ação
      * 
      * @return bool 
@@ -193,32 +193,7 @@ class  CallModel
     public function getError()
     {
         return $this->Error;
-    }
-
-    /**
-     * Organizar dados do histórico para envio  
-     *
-     * @param Object $obj
-     * @return array
-     */
-    public function passeAllDataArrayHistory($obj): array
-    {
-        $result = [];
-
-        if ($obj) {
-            foreach ($obj as $key => $arr) {
-                $result[$key]['call_id'] = $arr->data()->call_id;
-                $result[$key]['call_client_uuid'] = $arr->data()->call_client_uuid;
-                $result[$key]['call_user_dest_uuid'] = $arr->data()->call_user_dest_uuid;
-                $result[$key]['call_objective'] = $arr->data()->call_objective;
-                $result[$key]['call_status'] = $arr->data()->call_status;
-                $result[$key]['call_date_start'] = $arr->data()->call_date_start;
-                $result[$key]['call_date_end'] = $arr->data()->call_date_end;
-                $result[$key]['call_evaluation'] = $arr->data()->call_evaluation;
-            }
-        }
-        return $result;
-    }
+    }    
 
     /**
      * Salvar dados no banco de dados
