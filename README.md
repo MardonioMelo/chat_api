@@ -19,8 +19,8 @@ API para chat e chatbot de suporte, ainda em desenvolvimento.
 - [x] Receber fomulário da solicitação do atendimento e salvar dados da abertura do atendimento na tabela de call.
 - [x] Enviar para o cliente o número dele na fila de espera toda vez que um cliente entrar na sala de espera.
 - [x] Enviar para os atendentes a lista de espera por ordem de chegada atualizada toda vez que um novo cliente entrar.
-- [ ] Retirar cliente da sala de espera ao enviar mensagem para o cliente e iniciar o atendimento.
 - [ ] Criar sala com o id do cliente ao iniciar o atendimento e adicionar o atendente e o cliente nessa sala para troca de mensagens.
+- [ ] Retirar cliente da sala de espera ao enviar mensagem para o cliente e iniciar o atendimento.
 - [ ] Finalizar Atendimento - Enviar formulário de avaliação para o cliente, deletar sala do cliente.
 - [ ] Receber e salvar dados da avaliação do atendimento na tabela de call, enviar mensagem de obrigado e desconectar cliente.
 
@@ -540,7 +540,7 @@ Exemplos para consulta da quantidade online:
     }     
 > 
 
-<b>Criar Solicitação de Atendimento - Call</b><br>
+<b>Criar Call</b><br>
 
 > 
     Dados via POST:     
@@ -580,6 +580,30 @@ Enviar para todos os clientes e atendentes o número da fila de espera.
             "data": {
                 "cmd": "n_waiting_line",
                 "n_waiting_line": int
+            }
+        }
+    }
+> 
+
+<b>Cancelar Call</b><br>
+
+> 
+    Dados via POST:     
+    {  
+        "cmd": string, //call_cancel
+        "driver": string, //web
+        "user_uuid": string, //uuid do cliente
+        "call": int //id da call  
+    }   
+
+    Dados de retorno: 
+    {
+        "result": true,
+        "error": {
+            "msg": string,
+            "data": {
+                "id": int, //id da call
+                "cmd": "call_cancel"
             }
         }
     }

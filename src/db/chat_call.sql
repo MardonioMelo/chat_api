@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Tempo de geração: 03-Ago-2021 às 19:33
+-- Tempo de geração: 07-Ago-2021 às 21:25
 -- Versão do servidor: 10.4.19-MariaDB
 -- versão do PHP: 7.4.19
 
@@ -29,13 +29,14 @@ SET time_zone = "+00:00";
 
 CREATE TABLE `chat_call` (
   `call_id` int(11) NOT NULL,
-  `call_user_uuid` varchar(40) NOT NULL COMMENT 'UUID do atendente.',
-  `call_user_dest_uuid` varchar(40) DEFAULT NULL COMMENT 'UUID do cliente.',
+  `call_client_uuid` varchar(40) DEFAULT NULL COMMENT 'UUID do atendente.',
+  `call_attendant_uuid` varchar(40) DEFAULT NULL COMMENT 'UUID do cliente.',
   `call_objective` varchar(255) DEFAULT NULL COMMENT 'Assunto do atendimento.',
-  `call_status` int(2) NOT NULL DEFAULT 1 COMMENT 'Status do atendimento.',
-  `call_date_start` timestamp NULL DEFAULT NULL COMMENT 'Data e hora UTC do inicio do atendimento.',
-  `call_date_end` timestamp NULL DEFAULT NULL COMMENT 'Data e hora UTC do fim do atendimento.',
-  `call_evaluation` int(2) DEFAULT NULL COMMENT 'Nota de avaliação do chamado.'
+  `call_status` int(2) NOT NULL DEFAULT 1 COMMENT 'Status do atendiment:\r\n1 - Em espera\r\n2 - Iniciado\r\n3 - Finalizado\r\n4 - Cancelado',
+  `call_start` timestamp NULL DEFAULT NULL COMMENT 'Data e hora UTC do inicio do atendimento.',
+  `call_end` timestamp NULL DEFAULT NULL COMMENT 'Data e hora UTC do fim do atendimento.',
+  `call_evaluation` int(2) DEFAULT NULL COMMENT 'Nota de avaliação do chamado.',
+  `call_update` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Tabela de atendimentos';
 
 --
