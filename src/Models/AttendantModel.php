@@ -123,20 +123,21 @@ class  AttendantModel
      * @param integer $limit
      * @param integer $offset
      * @param string $uri
+     * @param string $find
      * @return void
      */
-    public function readAllAttendant(int $limit = 10, int $offset = 0, $uri = ""): void
+    public function readAllAttendant(int $limit = 10, int $offset = 0, $uri, $find = ""): void
     {
         if ($limit == 0) {
             $this->Result = false;
             $this->Error['msg'] = "O limite deve ser maior que 0 (zero), tente novamente!";
         } else {
 
-            $attendants = $this->tab_chat_attendant->find()->limit($limit)->offset($offset)->fetch("attendant_id ASC");
+            $attendants = $this->tab_chat_attendant->find($find)->limit($limit)->offset($offset)->fetch("attendant_id ASC");
 
             if ($attendants) {
 
-                $count = $this->tab_chat_attendant->find()->count();
+                $count = $this->tab_chat_attendant->find($find)->count();
                 $links = UtilitiesModel::paginationLink(HOME . $uri, $limit, $offset, $count);
 
                 $this->Result = true;
@@ -146,7 +147,7 @@ class  AttendantModel
                 $this->Error['next'] = $links['next'];
                 $this->Error['previous'] = $links['previous'];
             } else {
-                $attendants = $this->tab_chat_attendant->find()->limit(10)->offset(0)->fetch("attendant_id ASC");
+                $attendants = $this->tab_chat_attendant->find($find)->limit(10)->offset(0)->fetch("attendant_id ASC");
 
                 if ($attendants) {
                     $this->Result = false;

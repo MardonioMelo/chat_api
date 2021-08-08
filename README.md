@@ -526,7 +526,7 @@ Exemplos para consulta da quantidade online:
     Número total de clientes online
     Type: application/json  
     {  
-        "cmd": "n_on_clients",       
+        "cmd": "clients_on_n",       
     }   
 
     Dados de retorno: 
@@ -535,8 +535,8 @@ Exemplos para consulta da quantidade online:
         "error": {
             "msg": "Sucesso!",
             "data": {
-                "cmd": "n_on_clients",
-                "n_on_clients": 1
+                "cmd": "clients_on_n",
+                "clients_on_n": int
             }
         }
     }     
@@ -561,7 +561,8 @@ Exemplos para consulta da quantidade online:
             "msg": string,
             "data": {
                 "cmd": string,
-                "id": int|string
+                "id": int|string,
+                "client_uuid": string
             }
         }
     }

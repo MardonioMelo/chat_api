@@ -43,7 +43,7 @@ class  ClientModel
             $this->saveData();
         }
     }
-/**
+    /**
      * Consultar um cadastro 
      *   
      * @param int $id
@@ -80,7 +80,7 @@ class  ClientModel
     {
         $this->checkInputs(UtilitiesModel::filterParams($data), $id);
         if ($this->Result) {
-            $client = $this->getUser($id);        
+            $client = $this->getUser($id);
             if ($id > 0 && $client) {
                 $this->tab_chat_client->client_id = $client->client_id;
                 $this->tab_chat_client->client_uuid = $client->client_uuid;
@@ -113,6 +113,50 @@ class  ClientModel
         } else {
             $this->Result = false;
             $this->Error['msg'] = "Opss! O cadastro não existe ou já foi excluído.";
+        }
+    }
+
+    /**
+     * Consultar todos os cadastros conforme parâmetros passado no find
+     *
+     * @param string $find_name
+     * @param string $find_value
+     * @param integer $limit
+     * @param integer $offset
+     * @param string $uri    
+     * @return void
+     */
+    public function readAllClientFind(string $find_name, string $find_value, int $limit = 10, int $offset = 0, $uri = ""): void
+    {
+        if ($limit == 0) {
+            $this->Result = false;
+            $this->Error['msg'] = "O limite deve ser maior que 0 (zero), tente novamente!";
+        } else {
+
+            $clients = $this->tab_chat_client->find($find_name, $find_value)->limit($limit)->offset($offset)->fetch("client_id ASC");
+
+            if ($clients) {
+
+                $count = $this->tab_chat_client->find($find_name, $find_value)->count();
+                $links = UtilitiesModel::paginationLink(HOME . $uri, $limit, $offset, $count);
+
+                $this->Result = true;
+                $this->Error['msg'] = "Sucesso!";
+                $this->Error['data'] = $this->passeAllDataArray($clients, HOME . $uri);
+                $this->Error['count'] =  $count;
+                $this->Error['next'] = $links['next'];
+                $this->Error['previous'] = $links['previous'];
+            } else {
+                $clients = $this->tab_chat_client->find($find_name, $find_value)->limit(10)->offset(0)->fetch("client_id ASC");
+
+                if ($clients) {
+                    $this->Result = false;
+                    $this->Error['msg'] = "Não existem cadastros no limite e deslocamento informados, tente outra margem de consulta!";
+                } else {
+                    $this->Result = false;
+                    $this->Error['msg'] = "Não existem clientes cadastrados para os parâmetros informados!";
+                }
+            }
         }
     }
 
@@ -251,10 +295,10 @@ class  ClientModel
             if (UtilitiesModel::validateCPF($data['cpf'])) {
 
                 if ($id) {
-                    $client = $this->tab_chat_client->find("client_id <> :id AND client_cpf = :cpf", "id=$id&cpf=".$data['cpf'])->fetch();
+                    $client = $this->tab_chat_client->find("client_id <> :id AND client_cpf = :cpf", "id=$id&cpf=" . $data['cpf'])->fetch();
                 } else {
                     $client = $this->getUserCPF($data['cpf']);
-                }               
+                }
 
                 if (!$client) {
                     $this->inputs['cpf'] = UtilitiesModel::numCPF($data['cpf']);

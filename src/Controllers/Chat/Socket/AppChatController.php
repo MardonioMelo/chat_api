@@ -132,14 +132,18 @@ class AppChatController extends CommandController implements MessageComponentInt
 
                     $this->call_model->callCreate(json_decode($msg, true), $this->msg_obj->cmd);
 
+                    if ($this->call_model->getResult()) {
+                        $this->session_model->addUserRoomCall($this->call_model->getError()['data']['id'], $this->msg_obj->user_uuid, "client");
+                        $this->sendMsgAllUsers("client", 'n_waiting_line', ["n_waiting_line" => count($this->session_model->getUsersRoom("client"))]);
+                        $this->sendMsgAllUsers("attendant", 'clients_on_n', ["clients_on_n" => count($this->session_model->getUsersRoom("client"))]);
+                        $this->callDataClientsSendAll();
+                    }
+
                     $from->send(UtilitiesModel::dataFormatForSend(
                         $this->call_model->getResult(),
                         $this->call_model->getError()['msg'],
                         $this->call_model->getResult() ? $this->call_model->getError()['data'] : ['cmd' => $this->msg_obj->cmd]
                     ));
-
-                    $this->sendMsgAllUsers("client", 'n_waiting_line', ["n_waiting_line" => count($this->session_model->getUsersRoom("client"))]);
-                    $this->sendMsgAllUsers("attendant", 'n_on_clients', ["n_on_clients" => count($this->session_model->getUsersRoom("client"))]);
                     break;
 
                 case 'n_waiting_line': // Enviar status da fila de clientes
@@ -164,7 +168,6 @@ class AppChatController extends CommandController implements MessageComponentInt
 
                     if ($this->call_model->getResult()) {
                         $this->session_model->addUserRoomCall($this->msg_obj->call, $this->msg_obj->user_uuid, "attendant");
-                        $this->session_model->addUserRoomCall($this->msg_obj->call,  $this->call_model->getError()['data']['client_uuid'], "client");
                     }
 
                     $this->log_model->setLog("Sessão:\n" . print_r($_SESSION['_sf2_attributes'], true) . "\n");
@@ -192,7 +195,7 @@ class AppChatController extends CommandController implements MessageComponentInt
                     $this->call_model->callEnd(json_decode($msg, true), $this->msg_obj->cmd, $this->jwt->getError()['data']->type);
 
                     if ($this->call_model->getResult()) {
-                        $this->session_model->removeUserRoomCall($this->msg_obj->call);                        
+                        $this->session_model->removeUserRoomCall($this->msg_obj->call);
                     }
 
                     $this->log_model->setLog("Sessão:\n" . print_r($_SESSION['_sf2_attributes'], true) . "\n");
@@ -204,19 +207,37 @@ class AppChatController extends CommandController implements MessageComponentInt
                     ));
                     break;
 
+                case 'call_data_clients': // Dados dos clientes na espera do atendimento
+
+                    $this->callDataClientsFrom($from);
+
+                    break;
+
                 case 'n_on': // Total de usuários online
 
-                    $from->send(UtilitiesModel::dataFormatForSend(true, "Sucesso!", ["cmd" => $this->msg_obj->cmd, 'n_on' => $this->qtdUsersServer()]));
+                    if ($this->jwt->getError()['data']->type == "attendant") {
+                        $from->send(UtilitiesModel::dataFormatForSend(true, "Sucesso!", ["cmd" => $this->msg_obj->cmd, 'n_on' => $this->qtdUsersServer()]));
+                    } else {
+                        $from->send(UtilitiesModel::dataFormatForSend(false, "Opss! Você não tem permissão para executar essa ação.", ["cmd" => $this->msg_obj->cmd]));
+                    }
                     break;
 
-                case 'n_on_clients': // Total de clientes online
+                case 'clients_on_n': // Total de clientes online
 
-                    $from->send(UtilitiesModel::dataFormatForSend(true, "Sucesso!", ["cmd" => $this->msg_obj->cmd, 'n_on_clients' => count($this->session_model->getUsersRoom("client"))]));
+                    if ($this->jwt->getError()['data']->type == "attendant") {
+                        $from->send(UtilitiesModel::dataFormatForSend(true, "Sucesso!", ["cmd" => $this->msg_obj->cmd, 'clients_on_n' => count($this->session_model->getUsersRoom("client"))]));
+                    } else {
+                        $from->send(UtilitiesModel::dataFormatForSend(false, "Opss! Você não tem permissão para executar essa ação.", ["cmd" => $this->msg_obj->cmd]));
+                    }
                     break;
 
-                case 'n_on_attendants': // Total de atendentes online
+                case 'attendants_on_n': // Total de atendentes online
 
-                    $from->send(UtilitiesModel::dataFormatForSend(true, "Sucesso!", ["cmd" => $this->msg_obj->cmd, 'n_on_attendants' => count($this->session_model->getUsersRoom("attendant"))]));
+                    if ($this->jwt->getError()['data']->type == "attendant") {
+                        $from->send(UtilitiesModel::dataFormatForSend(true, "Sucesso!", ["cmd" => $this->msg_obj->cmd, 'attendants_on_n' => count($this->session_model->getUsersRoom("attendant"))]));
+                    } else {
+                        $from->send(UtilitiesModel::dataFormatForSend(false, "Opss! Você não tem permissão para executar essa ação.", ["cmd" => $this->msg_obj->cmd]));
+                    }
                     break;
 
                 default: //erro
@@ -372,5 +393,73 @@ class AppChatController extends CommandController implements MessageComponentInt
                 $client->send(UtilitiesModel::dataFormatForSend(true, "Sucesso!", $data));
             }
         }
+    }
+
+    /**
+     * Enviar dados dos clientes em espera par um atendente
+     *
+     * @param  $from
+     * @return void
+     */
+    public function callDataClientsFrom($from)
+    {
+        if ($this->jwt->getError()['data']->type == "attendant") {
+            $calls = $this->session_model->getUsersRoom("call");
+            $uuids = "";
+
+            if (!empty($calls)) {
+                foreach ($calls as $value) {
+                    $flip = array_flip($value);
+
+                    if ($uuids == "") {
+                        $uuids .= $flip['client'];
+                    } else {
+                        $uuids .= "," . $flip['client'];
+                    }
+                }
+            }
+
+            $uri = strip_tags($from->httpRequest->getRequestTarget());
+            $this->client_model->readAllClientFind("client_uuid IN(:uuids)", "uuids=$uuids", 1000, 0, $uri);
+            $data = $this->client_model->getResult() ? $this->client_model->getError()['data'] : [];
+
+            $from->send(UtilitiesModel::dataFormatForSend(
+                $this->client_model->getResult(),
+                $this->client_model->getError()['msg'],
+                [
+                    "cmd" => $this->msg_obj->cmd,
+                    'call_data_clients' => $data
+                ]
+            ));
+        } else {
+            $from->send(UtilitiesModel::dataFormatForSend(false, "Opss! Você não tem permissão para executar essa ação.", ["cmd" => $this->msg_obj->cmd]));
+        }
+    }
+
+    /**
+     * Enviar dados dos clientes em espera para todos os atendentes
+     *
+     * @return void
+     */
+    public function callDataClientsSendAll(): void
+    {
+        $calls = $this->session_model->getUsersRoom("call");
+        $uuids = "";
+
+        if (!empty($calls)) {
+            foreach ($calls as $value) {
+                $flip = array_flip($value);
+
+                if ($uuids == "") {
+                    $uuids .= $flip['client'];
+                } else {
+                    $uuids .= "," . $flip['client'];
+                }
+            }
+        }
+
+        $this->client_model->readAllClientFind("client_uuid IN(:uuids)", "uuids=$uuids", 1000, 0);
+        $data = $this->client_model->getResult() ? $this->client_model->getError()['data'] : [];
+        $this->sendMsgAllUsers("attendant", 'clients_on_data', $data);
     }
 }
