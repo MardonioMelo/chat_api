@@ -66,22 +66,28 @@ class  CallModel
     /**
      * Iniciar atendimento.
      *
-     * @param Array $params ["attendant_uuid" => "", "call" => ""]   
+     * @param Array $params ["call" => ""]   
      * @param string $cmd
+     * @param string $type_autor
+     * @param string $attendant_uuid
      * @return void
      */
-    public function callStart(array $data, string $cmd, string $type_autor): void
+    public function callStart(array $data, string $cmd, string $type_autor, string $attendant_uuid): void
     {
         $this->tab_chat_call = new ChatCall();
-        $data = UtilitiesModel::filterParams($data);
+        $data = UtilitiesModel::filterParams($data);       
 
         if ($type_autor == "attendant") {
-            if (!empty($data['call']) && !empty($data['attendant_uuid'])) {
+            if (!empty($data['call'])) {
+                
                 $this->tab_chat_call->call_id = (int) $data['call'];
-                $this->tab_chat_call->call_attendant_uuid = $data['attendant_uuid'];
+                $this->tab_chat_call->call_attendant_uuid = $attendant_uuid;
                 $this->tab_chat_call->call_start = date("Y-m-d H:i:s");
                 $this->tab_chat_call->call_status = 2;
                 $this->saveData();
+
+                $get_call = $this->getCall($this->tab_chat_call->call_id);
+                $this->Error['data']['client_uuid'] =  $get_call->call_client_uuid;
             } else {
                 $this->Result = false;
                 $this->Error['msg'] = "Opss! Informe os campos obrigatórios para salvar.";
@@ -172,6 +178,21 @@ class  CallModel
         } else {
             $this->Result = false;
             $this->Error['msg'] = "Opss! Informe os campos obrigatórios para realizar o cadastro.";
+        }
+    }
+
+    /**
+     * Consultar dados de uma call pelo ID
+     *
+     * @param integer $uuid
+     * @return null|Object
+     */
+    public function getCall(int $id)
+    {
+        if ($this->tab_chat_call->findById($id)) {
+            return $this->tab_chat_call->findById($id)->data();
+        } else {
+            return false;
         }
     }
 

@@ -24,6 +24,7 @@ class SessionRoomController
         $this->setRoom('attendant');
         $this->setRoom('client');
         $this->setRoom('list');
+        $this->setRoom('call');
     }
 
     /**
@@ -113,7 +114,7 @@ class SessionRoomController
     }
 
     /**
-     * Adicionar usuário na sala de clientes
+     * Adicionar usuário na sala de atendentes
      *
      * @param int $resourceId
      * @param string $user_uuid
@@ -125,7 +126,7 @@ class SessionRoomController
     }
 
     /**
-     * Remover usuário na sala de clientes
+     * Remover usuário na sala de atendentes
      *
      * @param int $resourceId
      * @return void
@@ -173,7 +174,7 @@ class SessionRoomController
     {
         $this->removeUserAttendant($resourceId);
         $this->removeUserClient($resourceId);
-        $this->removeUserList($resourceId);
+        $this->removeUserList($resourceId);       
     }
 
     /**
@@ -185,5 +186,37 @@ class SessionRoomController
     public function getUsersRoom(string $name_room = "list"): array
     {
         return  $this->session->get($name_room);
+    }
+
+    /**
+     *  Adicionar usuário na sala da call
+     * 
+     * @param integer $call     
+     * @param integer $resourceId
+     * @param string $user_uuid
+     * @param string $user_type
+     * @param string $name_room
+     * @return void
+     */
+    public function addUserRoomCall(int $call, string $user_uuid, string $user_type,  string $name_room = "call"): void
+    {
+        $arr = $this->session->get($name_room);
+        $arr[$name_room . '_' . $call][$user_uuid] = $user_type;
+        $this->session->set($name_room, $arr);
+    }
+
+     /**
+     * Remover usuário da sala da call
+     * 
+     * @param integer $call  
+     * @param integer $user_uuid
+     * @param string $name_room
+     * @return void
+     */
+    public function removeUserRoomCall(int $call, string $user_uuid, string $name_room = "call"): void
+    {
+        $arr = $this->session->get($name_room);
+        unset($arr[$name_room . '_' . $call][$user_uuid]);
+        $this->session->set($name_room, $arr);
     }
 }

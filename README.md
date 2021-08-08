@@ -617,8 +617,7 @@ Enviar para todos os clientes e atendentes o número da fila de espera.
     {  
         "cmd": string, //call_start
         "driver": string, //web
-        "user_uuid": string, //uuid do autor
-        "attendant_uuid": string //uuid do atendente
+        "user_uuid": string, //uuid do autor     
         "call": int //id da call  
     }   
 

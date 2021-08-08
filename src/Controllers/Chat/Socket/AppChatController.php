@@ -111,7 +111,6 @@ class AppChatController implements MessageComponentInterface
         $this->msg_obj = json_decode($msg);
         $this->jwt->checkToken($from->httpRequest);
         $this->msg_obj->user_uuid = $this->jwt->getError()['data']->uuid;
-        $msg_error = "Comando não reconhecido. Verifique se todos os campos e dados foram informados corretamente!";
 
         try {
             switch ($this->msg_obj->cmd) {
@@ -151,7 +150,20 @@ class AppChatController implements MessageComponentInterface
                     break;
 
                 case 'call_start': // Iniciar o atendimento pelo atendente.
-                    $this->call_model->callStart(json_decode($msg, true), $this->msg_obj->cmd, $this->jwt->getError()['data']->type);
+                    $this->call_model->callStart(
+                        json_decode($msg, true),
+                        $this->msg_obj->cmd,
+                        $this->jwt->getError()['data']->type,
+                        $this->jwt->getError()['data']->uuid
+                    );
+
+                    if ($this->call_model->getResult()) {                        
+                        $this->session_model->addUserRoomCall($this->msg_obj->call, $this->msg_obj->user_uuid, "attendant");
+                        $this->session_model->addUserRoomCall($this->msg_obj->call,  $this->call_model->getError()['data']['client_uuid'], "client");
+                    }
+
+                    $this->log_model->setLog("Sessão:\n" . print_r($_SESSION['_sf2_attributes'], true) . "\n");
+
                     $from->send(UtilitiesModel::dataFormatForSend(
                         $this->call_model->getResult(),
                         $this->call_model->getError()['msg'],
@@ -189,13 +201,21 @@ class AppChatController implements MessageComponentInterface
                     $from->send(UtilitiesModel::dataFormatForSend(true, "Sucesso!", ["cmd" => $this->msg_obj->cmd, 'n_on_attendants' => count($this->session_model->getUsersRoom("attendant"))]));
                     break;
 
-                default:
-                    $from->send($from->send(UtilitiesModel::dataFormatForSend(false, $msg_error, ["cmd" => "error"])));
+                default: //erro
+                    $from->send($from->send(UtilitiesModel::dataFormatForSend(
+                        false,
+                        "Comando não reconhecido. Verifique se todos os campos e dados foram informados corretamente!",
+                        ["cmd" => "error"]
+                    )));
                     break;
             }
         } catch (\Throwable $e) {
             $this->log_model->setLog($e->getMessage() . "\n");
-            $from->send(UtilitiesModel::dataFormatForSend(false, $msg_error, ["cmd" => "error"]));
+            $from->send(UtilitiesModel::dataFormatForSend(
+                false,
+                "Ops! Algo de inesperado aconteceu, tente novamente mais tarde.",
+                ["cmd" => "error"]
+            ));
         }
 
         $this->log_model->printLog();
@@ -319,7 +339,7 @@ class AppChatController implements MessageComponentInterface
     }
 
     /**
-     * Enviar mensagem para todos os clientes
+     * Enviar mensagem para todos os usuários de um tipo
      * @param string $type
      * @param string $cmd
      * @param mixed $msg    
