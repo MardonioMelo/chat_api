@@ -20,7 +20,7 @@ API para chat e chatbot de suporte, ainda em desenvolvimento.
 - [x] Enviar para o cliente o número dele na fila de espera toda vez que um cliente entrar na sala de espera.
 - [x] Enviar para os atendentes a lista de espera por ordem de chegada atualizada toda vez que um novo cliente entrar.
 - [x] Criar sala com o id do cliente ao iniciar o atendimento e adicionar o atendente e o cliente nessa sala para troca de mensagens.
-- [ ] Enviar dados dos clientes da sala de espera para os atendentes.
+- [x] Enviar dados dos clientes da sala de espera para os atendentes.
 - [ ] Criar método para troca de mensagem entre usuários dentro de uma sala de call.
 - [ ] Retirar cliente da sala de espera ao enviar mensagem para o cliente e iniciar o atendimento.
 - [ ] Finalizar Atendimento - Enviar formulário de avaliação para o cliente, deletar sala do cliente.
