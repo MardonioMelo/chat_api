@@ -116,6 +116,7 @@ class AppChatController implements MessageComponentInterface
             switch ($this->msg_obj->cmd) {
 
                 case 'msg': // Enviar mensagem para um destinatário
+
                     $orig_type = $this->jwt->getError()['data']->type;
                     $dest_type = $this->msg_obj->user_dest_type;
 
@@ -127,21 +128,28 @@ class AppChatController implements MessageComponentInterface
                     break;
 
                 case 'call_create': // Cadastrar nova call pelo cliente
+
                     $this->call_model->callCreate(json_decode($msg, true), $this->msg_obj->cmd);
+
                     $from->send(UtilitiesModel::dataFormatForSend(
                         $this->call_model->getResult(),
                         $this->call_model->getError()['msg'],
                         $this->call_model->getResult() ? $this->call_model->getError()['data'] : ['cmd' => $this->msg_obj->cmd]
                     ));
+
+                    $this->sendMsgAllUsers("client", 'n_waiting_line', ["n_waiting_line" => count($this->session_model->getUsersRoom("client"))]);
+                    $this->sendMsgAllUsers("attendant", 'n_on_clients', ["n_on_clients" => count($this->session_model->getUsersRoom("client"))]);
                     break;
 
-                case 'n_waiting_line': // Enviar numero da fila para os clientes e número de clientes para os atendentes
-                    $this->sendMsgAllUsers("client", 'n_waiting_line', count($this->session_model->getUsersRoom("client")));
-                    $this->sendMsgAllUsers("attendant", 'n_on_clients', count($this->session_model->getUsersRoom("client")));
+                case 'n_waiting_line': // Enviar status da fila de clientes
+
+                    $from->send(UtilitiesModel::dataFormatForSend(true, "Sucesso!", ["cmd" => $this->msg_obj->cmd, 'n_waiting_line' => count($this->session_model->getUsersRoom("client"))]));
                     break;
 
                 case 'call_cancel': // Cancelar call pelo cliente.                                  
+
                     $this->call_model->callCancel(json_decode($msg, true), $this->msg_obj->cmd);
+
                     $from->send(UtilitiesModel::dataFormatForSend(
                         $this->call_model->getResult(),
                         $this->call_model->getError()['msg'],
@@ -150,14 +158,10 @@ class AppChatController implements MessageComponentInterface
                     break;
 
                 case 'call_start': // Iniciar o atendimento pelo atendente.
-                    $this->call_model->callStart(
-                        json_decode($msg, true),
-                        $this->msg_obj->cmd,
-                        $this->jwt->getError()['data']->type,
-                        $this->jwt->getError()['data']->uuid
-                    );
 
-                    if ($this->call_model->getResult()) {                        
+                    $this->call_model->callStart(json_decode($msg, true), $this->msg_obj->cmd, $this->jwt->getError()['data']->type, $this->jwt->getError()['data']->uuid);
+
+                    if ($this->call_model->getResult()) {
                         $this->session_model->addUserRoomCall($this->msg_obj->call, $this->msg_obj->user_uuid, "attendant");
                         $this->session_model->addUserRoomCall($this->msg_obj->call,  $this->call_model->getError()['data']['client_uuid'], "client");
                     }
@@ -172,7 +176,9 @@ class AppChatController implements MessageComponentInterface
                     break;
 
                 case 'call_evaluation': // Avaliação do atendimento pelo cliente.
+
                     $this->call_model->callEvaluation(json_decode($msg, true), $this->msg_obj->cmd, $this->jwt->getError()['data']->type);
+
                     $from->send(UtilitiesModel::dataFormatForSend(
                         $this->call_model->getResult(),
                         $this->call_model->getError()['msg'],
@@ -181,7 +187,15 @@ class AppChatController implements MessageComponentInterface
                     break;
 
                 case 'call_end': // Finalizar o atendimento pelo atendente.
+
                     $this->call_model->callEnd(json_decode($msg, true), $this->msg_obj->cmd, $this->jwt->getError()['data']->type);
+
+                    if ($this->call_model->getResult()) {
+                        $this->session_model->removeUserRoomCall($this->msg_obj->call);                        
+                    }
+
+                    $this->log_model->setLog("Sessão:\n" . print_r($_SESSION['_sf2_attributes'], true) . "\n");
+
                     $from->send(UtilitiesModel::dataFormatForSend(
                         $this->call_model->getResult(),
                         $this->call_model->getError()['msg'],
@@ -190,14 +204,17 @@ class AppChatController implements MessageComponentInterface
                     break;
 
                 case 'n_on': // Total de usuários online
+
                     $from->send(UtilitiesModel::dataFormatForSend(true, "Sucesso!", ["cmd" => $this->msg_obj->cmd, 'n_on' => $this->qtdUsersServer()]));
                     break;
 
                 case 'n_on_clients': // Total de clientes online
+
                     $from->send(UtilitiesModel::dataFormatForSend(true, "Sucesso!", ["cmd" => $this->msg_obj->cmd, 'n_on_clients' => count($this->session_model->getUsersRoom("client"))]));
                     break;
 
                 case 'n_on_attendants': // Total de atendentes online
+
                     $from->send(UtilitiesModel::dataFormatForSend(true, "Sucesso!", ["cmd" => $this->msg_obj->cmd, 'n_on_attendants' => count($this->session_model->getUsersRoom("attendant"))]));
                     break;
 
@@ -213,7 +230,7 @@ class AppChatController implements MessageComponentInterface
             $this->log_model->setLog($e->getMessage() . "\n");
             $from->send(UtilitiesModel::dataFormatForSend(
                 false,
-                "Ops! Algo de inesperado aconteceu, tente novamente mais tarde.",
+                "Ops! Algo de inesperado aconteceu, verifique se os dados enviados estão corretos e tente novamente mais tarde.",
                 ["cmd" => "error"]
             ));
         }
@@ -342,14 +359,16 @@ class AppChatController implements MessageComponentInterface
      * Enviar mensagem para todos os usuários de um tipo
      * @param string $type
      * @param string $cmd
-     * @param mixed $msg    
+     * @param array $msg    
      * @return void
      */
-    public function sendMsgAllUsers(string $type, string $cmd, $msg): void
+    public function sendMsgAllUsers(string $type, string $cmd, array $data): void
     {
+        $data['cmd'] = $cmd;
+
         foreach ($this->clients as $client) {
             if ($this->session_model->getUser($client->resourceId, $type) == true) {
-                $client->send(UtilitiesModel::dataFormatForSend(true, "Sucesso!", ["cmd" => $cmd, $cmd => $msg]));
+                $client->send(UtilitiesModel::dataFormatForSend(true, "Sucesso!", $data));
             }
         }
     }

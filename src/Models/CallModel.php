@@ -27,15 +27,25 @@ class  CallModel
      * @return void
      */
     public function callCreate(array $data, string $cmd): void
-    {
+    {        
         $this->tab_chat_call = new ChatCall();
+        $data = UtilitiesModel::filterParams($data);
 
-        $this->checkInputsCreate(UtilitiesModel::filterParams($data));
-        if ($this->Result) {
-            $this->tab_chat_call->call_id = "";
-            $this->tab_chat_call->call_client_uuid =  $this->inputs['client_uuid'];
-            $this->tab_chat_call->call_objective = $this->inputs['objective'];
-            $this->saveData();
+        if (!empty($data['client_uuid']) && !empty($data['objective'])) {
+            $this->client_model = new ClientModel();
+
+            if ($this->client_model->getUserUUID($data['client_uuid'])) {
+                $this->tab_chat_call->call_id = "";
+                $this->tab_chat_call->call_client_uuid =  $data['client_uuid'];
+                $this->tab_chat_call->call_objective = $data['objective'];
+                $this->saveData();              
+            } else {
+                $this->Result = false;
+                $this->Error['msg'] = "Opss! O UUID do cliente informado não existe.";
+            }
+        } else {
+            $this->Result = false;
+            $this->Error['msg'] = "Opss! Informe os campos obrigatórios para realizar o cadastro.";
         }
         $this->Error['data']['cmd'] = $cmd;
     }
@@ -53,9 +63,16 @@ class  CallModel
         $data = UtilitiesModel::filterParams($data);
 
         if (!empty($data['call'])) {
-            $this->tab_chat_call->call_id = (int) $data['call'];
-            $this->tab_chat_call->call_status = 4;
-            $this->saveData();
+            $get_call = $this->getCall((int)$data['call']);
+
+            if ($get_call) {
+                $this->tab_chat_call->call_id = (int) $data['call'];
+                $this->tab_chat_call->call_status = 4;
+                $this->saveData();
+            } else {
+                $this->Result = false;
+                $this->Error['msg'] = "O número da call informada não existe ou foi excluída!";
+            }
         } else {
             $this->Result = false;
             $this->Error['msg'] = "Opss! Informe os campos obrigatórios para salvar.";
@@ -75,19 +92,23 @@ class  CallModel
     public function callStart(array $data, string $cmd, string $type_autor, string $attendant_uuid): void
     {
         $this->tab_chat_call = new ChatCall();
-        $data = UtilitiesModel::filterParams($data);       
+        $data = UtilitiesModel::filterParams($data);
 
         if ($type_autor == "attendant") {
             if (!empty($data['call'])) {
-                
-                $this->tab_chat_call->call_id = (int) $data['call'];
-                $this->tab_chat_call->call_attendant_uuid = $attendant_uuid;
-                $this->tab_chat_call->call_start = date("Y-m-d H:i:s");
-                $this->tab_chat_call->call_status = 2;
-                $this->saveData();
+                $get_call = $this->getCall((int)$data['call']);
 
-                $get_call = $this->getCall($this->tab_chat_call->call_id);
-                $this->Error['data']['client_uuid'] =  $get_call->call_client_uuid;
+                if ($get_call) {
+                    $this->tab_chat_call->call_id = (int) $data['call'];
+                    $this->tab_chat_call->call_attendant_uuid = $attendant_uuid;
+                    $this->tab_chat_call->call_start = date("Y-m-d H:i:s");
+                    $this->tab_chat_call->call_status = 2;
+                    $this->saveData();
+                    $this->Error['data']['client_uuid'] =  $get_call->call_client_uuid;
+                } else {
+                    $this->Result = false;
+                    $this->Error['msg'] = "O número da call informada não existe ou foi excluída!";
+                }
             } else {
                 $this->Result = false;
                 $this->Error['msg'] = "Opss! Informe os campos obrigatórios para salvar.";
@@ -113,10 +134,18 @@ class  CallModel
 
         if ($type_autor == "attendant") {
             if (!empty($data['call'])) {
-                $this->tab_chat_call->call_id = (int) $data['call'];                
-                $this->tab_chat_call->call_end = date("Y-m-d H:i:s");
-                $this->tab_chat_call->call_status = 3;
-                $this->saveData();
+                $get_call = $this->getCall((int)$data['call']);
+
+                if ($get_call) {
+                    $this->tab_chat_call->call_id = (int) $data['call'];
+                    $this->tab_chat_call->call_end = date("Y-m-d H:i:s");
+                    $this->tab_chat_call->call_status = 3;
+                    $this->saveData();
+                    $this->Error['data']['client_uuid'] =  $get_call->call_client_uuid;
+                } else {
+                    $this->Result = false;
+                    $this->Error['msg'] = "O número da call informada não existe ou foi excluída!";
+                }
             } else {
                 $this->Result = false;
                 $this->Error['msg'] = "Opss! Informe os campos obrigatórios para salvar.";
@@ -142,9 +171,16 @@ class  CallModel
 
         if ($type_autor == "client") {
             if (!empty($data['call']) && !empty($data['evaluation'])) {
-                $this->tab_chat_call->call_id = (int) $data['call'];   
-                $this->tab_chat_call->call_evaluation = (int) $data['evaluation'];                       
-                $this->saveData();
+                $get_call = $this->getCall((int)$data['call']);
+
+                if ($get_call) {
+                    $this->tab_chat_call->call_id = (int) $data['call'];
+                    $this->tab_chat_call->call_evaluation = (int) $data['evaluation'];
+                    $this->saveData();
+                } else {
+                    $this->Result = false;
+                    $this->Error['msg'] = "O número da call informada não existe ou foi excluída!";
+                }
             } else {
                 $this->Result = false;
                 $this->Error['msg'] = "Opss! Informe os campos obrigatórios para salvar.";
@@ -154,31 +190,6 @@ class  CallModel
             $this->Error['msg'] = "Opss! Você não tem permissão para executar essa ação.";
         }
         $this->Error['data']['cmd'] = $cmd;
-    }
-
-    /**
-     * Verificar e validar os dados para cadastro
-     *
-     * @param array $data   
-     * @return void
-     */
-    public function checkInputsCreate(array $data)
-    {
-        if (!empty($data['client_uuid']) && !empty($data['objective'])) {
-
-            $this->client_model = new ClientModel();
-            if ($this->client_model->getUserUUID($data['client_uuid'])) {
-                $this->inputs['client_uuid'] = $data['client_uuid'];
-                $this->inputs['objective'] = $data['objective'];
-                $this->Result = true;
-            } else {
-                $this->Result = false;
-                $this->Error['msg'] = "Opss! O UUID do cliente informado não existe.";
-            }
-        } else {
-            $this->Result = false;
-            $this->Error['msg'] = "Opss! Informe os campos obrigatórios para realizar o cadastro.";
-        }
     }
 
     /**
@@ -214,7 +225,7 @@ class  CallModel
     public function getError()
     {
         return $this->Error;
-    }    
+    }
 
     /**
      * Salvar dados no banco de dados

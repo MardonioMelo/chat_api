@@ -174,7 +174,7 @@ class SessionRoomController
     {
         $this->removeUserAttendant($resourceId);
         $this->removeUserClient($resourceId);
-        $this->removeUserList($resourceId);       
+        $this->removeUserList($resourceId);
     }
 
     /**
@@ -205,7 +205,7 @@ class SessionRoomController
         $this->session->set($name_room, $arr);
     }
 
-     /**
+    /**
      * Remover usuário da sala da call
      * 
      * @param integer $call  
@@ -213,10 +213,10 @@ class SessionRoomController
      * @param string $name_room
      * @return void
      */
-    public function removeUserRoomCall(int $call, string $user_uuid, string $name_room = "call"): void
+    public function removeUserRoomCall(int $call, string $name_room = "call"): void
     {
         $arr = $this->session->get($name_room);
-        unset($arr[$name_room . '_' . $call][$user_uuid]);
+        unset($arr[$name_room . '_' . $call]);
         $this->session->set($name_room, $arr);
     }
 }
