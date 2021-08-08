@@ -2,18 +2,19 @@
 
 namespace Src\Controllers\Chat\Socket;
 
+use Src\Models\JWTModel;
 use Src\Models\LogModel;
 use Src\Models\MsgModel;
 use Src\Models\CallModel;
 use Src\Models\ClientModel;
 use Src\Models\AttendantModel;
-use Ratchet\ConnectionInterface;
-use Src\Models\JWTModel;
-use Ratchet\MessageComponentInterface;
-use Src\Controllers\Chat\Socket\SessionRoomController;
 use Src\Models\UtilitiesModel;
+use Ratchet\ConnectionInterface;
+use Ratchet\MessageComponentInterface;
+use Src\Controllers\Chat\Socket\CommandController;
+use Src\Controllers\Chat\Socket\SessionRoomController;
 
-class AppChatController implements MessageComponentInterface
+class AppChatController extends CommandController implements MessageComponentInterface
 {
     protected $clients;
     private $session_model;
