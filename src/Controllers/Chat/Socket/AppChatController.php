@@ -145,22 +145,34 @@ class AppChatController implements MessageComponentInterface
                 case 'call_create': // Cadastrar nova call pelo cliente
 
                     if ($this->jwt->getError()['data']->type == "client") {
+                        $check_call = $this->existsCallInSession($this->msg_obj->client_uuid);
 
-                        $this->call_model->callCreate(json_decode($msg, true), $this->msg_obj->cmd);
+                        if (empty($check_call)) {
+                            $this->call_model->callCreate(json_decode($msg, true), $this->msg_obj->cmd);
 
-                        if ($this->call_model->getResult()) {
-                            $this->session_model->addUserRoomCall($this->call_model->getError()['data']['id'], $this->msg_obj->client_uuid, "client");
+                            if ($this->call_model->getResult()) {
+                                $this->session_model->addUserRoomCall($this->call_model->getError()['data']['id'], $this->msg_obj->client_uuid, "client");
+                                $this->nWaitingLine();
+                                $this->customerListData();
+                            }
+
+                            $this->log_model->setLog("Sessão:\n" . print_r($_SESSION['_sf2_attributes'], true) . "\n");
+
+                            $from->send(UtilitiesModel::dataFormatForSend(
+                                $this->call_model->getResult(),
+                                $this->call_model->getError()['msg'],
+                                $this->call_model->getResult() ? $this->call_model->getError()['data'] : ['cmd' => $this->msg_obj->cmd]
+                            ));
+                        } else {
                             $this->nWaitingLine();
                             $this->customerListData();
+
+                            $from->send(UtilitiesModel::dataFormatForSend(
+                                true,
+                                "Já existe uma sala de espera criada para você, aguarde o atendimento!",
+                                ["cmd" => $this->msg_obj->cmd, "id" => (int) explode("_", $check_call)[1]]
+                            ));
                         }
-
-                        $this->log_model->setLog("Sessão:\n" . print_r($_SESSION['_sf2_attributes'], true) . "\n");
-
-                        $from->send(UtilitiesModel::dataFormatForSend(
-                            $this->call_model->getResult(),
-                            $this->call_model->getError()['msg'],
-                            $this->call_model->getResult() ? $this->call_model->getError()['data'] : ['cmd' => $this->msg_obj->cmd]
-                        ));
                     } else {
                         $from->send(UtilitiesModel::dataFormatForSend(false, "Opss! Você não tem permissão para executar essa ação.", ["cmd" => $this->msg_obj->cmd]));
                     }
@@ -473,5 +485,29 @@ class AppChatController implements MessageComponentInterface
         } else {
             $this->sendMsgAllUsers("attendant", 'call_data_clients', "Atualização da fila de clientes.", ["clients" => $data]);
         }
+    }
+
+    /**
+     *  Verificar se já existe uma call aberta na sessão para o cliente
+     *
+     * @param string $uuid
+     * @return string
+     */
+    public function existsCallInSession(string $uuid): string
+    {
+        $calls = $this->session_model->getUsersRoom("call");
+        $call = "";
+
+        if (!empty($calls)) {
+            foreach ($calls as $key => $value) {
+                $flip = array_flip($value);
+
+                if ($uuid == $flip['client']) {
+                    $call = $key;
+                }
+            }
+        }
+
+        return $call;
     }
 }
