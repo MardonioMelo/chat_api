@@ -2,21 +2,23 @@
 
 namespace Src\Controllers\Chat\Socket;
 
+use Src\Models\MsgModel;
 use Src\Models\UtilitiesModel;
+use Ratchet\ConnectionInterface;
 
 /**
  * Class com os comandos disponíveis no chat
  */
 class CommandController
 {
+
     /**
      * Set commands
      *
-     * @param string $cmd
-     * @return void
+     * @param string $cmd   
      */
-    public function setCommand(string $cmd):void
+    public function setCommand(string $cmd)
     {
-        $this->$cmd();
+        return  $this->$cmd();
     }
 }

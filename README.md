@@ -423,14 +423,18 @@ Rotas do servidor WebSocket:
     Ex.: localhost:8081/api/client
 
     - Header: Deve ser informado no cabeçalho da requisição no campo Authorization um token JWT valido obtido anteriormente ex.: Authorization:  Bearer ...token...
+
+    No cabeçalho também deve está definido o tipo dos dados enviado.
+    Type: application/json   
 >
 
-Apos a conexão bem sucedida com o servidor de chat, já será possível enviar e receber informações conforme estrutura dos dados.
+Apos a conexão bem sucedida com o servidor de chat, já será possível enviar e receber informações conforme estrutura dos dados e cmd informado.
 
 <b>Troca de Mensagens</b><br>
+<br>Clientes não tem permissão para enviar mensagens para outro clientes, mas os atendentes tem.
 
-Exemplos para troca de mensagens: 
 >      
+    Request:
     Type: application/json  
     {  
         "cmd": "msg",  //comando
@@ -444,30 +448,34 @@ Exemplos para troca de mensagens:
         "attachment": null //null - outros atributos do chatbot
     }  
 
-    Dados de retorno: N/A.  
+    Response: N/A.  
 
-    Os dados de retorno caso o outro user esteja offline:
+    Response: caso o destinatário esteja offline:
+    Type: application/json  
     {
-        "result": false,
+        "result": false
         "error": {
-            "msg": "A mensagem foi enviada, mas o usuário está offline!",
-            "data": []
+            "msg": string,
+            "data": {
+                "cmd": "msg"
+            }
         }
     }
 
-    Dados enviados ao outro user:
+    Dados enviados ao destinatário:
+    Type: application/json  
     {
-        "result": false,
+        "result": true
         "error": {
-            "msg": "Sucesso!",
+            "msg": string, 
             "data": {
                 "cmd": "msg",
                 "driver": "web",
-                "user_uuid": "e0baef38-99b0-407d-ba5a-8e76547da088",
-                "user_type": "attendant",
-                "text": "ola fi",
-                "type": "text",
-                "time": "",
+                "user_uuid": string, //uuid do user de origem
+                "user_type": string, //attendant ou client - tipo da origem
+                "text": string, //conteúdo da mensagem
+                "type": string, //tipo de conteúdo da mensagem
+                "time": string, //hora da mensagem
                 "attachment": null
             }
         }
@@ -475,63 +483,71 @@ Exemplos para troca de mensagens:
     
 > 
 
-
-<b>Quantidade Online</b><br>
-
-Exemplos para consulta da quantidade online:   
-- ws://localhost:8081/api/attendant 
-- ws://localhost:8081/api/client 
+<b>Quantidade de usuários online (atendentes + clientes)</b>
+<br>Os clientes não tem permissão para este comando.
 
 >    
-    Número total de usuários online
+    Request:
     Type: application/json     
     {  
-        "cmd": "n_on"       
+        "cmd": "on_n", //comando 
+        "user_uuid": string //uuid do autor
     }   
 
-    Dados de retorno: 
+    Response: 
+    Type: application/json
     {
-        "result": true,
+        "result": bool,
         "error": {
             "msg": "Sucesso!",
             "data": {
-                "cmd": "n_on",
-                "n_on": 2
+                "cmd": "on_n",
+                "on_n": int
             }
         }
     }
 > 
 
->    
-    Número total de atendentes online
+<b>Quantidade de atendentes online</b>
+<br>Os clientes não tem permissão para este comando.
+
+>     
+    Request:
     Type: application/json  
     {  
-        "cmd": "n_on_attendants"        
+        "cmd": "attendants_on_n", //comando   
+        "user_uuid": string //uuid do autor     
     }   
 
-    Dados de retorno: 
+    Response:
+    Type: application/json   
     {
-        "result": true,
+        "result": bool,
         "error": {
             "msg": "Sucesso!",
             "data": {
-                "cmd": "n_on_attendants",
-                "n_on_attendants": 1
+                "cmd": "attendants_on_n",
+                "attendants_on_n": int
             }
         }
     }
 > 
 
+<b>Quantidade de clientes online</b>
+<br>Os clientes não tem permissão para este comando.
+
 >    
-    Número total de clientes online
+    Request:
     Type: application/json  
     {  
-        "cmd": "clients_on_n",       
+        "cmd": "clients_on_n", //comando
+        "user_uuid": string //uuid do autor
     }   
 
-    Dados de retorno: 
+    Response: 
+    Type: application/json
     {
-        "result": true,
+        "result": bool,
         "error": {
             "msg": "Sucesso!",
             "data": {
@@ -542,41 +558,18 @@ Exemplos para consulta da quantidade online:
     }     
 > 
 
-<b>Criar Call</b><br>
+<b>Quantidade de clientes na fila de espera</b>
 
-> 
-    Type: application/json     
+>
+    Request:
+    Type: application/json
     {  
-        "cmd": string, //call_create
-        "driver": string, //web
-        "client_uuid": string, //uuid do cliente
-        "user_uuid": string, //uuid do do autor
-        "objective": string //assunto  
+        "cmd": "n_waiting_line",  //comando 
+        "user_uuid": string //uuid do autor  
     }   
 
-    Dados de retorno: 
-    {
-        "result": bool,
-        "error": {
-            "msg": string,
-            "data": {
-                "cmd": string,
-                "id": int|string,
-                "client_uuid": string
-            }
-        }
-    }
-> 
-
-<b>Número da Fila de Espera - Call</b><br>
-Enviar para todos os clientes e atendentes o número da fila de espera.
-> 
-    Type: application/json     
-    {  
-        "cmd": "n_waiting_line"       
-    }   
-
-    Dados de retorno: 
+    Response:
+    Type: application/json
     {
         "result": bool,
         "error": {
@@ -587,27 +580,123 @@ Enviar para todos os clientes e atendentes o número da fila de espera.
             }
         }
     }
+>
+
+<b>Criar Call</b>
+<br>Os atendentes não tem permissão para este comando.
+
+> 
+    Request:
+    Type: application/json
+    {  
+        "cmd": "call_create", //comando
+        "driver": "web", //web
+        "client_uuid": string, //uuid do cliente
+        "user_uuid": string, //uuid do autor
+        "objective": string //assunto  
+    }
+
+    Response:
+    Type: application/json 
+    {
+        "result": bool,
+        "error": {
+            "msg": string,
+            "data": {
+                "cmd": "call_create",
+                "id": int|string                
+            }
+        }
+    }
+
+    Response para todos os clientes:
+    Type: application/json 
+    {
+        "result": bool,
+        "error": {
+            "msg": string,
+            "data": {
+                "row": int,
+                "cmd": "n_waiting_line"
+            }
+        }
+    }
+    
+    Response para todos os atendentes:
+    Type: application/json
+    {
+        "result": bool,
+        "error": {
+            "msg": string,
+            "data": {
+                "cmd": "call_data_clients",
+                "clients": [
+                    {
+                        "id": int,
+                        "cpf": int,
+                        "uuid": string,
+                        "name": string,
+                        "lastname": string,
+                        "avatar": string,
+                        "updated_at": string,
+                        "created_at": string,
+                        "url": string
+                    }
+                    ...
+                ]                
+            }
+        }
+    }
 > 
 
 <b>Cancelar Call</b><br>
+<br>Os atendentes não tem permissão para este comando.
 
 > 
+    Request:
     Type: application/json     
     {  
-        "cmd": string, //call_cancel
-        "driver": string, //web
-        "user_uuid": string, //uuid do cliente
-        "call": int //id da call  
-    }   
+        "cmd": "call_create", //comando
+        "driver": "web", //web       
+        "user_uuid": string, //uuid do autor
+        "call": int //id da call 
+    }  
 
-    Dados de retorno: 
+    Response: 
+    Type: application/json 
     {
-        "result": true,
+        "result": bool,
         "error": {
             "msg": string,
             "data": {
                 "id": int, //id da call
                 "cmd": "call_cancel"
+            }
+        }
+    }
+
+    Response para todos os clientes:
+    Type: application/json 
+    {
+        "result": bool,
+        "error": {
+            "msg": string,
+            "data": {
+                "row": int,
+                "cmd": "n_waiting_line"
+            }
+        }
+    }
+
+    Response para todos os atendentes:
+    Type: application/json
+    {
+        "result": bool,
+        "error": {
+            "msg": string,
+            "data": {
+                "clients": array,
+                "cmd": "call_data_clients"
             }
         }
     }

@@ -11,10 +11,9 @@ use Src\Models\AttendantModel;
 use Src\Models\UtilitiesModel;
 use Ratchet\ConnectionInterface;
 use Ratchet\MessageComponentInterface;
-use Src\Controllers\Chat\Socket\CommandController;
 use Src\Controllers\Chat\Socket\SessionRoomController;
 
-class AppChatController extends CommandController implements MessageComponentInterface
+class AppChatController implements MessageComponentInterface
 {
     protected $clients;
     private $session_model;
@@ -114,9 +113,10 @@ class AppChatController extends CommandController implements MessageComponentInt
         $this->msg_obj->user_uuid = $this->jwt->getError()['data']->uuid;
 
         try {
+
             switch ($this->msg_obj->cmd) {
 
-                case 'msg': // Enviar mensagem para um destinatário
+                case 'msg': // Enviar mensagem para um destinatário                    
 
                     $orig_type = $this->jwt->getError()['data']->type;
                     $dest_type = $this->msg_obj->user_dest_type;
@@ -128,32 +128,55 @@ class AppChatController extends CommandController implements MessageComponentInt
                     }
                     break;
 
-                case 'call_create': // Cadastrar nova call pelo cliente
+                case 'n_waiting_line': // Número de clientes na fila de espera
 
-                    $this->call_model->callCreate(json_decode($msg, true), $this->msg_obj->cmd);
-
-                    if ($this->call_model->getResult()) {
-                        $this->session_model->addUserRoomCall($this->call_model->getError()['data']['id'], $this->msg_obj->user_uuid, "client");
-                        $this->sendMsgAllUsers("client", 'n_waiting_line', ["n_waiting_line" => count($this->session_model->getUsersRoom("client"))]);
-                        $this->sendMsgAllUsers("attendant", 'clients_on_n', ["clients_on_n" => count($this->session_model->getUsersRoom("client"))]);
-                        $this->callDataClientsSendAll();
-                    }
-
-                    $from->send(UtilitiesModel::dataFormatForSend(
-                        $this->call_model->getResult(),
-                        $this->call_model->getError()['msg'],
-                        $this->call_model->getResult() ? $this->call_model->getError()['data'] : ['cmd' => $this->msg_obj->cmd]
-                    ));
+                    $this->nWaitingLine($from);
                     break;
 
-                case 'n_waiting_line': // Enviar status da fila de clientes
+                case 'customer_list_data': // Dados dos clientes na fila de espera
 
-                    $from->send(UtilitiesModel::dataFormatForSend(true, "Sucesso!", ["cmd" => $this->msg_obj->cmd, 'n_waiting_line' => count($this->session_model->getUsersRoom("client"))]));
+                    if ($this->jwt->getError()['data']->type == "attendant") {
+                        $this->customerListData($from);
+                    } else {
+                        $from->send(UtilitiesModel::dataFormatForSend(false, "Opss! Você não tem permissão para executar essa ação.", ["cmd" => $this->msg_obj->cmd]));
+                    }
+                    break;
+
+                case 'call_create': // Cadastrar nova call pelo cliente
+
+                    if ($this->jwt->getError()['data']->type == "client") {
+
+                        $this->call_model->callCreate(json_decode($msg, true), $this->msg_obj->cmd);
+
+                        if ($this->call_model->getResult()) {
+                            $this->session_model->addUserRoomCall($this->call_model->getError()['data']['id'], $this->msg_obj->client_uuid, "client");
+                            $this->nWaitingLine();
+                            $this->customerListData();
+                        }
+
+                        $this->log_model->setLog("Sessão:\n" . print_r($_SESSION['_sf2_attributes'], true) . "\n");
+
+                        $from->send(UtilitiesModel::dataFormatForSend(
+                            $this->call_model->getResult(),
+                            $this->call_model->getError()['msg'],
+                            $this->call_model->getResult() ? $this->call_model->getError()['data'] : ['cmd' => $this->msg_obj->cmd]
+                        ));
+                    } else {
+                        $from->send(UtilitiesModel::dataFormatForSend(false, "Opss! Você não tem permissão para executar essa ação.", ["cmd" => $this->msg_obj->cmd]));
+                    }
                     break;
 
                 case 'call_cancel': // Cancelar call pelo cliente.                                  
 
                     $this->call_model->callCancel(json_decode($msg, true), $this->msg_obj->cmd);
+
+                    if ($this->call_model->getResult()) {
+                        $this->session_model->removeUserRoomCall($this->msg_obj->call);
+                        $this->nWaitingLine();
+                        $this->customerListData();
+                    }
+
+                    $this->log_model->setLog("Sessão:\n" . print_r($_SESSION['_sf2_attributes'], true) . "\n");
 
                     $from->send(UtilitiesModel::dataFormatForSend(
                         $this->call_model->getResult(),
@@ -207,16 +230,10 @@ class AppChatController extends CommandController implements MessageComponentInt
                     ));
                     break;
 
-                case 'call_data_clients': // Dados dos clientes na espera do atendimento
-
-                    $this->callDataClientsFrom($from);
-
-                    break;
-
-                case 'n_on': // Total de usuários online
+                case 'on_n': // Total de usuários online
 
                     if ($this->jwt->getError()['data']->type == "attendant") {
-                        $from->send(UtilitiesModel::dataFormatForSend(true, "Sucesso!", ["cmd" => $this->msg_obj->cmd, 'n_on' => $this->qtdUsersServer()]));
+                        $from->send(UtilitiesModel::dataFormatForSend(true, "Sucesso!", ["cmd" => $this->msg_obj->cmd, 'on_n' => $this->qtdUsersServer()]));
                     } else {
                         $from->send(UtilitiesModel::dataFormatForSend(false, "Opss! Você não tem permissão para executar essa ação.", ["cmd" => $this->msg_obj->cmd]));
                     }
@@ -381,85 +398,80 @@ class AppChatController extends CommandController implements MessageComponentInt
      * Enviar mensagem para todos os usuários de um tipo
      * @param string $type
      * @param string $cmd
-     * @param array $msg    
+     * @param string $msg   
+     * @param array $data 
      * @return void
      */
-    public function sendMsgAllUsers(string $type, string $cmd, array $data): void
+    public function sendMsgAllUsers(string $type, string $cmd, string $msg, array $data): void
     {
         $data['cmd'] = $cmd;
 
         foreach ($this->clients as $client) {
             if ($this->session_model->getUser($client->resourceId, $type) == true) {
-                $client->send(UtilitiesModel::dataFormatForSend(true, "Sucesso!", $data));
+                $client->send(UtilitiesModel::dataFormatForSend(true, $msg, $data));
             }
         }
     }
 
     /**
-     * Enviar dados dos clientes em espera par um atendente
+     * Enviar número da fila de espera para um ou todos os clientes
      *
-     * @param  $from
+     * @param object $from
      * @return void
      */
-    public function callDataClientsFrom($from)
-    {
-        if ($this->jwt->getError()['data']->type == "attendant") {
-            $calls = $this->session_model->getUsersRoom("call");
-            $uuids = "";
-
-            if (!empty($calls)) {
-                foreach ($calls as $value) {
-                    $flip = array_flip($value);
-
-                    if ($uuids == "") {
-                        $uuids .= $flip['client'];
-                    } else {
-                        $uuids .= "," . $flip['client'];
-                    }
-                }
-            }
-
-            $uri = strip_tags($from->httpRequest->getRequestTarget());
-            $this->client_model->readAllClientFind("client_uuid IN(:uuids)", "uuids=$uuids", 1000, 0, $uri);
-            $data = $this->client_model->getResult() ? $this->client_model->getError()['data'] : [];
-
-            $from->send(UtilitiesModel::dataFormatForSend(
-                $this->client_model->getResult(),
-                $this->client_model->getError()['msg'],
-                [
-                    "cmd" => $this->msg_obj->cmd,
-                    'call_data_clients' => $data
-                ]
-            ));
-        } else {
-            $from->send(UtilitiesModel::dataFormatForSend(false, "Opss! Você não tem permissão para executar essa ação.", ["cmd" => $this->msg_obj->cmd]));
-        }
-    }
-
-    /**
-     * Enviar dados dos clientes em espera para todos os atendentes
-     *
-     * @return void
-     */
-    public function callDataClientsSendAll(): void
+    public function nWaitingLine(object $from = null): void
     {
         $calls = $this->session_model->getUsersRoom("call");
-        $uuids = "";
+        $row = count($calls) + 1;
+        $msg = "Atualização da fila de espera.";
+
+        if ($from) {
+            $from->send(UtilitiesModel::dataFormatForSend(true, $msg, ["cmd" => 'n_waiting_line', 'row' => $row]));
+        } else {
+            $this->sendMsgAllUsers("client", "n_waiting_line", $msg, ['row' => $row]);
+        }
+    }
+
+    /**
+     * Enviar dados dos clientes em espera para um ou todos os atendentes
+     *
+     * @param object $from
+     * @return void
+     */
+    public function customerListData(object $from = null): void
+    {
+        $calls = $this->session_model->getUsersRoom("call");
+        $find_name = "";
+        $find_value = "";
 
         if (!empty($calls)) {
-            foreach ($calls as $value) {
+            foreach ($calls as $key => $value) {
                 $flip = array_flip($value);
 
-                if ($uuids == "") {
-                    $uuids .= $flip['client'];
+                if ($find_value == "") {
+                    $find_value .= http_build_query([$key => $flip['client']]);
+                    $find_name .= "client_uuid = :" . $key;
                 } else {
-                    $uuids .= "," . $flip['client'];
+                    $find_value .= "&" . http_build_query([$key => $flip['client']]);
+                    $find_name .= " OR client_uuid = :" . $key;
                 }
             }
         }
 
-        $this->client_model->readAllClientFind("client_uuid IN(:uuids)", "uuids=$uuids", 1000, 0);
-        $data = $this->client_model->getResult() ? $this->client_model->getError()['data'] : [];
-        $this->sendMsgAllUsers("attendant", 'clients_on_data', $data);
+        $this->client_model->readAllClientFind($find_name, $find_value, 1000, 0);
+
+        if ($this->client_model->getResult()) {
+            $data = $this->client_model->getError()['data'];
+            $msg = $this->client_model->getError()['msg'];
+        } else {
+            $data = [];
+            $msg = "Não existem clientes na fila!";
+        }
+
+        if ($from) {
+            $from->send(UtilitiesModel::dataFormatForSend($this->client_model->getResult(), $msg, ["cmd" => "call_data_clients", "clients" => $data]));
+        } else {
+            $this->sendMsgAllUsers("attendant", 'call_data_clients', "Atualização da fila de clientes.", ["clients" => $data]);
+        }
     }
 }
