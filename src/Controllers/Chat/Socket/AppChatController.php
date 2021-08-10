@@ -486,8 +486,19 @@ class AppChatController implements MessageComponentInterface
         $this->client_model->readAllClientFind($find_name, $find_value, 1000, 0);
 
         if ($this->client_model->getResult()) {
-            $data = $this->client_model->getError()['data'];
+            $users = $this->client_model->getError()['data'];
             $msg = $this->client_model->getError()['msg'];
+            $data = [];
+
+            foreach ($calls as $key => $value) {
+                $flip = array_flip($value);
+
+                foreach ($users as $user) {
+                    if ($user['uuid'] == $flip['client']) {                   
+                        $data[$key] = $user;
+                    } 
+                }               
+            }
         } else {
             $data = [];
             $msg = "Não existem clientes na fila!";
