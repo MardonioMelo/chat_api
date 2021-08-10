@@ -631,7 +631,7 @@ Apos a conexão bem sucedida com o servidor de chat, já será possível enviar 
             "msg": string,
             "data": {
                 "cmd": "call_create",
-                "id": int|string                
+                "id": int|string //id da call         
             }
         }
     }
@@ -643,7 +643,7 @@ Apos a conexão bem sucedida com o servidor de chat, já será possível enviar 
         "error": {
             "msg": string,
             "data": {
-                "row": int,
+                "row": int, //quantidade de clientes na fila + 1
                 "cmd": "n_waiting_line"
             }
         }
@@ -657,9 +657,9 @@ Apos a conexão bem sucedida com o servidor de chat, já será possível enviar 
             "msg": string,
             "data": {
                 "cmd": "call_data_clients",
-                "clients": [
-                    {
-                        "id": int,
+                "clients": [  //dados dos clientes em espera
+                    "call_00": { //00 - corresponde ao id da call.
+                        "id": int, //id do cliente
                         "cpf": int,
                         "uuid": string,
                         "name": string,

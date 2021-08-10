@@ -124,6 +124,8 @@ class AppChatController implements MessageComponentInterface
                     if ($orig_type == "client" && $dest_type == "client" || $dest_type != "client" && $dest_type != "attendant") {
                         $from->send(UtilitiesModel::dataFormatForSend(false, "Não é permitido um cliente enviar mensagem para outro cliente.", ["cmd" => $this->msg_obj->cmd]));
                     } else {
+                        //Validar obrigatório informar o chat_call_id
+                        //Validar para não salvar e não enviar msg vazia 
                         $this->searchUserSendMsg($from);
                     }
                     break;
@@ -198,11 +200,13 @@ class AppChatController implements MessageComponentInterface
                     break;
 
                 case 'call_start': // Iniciar o atendimento pelo atendente.
-
+                    
                     $this->call_model->callStart(json_decode($msg, true), $this->msg_obj->cmd, $this->jwt->getError()['data']->type, $this->jwt->getError()['data']->uuid);
 
                     if ($this->call_model->getResult()) {
                         $this->session_model->addUserRoomCall($this->msg_obj->call, $this->msg_obj->user_uuid, "attendant");
+                        $this->nWaitingLine();
+                        $this->customerListData();
                     }
 
                     $this->log_model->setLog("Sessão:\n" . print_r($_SESSION['_sf2_attributes'], true) . "\n");
@@ -214,6 +218,7 @@ class AppChatController implements MessageComponentInterface
                     ));
                     break;
 
+               
                 case 'call_end': // Finalizar o atendimento pelo atendente.
 
                     $this->call_model->callEnd(json_decode($msg, true), $this->msg_obj->cmd, $this->jwt->getError()['data']->type);
@@ -468,6 +473,7 @@ class AppChatController implements MessageComponentInterface
         $calls = $this->session_model->getUsersRoom("call");
         $find_name = "";
         $find_value = "";
+        $data = [];
 
         if (!empty($calls)) {
             foreach ($calls as $key => $value) {
@@ -488,19 +494,18 @@ class AppChatController implements MessageComponentInterface
         if ($this->client_model->getResult()) {
             $users = $this->client_model->getError()['data'];
             $msg = $this->client_model->getError()['msg'];
-            $data = [];
 
             foreach ($calls as $key => $value) {
                 $flip = array_flip($value);
 
                 foreach ($users as $user) {
-                    if ($user['uuid'] == $flip['client']) {                   
-                        $data[$key] = $user;
-                    } 
-                }               
+                    if ($user['uuid'] == $flip['client']) {
+                        $data[$key]['user'] = $user;
+                        $data[$key]['call'] = $this->call_model->getCall((int) explode("_", $key)[1]);
+                    }
+                }
             }
         } else {
-            $data = [];
             $msg = "Não existem clientes na fila!";
         }
 
