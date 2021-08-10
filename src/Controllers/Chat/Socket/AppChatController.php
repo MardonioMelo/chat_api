@@ -107,12 +107,12 @@ class AppChatController implements MessageComponentInterface
      */
     public function onMessage(ConnectionInterface $from, $msg): void
     {
-        $this->log_model->resetLog();
-        $this->msg_obj = json_decode($msg);
-        $this->jwt->checkToken($from->httpRequest);
-        $this->msg_obj->user_uuid = $this->jwt->getError()['data']->uuid;
-
         try {
+
+            $this->log_model->resetLog();
+            $this->msg_obj = json_decode($msg);
+            $this->jwt->checkToken($from->httpRequest);
+            $this->msg_obj->user_uuid = $this->jwt->getError()['data']->uuid;
 
             switch ($this->msg_obj->cmd) {
 
@@ -200,25 +200,35 @@ class AppChatController implements MessageComponentInterface
                     break;
 
                 case 'call_start': // Iniciar o atendimento pelo atendente.
-                    
-                    $this->call_model->callStart(json_decode($msg, true), $this->msg_obj->cmd, $this->jwt->getError()['data']->type, $this->jwt->getError()['data']->uuid);
 
-                    if ($this->call_model->getResult()) {
-                        $this->session_model->addUserRoomCall($this->msg_obj->call, $this->msg_obj->user_uuid, "attendant");
-                        $this->nWaitingLine();
-                        $this->customerListData();
+                    $calls = $this->session_model->getUsersRoom("call");                  
+
+                    if (!in_array("attendant", $calls['call_' . $this->msg_obj->user_uuid])) {
+                        $this->call_model->callStart(json_decode($msg, true), $this->msg_obj->cmd, $this->jwt->getError()['data']->type, $this->jwt->getError()['data']->uuid);
+
+                        if ($this->call_model->getResult()) {
+                            $this->session_model->addUserRoomCall($this->msg_obj->call, $this->msg_obj->user_uuid, "attendant");
+                            $this->nWaitingLine();
+                            $this->customerListData();
+                        }
+
+                        $this->log_model->setLog("Sessão:\n" . print_r($_SESSION['_sf2_attributes'], true) . "\n");
+
+                        $from->send(UtilitiesModel::dataFormatForSend(
+                            $this->call_model->getResult(),
+                            $this->call_model->getError()['msg'],
+                            $this->call_model->getResult() ? $this->call_model->getError()['data'] : ['cmd' => $this->msg_obj->cmd]
+                        ));
+                    } else {
+                        $from->send(UtilitiesModel::dataFormatForSend(false, "Opss! Já existe um atendente nessa call.", ["cmd" => $this->msg_obj->cmd]));
                     }
-
-                    $this->log_model->setLog("Sessão:\n" . print_r($_SESSION['_sf2_attributes'], true) . "\n");
-
-                    $from->send(UtilitiesModel::dataFormatForSend(
-                        $this->call_model->getResult(),
-                        $this->call_model->getError()['msg'],
-                        $this->call_model->getResult() ? $this->call_model->getError()['data'] : ['cmd' => $this->msg_obj->cmd]
-                    ));
                     break;
 
-               
+                case 'call_msg': // Enviar mensagem para todos os participantes de uma call               
+
+                    $this->sendMsgCall($from);
+                    break;
+
                 case 'call_end': // Finalizar o atendimento pelo atendente.
 
                     $this->call_model->callEnd(json_decode($msg, true), $this->msg_obj->cmd, $this->jwt->getError()['data']->type);
@@ -358,7 +368,9 @@ class AppChatController implements MessageComponentInterface
      */
     public function searchUserSendMsg(ConnectionInterface $from): void
     {
-        $status_msg = $this->saveMsgDB();
+
+        $this->msg_model = new MsgModel();
+        $this->msg_model->saveMsgCall(0, $this->msg_obj->user_uuid, $this->msg_obj->user_dest_uuid, $this->msg_obj->text);
 
         $online = false;
         foreach ($this->clients as $client) { //Liste os users alocados na memória e procure o destinatário
@@ -372,7 +384,7 @@ class AppChatController implements MessageComponentInterface
                             . "Origem user: " . $this->msg_obj->user_uuid . "\nDestino user: " . $this->msg_obj->user_dest_uuid . " \n"
                             . "Origem resourceId " . $from->resourceId . "\nDestino resourceId: " . $client->resourceId  . "\n"
                             . "Mensagem: " . $this->msg_obj->text . "\n"
-                            . "Status mensagem: " . $status_msg . "\n"
+                            . "Status mensagem: " . $this->msg_model->getError() . "\n"
                     );
                     $client->send(UtilitiesModel::dataFormatForSend(true, "Sucesso!", [
                         "cmd" => $this->msg_obj->cmd,
@@ -397,18 +409,6 @@ class AppChatController implements MessageComponentInterface
     }
 
     /**
-     * Salvar mensagem no banco de dados
-     *
-     * @return string
-     */
-    public function saveMsgDB()
-    {
-        $this->msg_model = new MsgModel();
-        $this->msg_model->saveMsg($this->msg_obj->user_uuid, $this->msg_obj->user_dest_uuid, $this->msg_obj->text);
-        return $this->msg_model->getError();
-    }
-
-    /**
      * Armazene nova conexão para enviar mensagens mais tarde     
      *
      * @param ConnectionInterface $conn
@@ -425,14 +425,14 @@ class AppChatController implements MessageComponentInterface
     }
 
     /**
-     * Enviar mensagem para todos os usuários de um tipo
+     * Enviar dados para todos os usuários de um tipo
      * @param string $type
      * @param string $cmd
      * @param string $msg   
      * @param array $data 
      * @return void
      */
-    public function sendMsgAllUsers(string $type, string $cmd, string $msg, array $data): void
+    public function sendDataAllUsers(string $type, string $cmd, string $msg, array $data): void
     {
         $data['cmd'] = $cmd;
 
@@ -458,7 +458,7 @@ class AppChatController implements MessageComponentInterface
         if ($from) {
             $from->send(UtilitiesModel::dataFormatForSend(true, $msg, ["cmd" => 'n_waiting_line', 'row' => $row]));
         } else {
-            $this->sendMsgAllUsers("client", "n_waiting_line", $msg, ['row' => $row]);
+            $this->sendDataAllUsers("client", "n_waiting_line", $msg, ['row' => $row]);
         }
     }
 
@@ -512,7 +512,63 @@ class AppChatController implements MessageComponentInterface
         if ($from) {
             $from->send(UtilitiesModel::dataFormatForSend($this->client_model->getResult(), $msg, ["cmd" => "call_data_clients", "clients" => $data]));
         } else {
-            $this->sendMsgAllUsers("attendant", 'call_data_clients', "Atualização da fila de clientes.", ["clients" => $data]);
+            $this->sendDataAllUsers("attendant", 'call_data_clients', "Atualização da fila de clientes.", ["clients" => $data]);
+        }
+    }
+
+    /**
+     * Enviar mensagem para todos os usuários de uma call
+     * 
+     * @param object $from
+     * @return void
+     */
+    public function sendMsgCall(object $from = null): void
+    {
+        if (!empty($this->msg_obj->call) && !empty($this->msg_obj->text)) {
+
+            $list_uuid = $this->session_model->getUsersRoom("list");
+            $calls = $this->session_model->getUsersRoom("call");
+
+            if (!empty($calls['call_' . $this->msg_obj->call])) {
+
+                $data['cmd'] = $this->msg_obj->cmd;
+                $data['text'] = $this->msg_obj->text;
+                $data['call'] = $this->msg_obj->call;
+                $call = $calls['call_' . $this->msg_obj->call];
+                $list_flip = array_flip($list_uuid);
+                $call_flip = array_flip($call);
+                $online = false;
+
+                if (in_array($this->msg_obj->user_uuid, $call_flip)) {
+                    foreach ($call as $uuid => $value) {
+
+                        foreach ($this->clients as $client) {
+                            if ($list_flip[$uuid] == "resourceId_$client->resourceId" && $this->msg_obj->user_uuid != $uuid) {
+
+                                $this->msg_model = (new MsgModel())->saveMsgCall(
+                                    $this->msg_obj->call,
+                                    $this->msg_obj->user_uuid,
+                                    $uuid,
+                                    $this->msg_obj->text
+                                );
+                                $online = true;
+                                $data["type"] = $value;
+                                $client->send(UtilitiesModel::dataFormatForSend(true, "Sucesso!", $data));
+                            }
+                        }
+                    }
+                    //Resposta caso o destinatário esteja offline       
+                    if ($online === false) {
+                        $from->send(UtilitiesModel::dataFormatForSend(false, "A mensagem foi enviada, mas o usuário está offline!", ["cmd" => $this->msg_obj->cmd]));
+                    }
+                } else {
+                    $from->send(UtilitiesModel::dataFormatForSend(false, "Opss! Você não está na sala da Call informada.", ["cmd" => $this->msg_obj->cmd]));
+                }
+            } else {
+                $from->send(UtilitiesModel::dataFormatForSend(false, "Opss! A sala da Call não existe ou já foi encerrada.", ["cmd" => $this->msg_obj->cmd]));
+            }
+        } else {
+            $from->send(UtilitiesModel::dataFormatForSend(false, "Opss! Informe os dados obrigatórios para enviar mensagem.", ["cmd" => $this->msg_obj->cmd]));
         }
     }
 }

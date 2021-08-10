@@ -657,20 +657,32 @@ Apos a conexão bem sucedida com o servidor de chat, já será possível enviar 
             "msg": string,
             "data": {
                 "cmd": "call_data_clients",
-                "clients": [  //dados dos clientes em espera
+                "clients": {  //dados dos clientes em espera
                     "call_00": { //00 - corresponde ao id da call.
-                        "id": int, //id do cliente
-                        "cpf": int,
-                        "uuid": string,
-                        "name": string,
-                        "lastname": string,
-                        "avatar": string,
-                        "updated_at": string,
-                        "created_at": string,
-                        "url": string
-                    }
-                    ...
-                ]                
+                        "user": { //dados do cliente
+                            "id": int, //id do cliente
+                            "cpf": int,
+                            "uuid": string,
+                            "name": string,
+                            "lastname": string,
+                            "avatar": string,
+                            "updated_at": string,
+                            "created_at": string,
+                            "url": string
+                        },
+                        "call": { //dados da call
+                            "call_id": int,
+                            "call_client_uuid": string,
+                            "call_attendant_uuid": "string,
+                            "call_objective": string,
+                            "call_status": int,
+                            "call_start": string,
+                            "call_end": string,
+                            "call_evaluation": int,
+                            "call_update": string
+                        }                        
+                    }...
+                }                
             }
         }
     }

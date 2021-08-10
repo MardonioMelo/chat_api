@@ -23,9 +23,11 @@ class  MsgModel
         $this->tab_chat_msg = new ChatMsg();
     }
 
+
     /**
      * Salva mensagem do chat no banco de dados
      *
+     * @param Int $user_call
      * @param String $user_id
      * @param String $user_dest_id
      * @param String $text
@@ -34,8 +36,9 @@ class  MsgModel
      * @param String $attachment
      * @return void
      */
-    public function saveMsg(string $user_uuid, string $user_dest_uuid, String $text, String $drive = "web", String $type = "text", String $attachment = null): void
+    public function saveMsgCall(int $user_call, string $user_uuid, string $user_dest_uuid, String $text, String $drive = "web", String $type = "text", String $attachment = null): void
     {
+        $this->tab_chat_msg->chat_call_id = $user_call;
         $this->tab_chat_msg->chat_user_uuid = $user_uuid;
         $this->tab_chat_msg->chat_user_dest_uuid = $user_dest_uuid;
         $this->tab_chat_msg->chat_text = trim(strip_tags($text));
