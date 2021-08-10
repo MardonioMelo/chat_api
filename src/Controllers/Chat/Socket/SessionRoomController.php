@@ -219,4 +219,40 @@ class SessionRoomController
         unset($arr[$name_room . '_' . $call]);
         $this->session->set($name_room, $arr);
     }
+
+    /**
+     *  Verificar se já existe uma call aberta na sessão para o cliente
+     *
+     * @param string $uuid
+     * @return string
+     */
+    public function existsCallInSession(string $uuid): string
+    {
+        $calls = $this->getUsersRoom("call");
+        $call = "";
+
+        if (!empty($calls)) {
+            foreach ($calls as $key => $value) {
+                $flip = array_flip($value);
+
+                if ($uuid == $flip['client']) {
+                    $call = $key;
+                }
+            }
+        }
+        return $call;
+    }
+
+    /**
+     *  Verificar se o usuário está online
+     *
+     * @param string $uuid
+     * @param string $room
+     * @return bool
+     */
+    public function checkOn(string $uuid, string $room = "list"): bool
+    {
+        $users = $this->getUsersRoom($room);
+        return in_array($uuid, $users);
+    }
 }

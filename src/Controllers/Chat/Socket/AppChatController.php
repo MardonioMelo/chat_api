@@ -145,7 +145,7 @@ class AppChatController implements MessageComponentInterface
                 case 'call_create': // Cadastrar nova call pelo cliente
 
                     if ($this->jwt->getError()['data']->type == "client") {
-                        $check_call = $this->existsCallInSession($this->msg_obj->client_uuid);
+                        $check_call = $this->session_model->existsCallInSession($this->msg_obj->client_uuid);
 
                         if (empty($check_call)) {
                             $this->call_model->callCreate(json_decode($msg, true), $this->msg_obj->cmd);
@@ -214,17 +214,6 @@ class AppChatController implements MessageComponentInterface
                     ));
                     break;
 
-                case 'call_evaluation': // Avaliação do atendimento pelo cliente.
-
-                    $this->call_model->callEvaluation(json_decode($msg, true), $this->msg_obj->cmd, $this->jwt->getError()['data']->type);
-
-                    $from->send(UtilitiesModel::dataFormatForSend(
-                        $this->call_model->getResult(),
-                        $this->call_model->getError()['msg'],
-                        $this->call_model->getResult() ? $this->call_model->getError()['data'] : ['cmd' => $this->msg_obj->cmd]
-                    ));
-                    break;
-
                 case 'call_end': // Finalizar o atendimento pelo atendente.
 
                     $this->call_model->callEnd(json_decode($msg, true), $this->msg_obj->cmd, $this->jwt->getError()['data']->type);
@@ -240,6 +229,30 @@ class AppChatController implements MessageComponentInterface
                         $this->call_model->getError()['msg'],
                         $this->call_model->getResult() ? $this->call_model->getError()['data'] : ['cmd' => $this->msg_obj->cmd]
                     ));
+                    break;
+
+                case 'call_evaluation': // Avaliação do atendimento pelo cliente.
+
+                    $this->call_model->callEvaluation(json_decode($msg, true), $this->msg_obj->cmd, $this->jwt->getError()['data']->type);
+
+                    $from->send(UtilitiesModel::dataFormatForSend(
+                        $this->call_model->getResult(),
+                        $this->call_model->getError()['msg'],
+                        $this->call_model->getResult() ? $this->call_model->getError()['data'] : ['cmd' => $this->msg_obj->cmd]
+                    ));
+                    break;
+
+                case 'check_user_on': // Verificar se um usuário especifico está online
+
+                    if (!empty($this->msg_obj->check_on_uuid)) {
+                        $from->send(UtilitiesModel::dataFormatForSend(
+                            true,
+                            "Sucesso!",
+                            ["cmd" => $this->msg_obj->cmd, 'check_user_on' => $this->session_model->checkOn($this->msg_obj->check_on_uuid)]
+                        ));
+                    } else {
+                        $from->send(UtilitiesModel::dataFormatForSend(false, "Opss! Informe os campos obrigatórios.", ["cmd" => $this->msg_obj->cmd]));
+                    }
                     break;
 
                 case 'on_n': // Total de usuários online
@@ -485,29 +498,5 @@ class AppChatController implements MessageComponentInterface
         } else {
             $this->sendMsgAllUsers("attendant", 'call_data_clients', "Atualização da fila de clientes.", ["clients" => $data]);
         }
-    }
-
-    /**
-     *  Verificar se já existe uma call aberta na sessão para o cliente
-     *
-     * @param string $uuid
-     * @return string
-     */
-    public function existsCallInSession(string $uuid): string
-    {
-        $calls = $this->session_model->getUsersRoom("call");
-        $call = "";
-
-        if (!empty($calls)) {
-            foreach ($calls as $key => $value) {
-                $flip = array_flip($value);
-
-                if ($uuid == $flip['client']) {
-                    $call = $key;
-                }
-            }
-        }
-
-        return $call;
     }
 }

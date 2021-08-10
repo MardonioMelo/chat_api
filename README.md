@@ -583,6 +583,32 @@ Apos a conexão bem sucedida com o servidor de chat, já será possível enviar 
     }
 >
 
+<b>Verificar se um usuário está online</b><br>
+
+> 
+    Request:
+    Type: application/json     
+    {  
+        "cmd": "check_user_on", //check_user_on  
+        "check_on_uuid": string, //uuid do usuário a ser verificado
+        "user_uuid": string //uuid do autor   
+    }   
+
+    Response: 
+    Type: application/json
+    {
+        "result": bool,
+        "error": {
+            "msg": string,
+            "data": {
+                "cmd": "check_user_on",
+                "check_user_on": bool //true = online, false = offline
+            }
+        }
+    }
+
+>
+
 <b>Criar Call</b>
 <br>Os atendentes não tem permissão para este comando.
 
@@ -776,7 +802,6 @@ Apos a conexão bem sucedida com o servidor de chat, já será possível enviar 
         }
     }
 >
-
 
 
 ## Comandos
