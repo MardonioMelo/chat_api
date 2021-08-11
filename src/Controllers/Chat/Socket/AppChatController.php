@@ -114,21 +114,7 @@ class AppChatController implements MessageComponentInterface
             $this->jwt->checkToken($from->httpRequest);
             $this->msg_obj->user_uuid = $this->jwt->getError()['data']->uuid;
 
-            switch ($this->msg_obj->cmd) {
-
-                case 'msg': // Enviar mensagem para um destinatário                    
-
-                    $orig_type = $this->jwt->getError()['data']->type;
-                    $dest_type = $this->msg_obj->user_dest_type;
-
-                    if ($orig_type == "client" && $dest_type == "client" || $dest_type != "client" && $dest_type != "attendant") {
-                        $from->send(UtilitiesModel::dataFormatForSend(false, "Não é permitido um cliente enviar mensagem para outro cliente.", ["cmd" => $this->msg_obj->cmd]));
-                    } else {
-                        //Validar obrigatório informar o chat_call_id
-                        //Validar para não salvar e não enviar msg vazia 
-                        $this->searchUserSendMsg($from);
-                    }
-                    break;
+            switch ($this->msg_obj->cmd) {                
 
                 case 'n_waiting_line': // Número de clientes na fila de espera
 
