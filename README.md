@@ -756,7 +756,7 @@ Apos a conexão bem sucedida com o servidor de chat, já será possível enviar 
         "text": string, //mensagem        
     }  
 
-    Response: caso o destinatário esteja offline:
+    Response: caso o destinatário esteja offline
     Type: application/json  
     {
         "result": false
@@ -789,20 +789,23 @@ Apos a conexão bem sucedida com o servidor de chat, já será possível enviar 
 <br>Outro atendente que não esteja na call, também pode finalizar.
 
 > 
+    Request
     Type: application/json     
     {  
         "cmd": "call_end", //comando         
         "call": int //id da call  
     }   
 
-    Dados de retorno: 
+    Response: 
+    Type: application/json 
     {
-        "result": true,
+        "result": bool,
         "error": {
             "msg": string,
             "data": {
                 "call": int, //id da call
-                "cmd": "call_end"
+                "cmd": "call_end",
+                "client_uuid": string //uuid do cliente
             }
         }
     }
@@ -813,10 +816,9 @@ Apos a conexão bem sucedida com o servidor de chat, já será possível enviar 
 > 
     Type: application/json     
     {  
-        "cmd": string, //call_evaluation       
-        "user_uuid": string, //uuid do autor       
+        "cmd": "call_evaluation", //comando         
         "call": int, //id da call  
-        "evaluation": 5
+        "evaluation": int //nota
     }   
 
     Dados de retorno: 
