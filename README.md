@@ -432,21 +432,16 @@ Rotas do servidor WebSocket:
 Apos a conexão bem sucedida com o servidor de chat, já será possível enviar e receber informações conforme estrutura dos dados e cmd informado.
 
 <b>Troca de Mensagens</b><br>
-<br>Clientes não tem permissão para enviar mensagens para outro clientes, mas os atendentes tem.
+<br>As mensagens são enviadas para os outros usuários que estão na mesma sala da call.
 
 >      
     Request:
     Type: application/json  
     {  
-        "cmd": "msg",  //comando
-        "driver": "web", //web
-        "user_uuid": string, //uuid do user de origem
-        "user_dest_uuid": string, //uuid do user de destino  
-        "user_dest_type": string, //client ou attendant - tipo do destinatário  
-        "text": string, //mensagem   
-        "type": string, //text - tipo de mensagem 
-        "time": string, //hora    
-        "attachment": null //null - outros atributos do chatbot
+        "cmd": "msg",  //comando       
+        "user_uuid": string, //uuid do user de origem    
+        "call": int,
+        "text": string, //mensagem        
     }  
 
     Response: N/A.  
@@ -470,14 +465,10 @@ Apos a conexão bem sucedida com o servidor de chat, já será possível enviar 
         "error": {
             "msg": string, 
             "data": {
-                "cmd": "msg",
-                "driver": "web",
-                "user_uuid": string, //uuid do user de origem
-                "user_type": string, //attendant ou client - tipo da origem
-                "text": string, //conteúdo da mensagem
-                "type": string, //tipo de conteúdo da mensagem
-                "time": string, //hora da mensagem
-                "attachment": null
+                "cmd": "msg",               
+                "user_uuid": string, //uuid do user de origem               
+                "text": string, //conteúdo da mensagem               
+               
             }
         }
     }  

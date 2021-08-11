@@ -345,55 +345,7 @@ class AppChatController implements MessageComponentInterface
     {
         return count($this->clients); //Qtd de usuários online;           
     }
-
-    /**
-     * Procurar destinatária na memoria e enviar a mensagem ao mesmo
-     *
-     * @param ConnectionInterface $from 
-     * @return void
-     */
-    public function searchUserSendMsg(ConnectionInterface $from): void
-    {
-
-        $this->msg_model = new MsgModel();
-        $this->msg_model->saveMsgCall(0, $this->msg_obj->user_uuid, $this->msg_obj->user_dest_uuid, $this->msg_obj->text);
-
-        $online = false;
-        foreach ($this->clients as $client) { //Liste os users alocados na memória e procure o destinatário
-
-            if ($from !== $client) {   // O remetente não é o destinatário                
-                $destiny_uuid = $this->session_model->getUser($client->resourceId, $this->msg_obj->user_dest_type);
-
-                if ($this->msg_obj->user_dest_uuid == $destiny_uuid) {  // O destinatária corresponde ao uuid informado do destinatário   
-                    $this->log_model->setLog(
-                        "Total Online: {$this->qtdUsersServer()} \n"
-                            . "Origem user: " . $this->msg_obj->user_uuid . "\nDestino user: " . $this->msg_obj->user_dest_uuid . " \n"
-                            . "Origem resourceId " . $from->resourceId . "\nDestino resourceId: " . $client->resourceId  . "\n"
-                            . "Mensagem: " . $this->msg_obj->text . "\n"
-                            . "Status mensagem: " . $this->msg_model->getError() . "\n"
-                    );
-                    $client->send(UtilitiesModel::dataFormatForSend(true, "Sucesso!", [
-                        "cmd" => $this->msg_obj->cmd,
-                        "driver" => $this->msg_obj->driver,
-                        "user_uuid" => $this->msg_obj->user_uuid,
-                        "user_type" => $this->jwt->getError()['data']->type,
-                        "text" => $this->msg_obj->text,
-                        "type" => $this->msg_obj->type,
-                        "time" => $this->msg_obj->time,
-                        "attachment" => $this->msg_obj->attachment,
-                    ]));
-                    $online = true;
-                }
-            }
-        }
-
-        //Resposta caso o destinatário esteja offline       
-        if ($online === false) {
-            $this->log_model->setLog("Status do user: Offline\n");
-            $client->send(UtilitiesModel::dataFormatForSend(false, "A mensagem foi enviada, mas o usuário está offline!", ["cmd" => $this->msg_obj->cmd]));
-        }
-    }
-
+   
     /**
      * Armazene nova conexão para enviar mensagens mais tarde     
      *
