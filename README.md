@@ -431,133 +431,13 @@ Rotas do servidor WebSocket:
 
 Apos a conexão bem sucedida com o servidor de chat, já será possível enviar e receber informações conforme estrutura dos dados e cmd informado.
 
-<b>Troca de Mensagens</b><br>
-<br>As mensagens são enviadas para os outros usuários que estão na mesma sala da call.
-
->      
-    Request:
-    Type: application/json  
-    {  
-        "cmd": "msg",  //comando       
-        "user_uuid": string, //uuid do user de origem    
-        "call": int,
-        "text": string, //mensagem        
-    }  
-
-    Response: N/A.  
-
-    Response: caso o destinatário esteja offline:
-    Type: application/json  
-    {
-        "result": false
-        "error": {
-            "msg": string,
-            "data": {
-                "cmd": "msg"
-            }
-        }
-    }
-
-    Dados enviados ao destinatário:
-    Type: application/json  
-    {
-        "result": true
-        "error": {
-            "msg": string, 
-            "data": {
-                "cmd": "msg",               
-                "user_uuid": string, //uuid do user de origem               
-                "text": string, //conteúdo da mensagem               
-               
-            }
-        }
-    }  
-    
-> 
-
-<b>Quantidade de usuários online (atendentes + clientes)</b>
-<br>Os clientes não tem permissão para este comando.
-
->    
-    Request:
-    Type: application/json     
-    {  
-        "cmd": "on_n", //comando 
-        "user_uuid": string //uuid do autor
-    }   
-
-    Response: 
-    Type: application/json
-    {
-        "result": bool,
-        "error": {
-            "msg": "Sucesso!",
-            "data": {
-                "cmd": "on_n",
-                "on_n": int
-            }
-        }
-    }
-> 
-
-<b>Quantidade de atendentes online</b>
-<br>Os clientes não tem permissão para este comando.
-
->     
-    Request:
-    Type: application/json  
-    {  
-        "cmd": "attendants_on_n", //comando   
-        "user_uuid": string //uuid do autor     
-    }   
-
-    Response:
-    Type: application/json   
-    {
-        "result": bool,
-        "error": {
-            "msg": "Sucesso!",
-            "data": {
-                "cmd": "attendants_on_n",
-                "attendants_on_n": int
-            }
-        }
-    }
-> 
-
-<b>Quantidade de clientes online</b>
-<br>Os clientes não tem permissão para este comando.
-
->    
-    Request:
-    Type: application/json  
-    {  
-        "cmd": "clients_on_n", //comando
-        "user_uuid": string //uuid do autor
-    }   
-
-    Response: 
-    Type: application/json
-    {
-        "result": bool,
-        "error": {
-            "msg": "Sucesso!",
-            "data": {
-                "cmd": "clients_on_n",
-                "clients_on_n": int
-            }
-        }
-    }     
-> 
-
 <b>Quantidade de clientes na fila de espera</b>
 
 >
     Request:
     Type: application/json
     {  
-        "cmd": "n_waiting_line",  //comando 
-        "user_uuid": string //uuid do autor  
+        "cmd": "n_waiting_line"  //comando       
     }   
 
     Response:
@@ -568,36 +448,59 @@ Apos a conexão bem sucedida com o servidor de chat, já será possível enviar 
             "msg": string,
             "data": {
                 "cmd": "n_waiting_line",
-                "n_waiting_line": int
+                "row": int
             }
         }
     }
 >
 
-<b>Verificar se um usuário está online</b><br>
+<b>Dados dos clientes na fila de espera</b>
+<br>Os clientes não tem permissão para este comando.
 
-> 
+>
     Request:
-    Type: application/json     
+    Type: application/json
     {  
-        "cmd": "check_user_on", //check_user_on  
-        "check_on_uuid": string, //uuid do usuário a ser verificado
-        "user_uuid": string //uuid do autor   
+        "cmd": "call_data_clients"  //comando         
     }   
 
-    Response: 
+    Response para todos os atendentes:
     Type: application/json
     {
         "result": bool,
         "error": {
             "msg": string,
             "data": {
-                "cmd": "check_user_on",
-                "check_user_on": bool //true = online, false = offline
+                "cmd": "call_data_clients",
+                "clients": {  //dados dos clientes em espera
+                    "call_00": { //00 - corresponde ao id da call.
+                        "user": { //dados do cliente
+                            "id": int, //id do cliente
+                            "cpf": int,
+                            "uuid": string,
+                            "name": string,
+                            "lastname": string,
+                            "avatar": string,
+                            "updated_at": string,
+                            "created_at": string,
+                            "url": string
+                        },
+                        "call": { //dados da call
+                            "call_id": int,
+                            "call_client_uuid": string,
+                            "call_attendant_uuid": "string,
+                            "call_objective": string,
+                            "call_status": int,
+                            "call_start": string,
+                            "call_end": string,
+                            "call_evaluation": int,
+                            "call_update": string
+                        }                        
+                    } ...
+                }                
             }
         }
     }
-
 >
 
 <b>Criar Call</b>
@@ -607,10 +510,7 @@ Apos a conexão bem sucedida com o servidor de chat, já será possível enviar 
     Request:
     Type: application/json
     {  
-        "cmd": "call_create", //comando
-        "driver": "web", //web
-        "client_uuid": string, //uuid do cliente
-        "user_uuid": string, //uuid do autor
+        "cmd": "call_create", //comando    
         "objective": string //assunto  
     }
 
@@ -622,7 +522,7 @@ Apos a conexão bem sucedida com o servidor de chat, já será possível enviar 
             "msg": string,
             "data": {
                 "cmd": "call_create",
-                "id": int|string //id da call         
+                "call": int|string //id da call         
             }
         }
     }
@@ -680,15 +580,12 @@ Apos a conexão bem sucedida com o servidor de chat, já será possível enviar 
 > 
 
 <b>Cancelar Call</b><br>
-<br>Os atendentes não tem permissão para este comando.
 
 > 
     Request:
     Type: application/json     
     {  
-        "cmd": "call_create", //comando
-        "driver": "web", //web       
-        "user_uuid": string, //uuid do autor
+        "cmd": "call_cancel", //comando    
         "call": int //id da call 
     }  
 
@@ -699,7 +596,7 @@ Apos a conexão bem sucedida com o servidor de chat, já será possível enviar 
         "error": {
             "msg": string,
             "data": {
-                "id": int, //id da call
+                "call": int, //id da call
                 "cmd": "call_cancel"
             }
         }
@@ -725,21 +622,47 @@ Apos a conexão bem sucedida com o servidor de chat, já será possível enviar 
         "error": {
             "msg": string,
             "data": {
-                "clients": array,
-                "cmd": "call_data_clients"
+                "cmd": "call_data_clients",
+                "clients": {  //dados dos clientes em espera
+                    "call_00": { //00 - corresponde ao id da call.
+                        "user": { //dados do cliente
+                            "id": int, //id do cliente
+                            "cpf": int,
+                            "uuid": string,
+                            "name": string,
+                            "lastname": string,
+                            "avatar": string,
+                            "updated_at": string,
+                            "created_at": string,
+                            "url": string
+                        },
+                        "call": { //dados da call
+                            "call_id": int,
+                            "call_client_uuid": string,
+                            "call_attendant_uuid": "string,
+                            "call_objective": string,
+                            "call_status": int,
+                            "call_start": string,
+                            "call_end": string,
+                            "call_evaluation": int,
+                            "call_update": string
+                        }                        
+                    }...
+                }                
             }
         }
     }
 > 
 
-<b>Iniciar Call</b><br>
+<b>Iniciar Call</b>
+<br>Os clientes não tem permissão para este comando.
+<br>No momento, não é permitido entrar mais de um atendente por sala de call. 
+<br>Caso, um atendente inicie a call, o mesmo não poderá sair até finalizar o atendimento. 
 
 > 
     Type: application/json     
     {  
-        "cmd": string, //call_start
-        "driver": string, //web
-        "user_uuid": string, //uuid do autor     
+        "cmd": string, //call_start        
         "call": int //id da call  
     }   
 
@@ -749,22 +672,126 @@ Apos a conexão bem sucedida com o servidor de chat, já será possível enviar 
         "error": {
             "msg": string,
             "data": {
-                "id": int, //id da call
+                "call": int, //id da call
                 "cmd": "call_start",
                 "client_uuid": string, //uuid do cliente
             }
         }
     }
+
+    Response para o cliente em questão
+    Type: application/json
+    {
+        "result": true,
+        "error": {
+            "msg": string,
+            "data": {
+                "call": int,
+                "cmd": "call_start"
+            }
+        }
+    }
+
+    Response para todos os clientes:
+    Type: application/json 
+    {
+        "result": bool,
+        "error": {
+            "msg": string,
+            "data": {
+                "row": int, //quantidade de clientes na fila + 1
+                "cmd": "n_waiting_line"
+            }
+        }
+    }
+    
+    Response para todos os atendentes:
+    Type: application/json
+    {
+        "result": bool,
+        "error": {
+            "msg": string,
+            "data": {
+                "cmd": "call_data_clients",
+                "clients": {  //dados dos clientes em espera
+                    "call_00": { //00 - corresponde ao id da call.
+                        "user": { //dados do cliente
+                            "id": int, //id do cliente
+                            "cpf": int,
+                            "uuid": string,
+                            "name": string,
+                            "lastname": string,
+                            "avatar": string,
+                            "updated_at": string,
+                            "created_at": string,
+                            "url": string
+                        },
+                        "call": { //dados da call
+                            "call_id": int,
+                            "call_client_uuid": string,
+                            "call_attendant_uuid": "string,
+                            "call_objective": string,
+                            "call_status": int,
+                            "call_start": string,
+                            "call_end": string,
+                            "call_evaluation": int,
+                            "call_update": string
+                        }                        
+                    }...
+                }                
+            }
+        }
+    }
 >
 
-<b>Finalizar Call</b><br>
+<b>Troca de Mensagens</b>
+<br>As mensagens são enviadas para os outros usuários que estão na mesma sala da call.
+
+>      
+    Request:
+    Type: application/json  
+    {  
+        "cmd": "call_msg",  //comando          
+        "call": int,  //id da call
+        "text": string, //mensagem        
+    }  
+
+    Response: caso o destinatário esteja offline:
+    Type: application/json  
+    {
+        "result": false
+        "error": {
+            "msg": "call_msg",
+            "data": {
+                "cmd": "call_msg"
+            }
+        }
+    }
+
+    Dados enviados ao destinatário:
+    Type: application/json  
+    {
+        "result": bool,
+        "error": {
+            "msg": string,
+            "data": {
+                "cmd": "call_msg",
+                "text": string,
+                "call": int,
+                "type": string //attendant ou client
+            }
+        }
+    }      
+>
+
+<b>Finalizar Call</b>
+<br>Os clientes não tem permissão para este comando.
+<br>Outro atendente que não esteja na call, também pode finalizar.
 
 > 
     Type: application/json     
     {  
-        "cmd": string, //call_end
-        "driver": string, //web
-        "user_uuid": string, //uuid do autor       
+        "cmd": "call_end", //comando         
         "call": int //id da call  
     }   
 
@@ -774,7 +801,7 @@ Apos a conexão bem sucedida com o servidor de chat, já será possível enviar 
         "error": {
             "msg": string,
             "data": {
-                "id": int, //id da call
+                "call": int, //id da call
                 "cmd": "call_end"
             }
         }
@@ -786,8 +813,7 @@ Apos a conexão bem sucedida com o servidor de chat, já será possível enviar 
 > 
     Type: application/json     
     {  
-        "cmd": string, //call_evaluation
-        "driver": string, //web
+        "cmd": string, //call_evaluation       
         "user_uuid": string, //uuid do autor       
         "call": int, //id da call  
         "evaluation": 5
@@ -799,12 +825,109 @@ Apos a conexão bem sucedida com o servidor de chat, já será possível enviar 
         "error": {
             "msg": string,
             "data": {
-                "id": int, //id da call
+                "call": int, //id da call
                 "cmd": "call_evaluation"
             }
         }
     }
 >
+
+<b>Verificar se um usuário está online</b><br>
+
+> 
+    Request:
+    Type: application/json     
+    {  
+        "cmd": "check_user_on", //check_user_on  
+        "check_on_uuid": string, //uuid do usuário a ser verificado       
+    }   
+
+    Response: 
+    Type: application/json
+    {
+        "result": bool,
+        "error": {
+            "msg": string,
+            "data": {
+                "cmd": "check_user_on",
+                "online": bool //true = online, false = offline
+            }
+        }
+    }
+
+>
+
+<b>Quantidade de usuários online (atendentes + clientes)</b>
+<br>Os clientes não tem permissão para este comando.
+
+>    
+    Request:
+    Type: application/json     
+    {  
+        "cmd": "on_n" //comando       
+    }   
+
+    Response: 
+    Type: application/json
+    {
+        "result": bool,
+        "error": {
+            "msg": "Sucesso!",
+            "data": {
+                "cmd": "on_n",
+                "qtd": int
+            }
+        }
+    }
+> 
+
+<b>Quantidade de clientes online</b>
+<br>Os clientes não tem permissão para este comando.
+
+>     
+    Request:
+    Type: application/json  
+    {  
+        "cmd": "clients_on_n", //comando
+    }   
+
+    Response:
+    Type: application/json   
+    {
+        "result": bool,
+        "error": {
+            "msg": "Sucesso!",
+            "data": {
+                "cmd": "clients_on_n",
+                "qtd": int
+            }
+        }
+    }
+> 
+
+<b>Quantidade de atendentes online</b>
+<br>Os clientes não tem permissão para este comando.
+
+>     
+    Request:
+    Type: application/json  
+    {  
+        "cmd": "attendants_on_n", //comando
+    }   
+
+    Response:
+    Type: application/json   
+    {
+        "result": bool,
+        "error": {
+            "msg": "Sucesso!",
+            "data": {
+                "cmd": "attendants_on_n",
+                "qtd": int
+            }
+        }
+    }
+> 
 
 
 ## Comandos

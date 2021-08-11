@@ -240,7 +240,7 @@ class  CallModel
         if ($result) {
             $this->Result = true;
             $this->Error['msg'] = "Sucesso!";
-            $this->Error['data']['id'] = $this->tab_chat_call->call_id;
+            $this->Error['data']['call'] = $this->tab_chat_call->call_id;
         } else {
             $this->Result = false;
             $this->Error['msg'] = $this->tab_chat_call->fail()->getMessage();
