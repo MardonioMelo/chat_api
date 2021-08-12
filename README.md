@@ -22,9 +22,9 @@ API para chat e chatbot de suporte, ainda em desenvolvimento.
 - [x] Criar sala com o id do cliente ao iniciar o atendimento e adicionar o atendente e o cliente nessa sala para troca de mensagens.
 - [x] Enviar dados dos clientes da sala de espera para os atendentes.
 - [x] Validar para que o mesmo cliente não abra mais de uma ao mesmo tempo mesmo que desconecte e reconecte.
-- [ ] Criar método para troca de mensagem entre usuários dentro de uma sala de call.
-- [ ] Retirar cliente da sala de espera ao enviar mensagem para o cliente e iniciar o atendimento.
-- [ ] Finalizar Atendimento - Enviar formulário de avaliação para o cliente, deletar sala do cliente.
+- [x] Criar método para troca de mensagem entre usuários dentro de uma sala de call.
+- [x] Retirar cliente da sala de espera ao enviar mensagem para o cliente e iniciar o atendimento.
+- [x] Finalizar Atendimento - Enviar formulário de avaliação para o cliente, deletar sala do cliente.
 - [ ] Receber e salvar dados da avaliação do atendimento na tabela de call, enviar mensagem de obrigado e desconectar cliente.
 
 
