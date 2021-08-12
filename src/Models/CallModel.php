@@ -27,7 +27,7 @@ class  CallModel
      * @return void
      */
     public function callCreate(array $data, string $cmd): void
-    {        
+    {
         $this->tab_chat_call = new ChatCall();
         $data = UtilitiesModel::filterParams($data);
 
@@ -38,7 +38,7 @@ class  CallModel
                 $this->tab_chat_call->call_id = "";
                 $this->tab_chat_call->call_client_uuid =  $data['client_uuid'];
                 $this->tab_chat_call->call_objective = $data['objective'];
-                $this->saveData();              
+                $this->saveData();
             } else {
                 $this->Result = false;
                 $this->Error['msg'] = "Opss! O UUID do cliente informado não existe.";
@@ -205,6 +205,83 @@ class  CallModel
         } else {
             return false;
         }
+    }
+
+    /**
+     * Consultar todos os cadastros conforme parâmetros passado no find
+     *
+     * @param string $find_name
+     * @param string $find_value
+     * @param integer $limit
+     * @param integer $offset
+     * @param string $uri    
+     * @param bool $formatted
+     * @return void
+     */
+    public function readAllCallFind(string $find_name, string $find_value, int $limit = 10, int $offset = 0, $uri = "", bool $formatted = true): void
+    {
+        $this->tab_chat_call = new ChatCall();
+
+        if ($limit == 0) {
+            $this->Result = false;
+            $this->Error['msg'] = "O limite deve ser maior que 0 (zero), tente novamente!";
+        } else {          
+
+            $calls = $this->tab_chat_call->find($find_name, $find_value)->limit($limit)->offset($offset)->fetch("call_id ASC");
+
+            if ($calls) {
+
+                $count = $this->tab_chat_call->find($find_name, $find_value)->count();
+                $links = UtilitiesModel::paginationLink(HOME . $uri, $limit, $offset, $count);
+
+                $this->Result = true;
+                $this->Error['msg'] = "Sucesso!";
+                $this->Error['data'] = $formatted ? $this->passeAllDataArray($calls, HOME . $uri) : $calls;
+                $this->Error['count'] =  $count;
+                $this->Error['next'] = $links['next'];
+                $this->Error['previous'] = $links['previous'];
+            } else {
+                $calls = $this->tab_chat_call->find($find_name, $find_value)->limit(10)->offset(0)->fetch("call_id ASC");
+
+                if ($calls) {
+                    $this->Result = false;
+                    $this->Error['msg'] = "Não existem cadastros no limite e deslocamento informados, tente outra margem de consulta!";
+                } else {
+                    $this->Result = false;
+                    $this->Error['msg'] = "Não existem clientes cadastrados para os parâmetros informados!";
+                }
+            }
+        }
+    }
+
+    /**
+     * Organizar dados para envio  
+     *
+     * @param Object $obj
+     * @param null|string $url
+     * @return array
+     */
+    public function passeAllDataArray($obj, $url = null): array
+    {
+        $result = [];
+
+        if ($obj) {
+            foreach ($obj as $key => $arr) {
+                $result[$key]['call'] = $arr->data()->call_id;
+                $result[$key]['client_uuid'] = $arr->data()->call_client_uuid;
+                $result[$key]['attendant_uuid'] = $arr->data()->call_attendant_uuid;
+                $result[$key]['objective'] = $arr->data()->call_objective;
+                $result[$key]['status'] = $arr->data()->call_status;
+                $result[$key]['start'] = date("d/m/Y H:i:s", strtotime($arr->data()->call_start));
+                $result[$key]['end'] = date("d/m/Y H:i:s", strtotime($arr->data()->call_end));
+                $result[$key]['evaluation'] = $arr->data()->call_evaluation;
+                $result[$key]['update'] = date("d/m/Y H:i:s", strtotime($arr->data()->call_update));
+                if ($url) {
+                    $result[$key]['url'] = $url . '/' .  $arr->data()->call_id;
+                }
+            }
+        }
+        return $result;
     }
 
     /**

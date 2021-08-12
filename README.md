@@ -660,13 +660,15 @@ Apos a conexão bem sucedida com o servidor de chat, já será possível enviar 
 <br>Caso, um atendente inicie a call, o mesmo não poderá sair até finalizar o atendimento. 
 
 > 
+    Request:
     Type: application/json     
     {  
         "cmd": string, //call_start        
         "call": int //id da call  
     }   
-
-    Dados de retorno: 
+    
+    Response:
+    Type: application/json  
     {
         "result": true,
         "error": {
@@ -690,20 +692,7 @@ Apos a conexão bem sucedida com o servidor de chat, já será possível enviar 
                 "cmd": "call_start"
             }
         }
-    }
-
-    Response para todos os clientes:
-    Type: application/json 
-    {
-        "result": bool,
-        "error": {
-            "msg": string,
-            "data": {
-                "row": int, //quantidade de clientes na fila + 1
-                "cmd": "n_waiting_line"
-            }
-        }
-    }
+    }    
     
     Response para todos os atendentes:
     Type: application/json
@@ -879,6 +868,7 @@ Apos a conexão bem sucedida com o servidor de chat, já será possível enviar 
 <b>Avaliação da Call</b><br>
 
 > 
+    Request:
     Type: application/json     
     {  
         "cmd": "call_evaluation", //comando         
@@ -886,14 +876,15 @@ Apos a conexão bem sucedida com o servidor de chat, já será possível enviar 
         "evaluation": int //nota
     }   
 
-    Dados de retorno: 
+    Response: 
+    Type: application/json   
     {
         "result": true,
         "error": {
             "msg": string,
             "data": {
                 "call": int, //id da call
-                "cmd": "call_evaluation"
+                "cmd": "call_evaluation"               
             }
         }
     }

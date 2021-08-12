@@ -33,8 +33,8 @@ CREATE TABLE `chat_call` (
   `call_attendant_uuid` varchar(40) DEFAULT NULL COMMENT 'UUID do cliente.',
   `call_objective` varchar(255) DEFAULT NULL COMMENT 'Assunto do atendimento.',
   `call_status` int(2) NOT NULL DEFAULT 1 COMMENT 'Status do atendimento:\r\n1 - Em espera\r\n2 - Iniciado\r\n3 - Finalizado\r\n4 - Cancelado',
-  `call_start` timestamp NULL DEFAULT NULL COMMENT 'Data e hora UTC do inicio do atendimento.',
-  `call_end` timestamp NULL DEFAULT NULL COMMENT 'Data e hora UTC do fim do atendimento.',
+  `call_start` timestamp NULL DEFAULT NULL COMMENT 'Data e hora do inicio do atendimento.',
+  `call_end` timestamp NULL DEFAULT NULL COMMENT 'Data e hora do fim do atendimento.',
   `call_evaluation` int(2) DEFAULT NULL COMMENT 'Nota de avaliação do chamado.',
   `call_update` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Tabela de atendimentos';

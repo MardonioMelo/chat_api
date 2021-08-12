@@ -13,6 +13,9 @@ use Ratchet\ConnectionInterface;
 use Ratchet\MessageComponentInterface;
 use Src\Controllers\Chat\Socket\SessionRoomController;
 
+/**
+ * Undocumented class
+ */
 class AppChatController implements MessageComponentInterface
 {
     protected $clients;
@@ -26,9 +29,7 @@ class AppChatController implements MessageComponentInterface
     private $jwt;
 
     /**
-     * Set class - informe true para exibir os logs no terminal
-     *
-     * @param boolean $on_log
+     * Set class - informe true para exibir os logs no terminal  
      */
     public function __construct()
     {
@@ -39,6 +40,7 @@ class AppChatController implements MessageComponentInterface
         $this->attendant_model = new AttendantModel();
         $this->client_model = new ClientModel();
         $this->jwt = new JWTModel();
+        $this->importCalls();
     }
 
     /**
@@ -115,9 +117,8 @@ class AppChatController implements MessageComponentInterface
             $autor['user_uuid'] = $this->jwt->getError()['data']->uuid;
             $this->msg_obj = json_decode(json_encode($autor));
 
-            switch ($this->msg_obj->cmd) {
 
-                    //Restaurar salas de call com status 1 ou 2 quando o servidor de chat subir
+            switch ($this->msg_obj->cmd) {
 
                 case 'n_waiting_line': // Número de clientes na fila de espera +1
 
@@ -203,7 +204,6 @@ class AppChatController implements MessageComponentInterface
 
                             if ($this->call_model->getResult()) {
                                 $this->session_model->addUserRoomCall($this->msg_obj->call, $this->msg_obj->user_uuid, "attendant");
-                                $this->nWaitingLine();
                                 $this->customerListData();
                                 $this->sendNoticeUser([$call_flip['client']], 'client', $this->msg_obj->cmd, "Chegou sua vez!", ['call' => $this->msg_obj->call]);
                             }
@@ -391,6 +391,7 @@ class AppChatController implements MessageComponentInterface
 
     /**
      * Enviar dados para todos os usuários de um tipo
+     * 
      * @param string $type
      * @param string $cmd
      * @param string $msg   
@@ -553,4 +554,25 @@ class AppChatController implements MessageComponentInterface
             }
         }
     }
+
+    /**
+     * Importar todas as solicitações de atendimento com status 1 e 2 salvas no db.
+     * Este método deve ser executado apenas ao iniciar o servidor de chat
+     *
+     * @return void
+     */
+    public function importCalls(): void
+    {
+        $this->call_model->readAllCallFind("call_status <= :status", "status=2", 1000, 0, "", false);
+
+        if ($this->call_model->getResult()) {
+            foreach ($this->call_model->getError()['data'] as $call) {
+
+                $this->session_model->addUserRoomCall($call->data()->call_id, $call->data()->call_client_uuid, "client");
+                if (!empty($call->data()->call_attendant_uuid)) {
+                    $this->session_model->addUserRoomCall($call->data()->call_id, $call->data()->call_attendant_uuid, "attendant");
+                }
+            }
+        }
+    }    
 }
