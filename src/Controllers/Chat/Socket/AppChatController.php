@@ -176,7 +176,7 @@ class AppChatController implements MessageComponentInterface
                     $this->call_model->callCancel(json_decode($msg, true), $this->msg_obj->cmd);
 
                     if ($this->call_model->getResult()) {
-                        $this->session_model->removeUserRoomCall($this->msg_obj->call);
+                        $this->session_model->destroyRoomCall($this->msg_obj->call);
                         $this->nWaitingLine();
                         $this->customerListData();
                     }
@@ -238,7 +238,16 @@ class AppChatController implements MessageComponentInterface
                     $this->call_model->callEnd(json_decode($msg, true), $this->msg_obj->cmd, $this->jwt->getError()['data']->type);
 
                     if ($this->call_model->getResult()) {
-                        $this->session_model->removeUserRoomCall($this->msg_obj->call);
+                        $this->session_model->destroyRoomCall($this->msg_obj->call);
+                        $this->nWaitingLine();
+                        $this->customerListData();
+                        $this->sendNoticeUser(
+                            [$this->call_model->getError()['data']['client_uuid']],
+                            'client',
+                            $this->msg_obj->cmd,
+                            "Esperamos ter te ajudado, você poderia avaliar este atendimento?",
+                            ['call' => $this->msg_obj->call]
+                        );
                     }
 
                     $this->log_model->setLog("Sessão:\n" . print_r($_SESSION['_sf2_attributes'], true) . "\n");

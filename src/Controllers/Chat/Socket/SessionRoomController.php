@@ -198,7 +198,7 @@ class SessionRoomController
      * @param string $name_room
      * @return void
      */
-    public function addUserRoomCall(int $call, string $user_uuid, string $user_type,  string $name_room = "call"): void
+    public function addUserRoomCall(int $call, string $user_uuid, string $user_type, string $name_room = "call"): void
     {
         $arr = $this->session->get($name_room);
         $arr[$name_room . '_' . $call][$user_uuid] = $user_type;
@@ -213,13 +213,27 @@ class SessionRoomController
      * @param string $name_room
      * @return void
      */
-    public function removeUserRoomCall(int $call, string $name_room = "call"): void
+    public function removeUserRoomCall(int $call, string $user_uuid, string $name_room = "call"): void
+    {
+        $arr = $this->session->get($name_room);
+        unset($arr[$name_room . '_' . $call][$user_uuid]);
+        $this->session->set($name_room, $arr);
+    }
+
+    /**
+     * Remover sala da sessão
+     * 
+     * @param integer $call    
+     * @param string $name_room
+     * @return void
+     */
+    public function destroyRoomCall(int $call, string $name_room = "call"): void
     {
         $arr = $this->session->get($name_room);
         unset($arr[$name_room . '_' . $call]);
         $this->session->set($name_room, $arr);
     }
-
+    
     /**
      *  Verificar se já existe uma call aberta na sessão para o cliente
      *

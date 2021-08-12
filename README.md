@@ -768,7 +768,7 @@ Apos a conexão bem sucedida com o servidor de chat, já será possível enviar 
         }
     }
 
-    Dados enviados ao destinatário:
+    Response enviados ao destinatário:
     Type: application/json  
     {
         "result": bool,
@@ -781,7 +781,8 @@ Apos a conexão bem sucedida com o servidor de chat, já será possível enviar 
                 "type": string //attendant ou client
             }
         }
-    }      
+    }
+         
 >
 
 <b>Finalizar Call</b>
@@ -806,6 +807,70 @@ Apos a conexão bem sucedida com o servidor de chat, já será possível enviar 
                 "call": int, //id da call
                 "cmd": "call_end",
                 "client_uuid": string //uuid do cliente
+            }
+        }
+    }
+
+    Response enviado ao cliente atendido:
+    Type: application/json  
+    {
+        "result": bool,
+        "error": {
+            "msg": string,
+            "data": {
+                "call": int,
+                "cmd": "call_end"
+            }
+        }
+    } 
+
+    Response para todos os clientes:
+    Type: application/json 
+    {
+        "result": bool,
+        "error": {
+            "msg": string,
+            "data": {
+                "row": int, //quantidade de clientes na fila + 1
+                "cmd": "n_waiting_line"
+            }
+        }
+    }
+    
+    Response para todos os atendentes:
+    Type: application/json
+    {
+        "result": bool,
+        "error": {
+            "msg": string,
+            "data": {
+                "cmd": "call_data_clients",
+                "clients": {  //dados dos clientes em espera
+                    "call_00": { //00 - corresponde ao id da call.
+                        "user": { //dados do cliente
+                            "id": int, //id do cliente
+                            "cpf": int,
+                            "uuid": string,
+                            "name": string,
+                            "lastname": string,
+                            "avatar": string,
+                            "updated_at": string,
+                            "created_at": string,
+                            "url": string
+                        },
+                        "call": { //dados da call
+                            "call_id": int,
+                            "call_client_uuid": string,
+                            "call_attendant_uuid": "string,
+                            "call_objective": string,
+                            "call_status": int,
+                            "call_start": string,
+                            "call_end": string,
+                            "call_evaluation": int,
+                            "call_update": string
+                        }                        
+                    }...
+                }                
             }
         }
     }
