@@ -164,7 +164,7 @@ class AppChatController implements MessageComponentInterface
                             $from->send(UtilitiesModel::dataFormatForSend(
                                 true,
                                 "Já existe uma sala de espera criada para você, aguarde o atendimento!",
-                                ["cmd" => $this->msg_obj->cmd, "id" => (int) explode("_", $check_call)[1]]
+                                ["cmd" => $this->msg_obj->cmd, "call" => (int) explode("_", $check_call)[1]]
                             ));
                         }
                     } else {
@@ -268,6 +268,15 @@ class AppChatController implements MessageComponentInterface
                         $this->call_model->getError()['msg'],
                         $this->call_model->getResult() ? $this->call_model->getError()['data'] : ['cmd' => $this->msg_obj->cmd]
                     ));
+                    break;
+
+                case "call_check_open": // Checar se existe call aberta de um usuário com status 1 e 2
+
+                    if ($this->jwt->getError()['data']->type == "client") {
+                        $this->checkCallOpenClient($from);
+                    } else {
+                        $this->checkCallOpenAttendant($from);
+                    }
                     break;
 
                 case 'check_user_on': // Verificar se um usuário especifico está online
@@ -574,5 +583,37 @@ class AppChatController implements MessageComponentInterface
                 }
             }
         }
-    }    
+    }
+
+    /**
+     * Consultar call em aberto de um cliente
+     *
+     * @return void
+     */
+    public function checkCallOpenClient(object $from): void
+    {
+        $this->call_model->readAllCallFind("call_client_uuid = :uuid AND call_status <= :status", "uuid={$this->msg_obj->user_uuid}&status=2", 1, 0, "", true);
+
+        $from->send(UtilitiesModel::dataFormatForSend(
+            $this->call_model->getResult(),
+            $this->call_model->getError()['msg'],
+            ["cmd" => $this->msg_obj->cmd, "data" => ($this->call_model->getResult() ? $this->call_model->getError()['data'] : [])]
+        ));
+    }
+
+    /**
+     * Consultar call em aberto de um atendante
+     *
+     * @return void
+     */
+    public function checkCallOpenAttendant(object $from): void
+    {
+        $this->call_model->readAllCallFind("call_attendant_uuid = :uuid AND call_status <= :status", "uuid={$this->msg_obj->user_uuid}&status=2", 1000, 0, "", true);
+
+        $from->send(UtilitiesModel::dataFormatForSend(
+            $this->call_model->getResult(),
+            $this->call_model->getError()['msg'],
+            ["cmd" => $this->msg_obj->cmd, "data" => ($this->call_model->getResult() ? $this->call_model->getError()['data'] : [])]
+        ));
+    }
 }

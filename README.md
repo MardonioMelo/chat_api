@@ -431,6 +431,8 @@ Rotas do servidor WebSocket:
 
 Apos a conexão bem sucedida com o servidor de chat, já será possível enviar e receber informações conforme estrutura dos dados e cmd informado.
 
+Obs.: Caso o processo do servidor de chat caia, as calls - atendimentos em aberto com status 1 e 2 serão reestabelecidos ao reiniciar o servidor.
+
 <b>Quantidade de clientes na fila de espera</b>
 
 >
@@ -890,13 +892,51 @@ Apos a conexão bem sucedida com o servidor de chat, já será possível enviar 
     }
 >
 
+<b>Verificar se existem atendimentos em aberto para um usuário</b>
+<br>Se for um cliente, o resultado caso tenha call aberta, será sempre de uma call.
+<br>Se for um atendente, o resultado poderá ser mais de uma call.
+
+> 
+    Request:
+    Type: application/json     
+    {  
+        "cmd": "call_check_open" //comando            
+    }   
+
+    Response: 
+    Type: application/json
+    {
+    "result": bool,
+        "error": {
+            "msg": string,
+            "data": {
+                "cmd": "call_check_open", //comando
+                "data": [ //dados da call
+                    {
+                        "call": int,
+                        "client_uuid": string,
+                        "attendant_uuid": "string,
+                        "objective": string,
+                        "status": int,
+                        "start": string,
+                        "end": string,
+                        "evaluation": int,
+                        "update": string
+                    }   
+                    ...  
+                ]
+            }
+        }
+    }
+>
+
 <b>Verificar se um usuário está online</b><br>
 
 > 
     Request:
     Type: application/json     
     {  
-        "cmd": "check_user_on", //check_user_on  
+        "cmd": "check_user_on", //comando  
         "check_on_uuid": string, //uuid do usuário a ser verificado       
     }   
 
@@ -986,6 +1026,7 @@ Apos a conexão bem sucedida com o servidor de chat, já será possível enviar 
         }
     }
 > 
+
 
 
 ## Comandos

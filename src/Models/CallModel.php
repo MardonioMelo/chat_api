@@ -248,7 +248,7 @@ class  CallModel
                     $this->Error['msg'] = "Não existem cadastros no limite e deslocamento informados, tente outra margem de consulta!";
                 } else {
                     $this->Result = false;
-                    $this->Error['msg'] = "Não existem clientes cadastrados para os parâmetros informados!";
+                    $this->Error['msg'] = "Não existem cadastros para os parâmetros informados!";
                 }
             }
         }
