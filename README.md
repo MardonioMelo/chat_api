@@ -1,4 +1,4 @@
-# Chatbot_api (Em desenvolvimento...)
+# API para Chat de Atendimento
 API para chat e chatbot de suporte, ainda em desenvolvimento.
 
 
