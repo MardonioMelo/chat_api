@@ -48,8 +48,13 @@ class LogModel
         if ($this->on_log) {
             $this->headerLog();
             $in = "\n+--------" . date("d/m/Y H:i:s") . "-----------+\n";
-            $out = "\n----------------------------------------\n";
-            print_r($in . $this->log .  "\nMemória: " . memory_get_usage() . " bytes\nPID: " . getmypid() . $out);
+            $out = "\n>---------------------------------------<\n";
+            $process = "\n----------------------------------------\n";
+            $process .= ">           CPU - Processo              |";
+            $process .= "\n----------------------------------------\n";
+            $process .= "\nMemória: " . memory_get_usage() . " bytes";
+            $process .= "\nPID: " . getmypid();
+            print_r($in . $this->log . $process . $out);
         }
     }
 
@@ -71,10 +76,9 @@ class LogModel
     public function headerLog()
     {
         print_r("     *>>> STATUS DO SERVIDOR <<<*");
-        print_r("\n|--------------------------------------|");
+        print_r("\n+--------------------------------------+");
         print_r("\n      ╭═══════════════════════╮");
         print_r("\n        Servidor em Operação");
         print_r("\n      ╰═══════════════════════╯");
-        
     }
 }

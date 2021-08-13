@@ -19,36 +19,34 @@ class CommandController
      */
     public function statusServidor(): void
     {
-        // $this->log_model->setLog("\nSessão Geral:\n" . print_r($_SESSION['_sf2_attributes'], true) . "\n");       
-
         $this->log_model->setLog("\n----------------------------------------\n");
-        $this->log_model->setLog("          Atendentes Online");
-        $this->log_model->setLog("\n----------------------------------------\n\n");
-        $this->log_model->setLog(print_r(implode("\n", $_SESSION['_sf2_attributes']['attendant']), true) . "\n");
-
-        $this->log_model->setLog("\n----------------------------------------\n");
-        $this->log_model->setLog("           Clientes Online");
-        $this->log_model->setLog("\n----------------------------------------\n\n");
-        $this->log_model->setLog(print_r(implode("\n", $_SESSION['_sf2_attributes']['client']), true) . "\n");
-
-        $this->log_model->setLog("\n----------------------------------------\n");
-        $this->log_model->setLog("         Salas de Atendimento");
-        $this->log_model->setLog("\n----------------------------------------\n\n");
-
-        foreach ($_SESSION['_sf2_attributes']['call'] as $call => $users) {
-            $this->log_model->setLog(" {$call}:\n");
-            foreach ($users as $uuid => $user) {
-                $this->log_model->setLog(" $uuid -> $user \n");
-            }
-        }
-
-        $this->log_model->setLog("\n----------------------------------------\n");
-        $this->log_model->setLog("                 Resumo");
+        $this->log_model->setLog(">               Resumo                  |");
         $this->log_model->setLog("\n----------------------------------------\n");
 
         $this->log_model->setLog("\nTotal Online: {$this->qtdUsersServer()} \n");
         $this->log_model->setLog("Total Atendentes: " . count($this->session_model->getUsersRoom("attendant")) . "\n");
         $this->log_model->setLog("Total Clientes: " . count($this->session_model->getUsersRoom("client")) . "\n");
+
+        $this->log_model->setLog("\n----------------------------------------\n");
+        $this->log_model->setLog(">          Atendentes Online            |");
+        $this->log_model->setLog("\n----------------------------------------\n\n");
+        $this->log_model->setLog(print_r(implode("\n", $_SESSION['_sf2_attributes']['attendant']), true) . "\n");
+
+        $this->log_model->setLog("\n----------------------------------------\n");
+        $this->log_model->setLog(">           Clientes Online             |");
+        $this->log_model->setLog("\n----------------------------------------\n\n");
+        $this->log_model->setLog(print_r(implode("\n", $_SESSION['_sf2_attributes']['client']), true) . "\n");
+
+        $this->log_model->setLog("\n----------------------------------------\n");
+        $this->log_model->setLog(">         Salas de Atendimento          |");
+        $this->log_model->setLog("\n----------------------------------------\n\n");
+
+        foreach ($_SESSION['_sf2_attributes']['call'] as $call => $users) {
+            $this->log_model->setLog(" [{$call}]:\n");
+            foreach ($users as $uuid => $user) {
+                $this->log_model->setLog(" | $uuid -> $user \n");
+            }
+        }
     }
 
     /**

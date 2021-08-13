@@ -4,7 +4,6 @@ namespace Src\Controllers\Chat\Socket;
 
 use Src\Models\JWTModel;
 use Src\Models\LogModel;
-use Src\Models\MsgModel;
 use Src\Models\CallModel;
 use Src\Models\ClientModel;
 use Src\Models\AttendantModel;
