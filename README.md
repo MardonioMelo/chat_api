@@ -44,7 +44,7 @@ O Painel de Chat será a tela de atendimento, nela terá:
 <p><b>Atenção:</b> Os atendentes devem estar cadastrados previamente. Essa necessidade será apenas para identificação no Painel de Chat através de um ID que vincula a configuração do perfíl, já para o cliente, a identificação do atendente não será mostrada.</p>
 
 ### Avaliação do Atendimento
-Apos atendente encerrar o atendimento, será enviado por padrão, um formulário de avaliação contendo um campo com 5 opções de nota (1-5 obrigatório) e um campo para comentário (opcional).
+Apos atendente encerrar o atendimento, será enviado por padrão, um formulário de avaliação contendo um campo com 5 opções de nota (1-5 obrigatório).
 
 ## ChatBot
 O chatbot deverá ser implementado no atendimento par respostas mais simples e solução de problemas comuns.
@@ -88,7 +88,7 @@ Exemplo de envio:
 - POST: localhost/chatbot_api/api/token
 >   
     Content-Type: multipart/form-data
-    Dados:     
+    Request:     
         uuid: string              
         type: string    
         public: string
@@ -96,15 +96,16 @@ Exemplo de envio:
         avatar: string
         lastname: string
 
-    Dados de retorno: 
-        {
-            "result": bool,
-            "error": {
-                "header": string,
-                "token": string,
-                "msg": string
-            }
-        } 
+    Response: 
+    Type: application/json
+    {
+        "result": bool,
+        "error": {
+            "header": string,
+            "token": string,
+            "msg": string
+        }
+    } 
 > 
 
 O name | lastname | avatar: são opcionais porque só serão utilizados quando a API tiver que cadastrar um usuário que não existe no db e que informou um CPF válido no campo uuid, nesse caso o name e lastname passam a ser obrigatórios..
@@ -126,13 +127,14 @@ Exemplo de envio:
 - POST: localhost/chatbot_api/api/attendant
 >   
     Content-Type: multipart/form-data
-    Dados:   
+    Request:   
         cpf: string    
         name: string  
         lastname: string     
         avatar: string - opcional          
 
-    Dados de retorno: 
+    Response: 
+    Type: application/json
     {
         "result": bool,
         "error": {
@@ -1008,7 +1010,14 @@ Obs.: Caso o processo do servidor de chat caia, as calls - atendimentos em abert
 ### Iniciar servidor WebSocket do chat
 > php run
 
+### Cadastrar usuário
+> php new-user.php
+
+### Comandos para treino do bot
+> php dataset.php
+
 ### Testes Automatizados - PHPUnit
 - Execute o comando para os testes automatizados com PHPUnit
+- Os testes automatizados ainda não foram implementados
 > php vendor/bin/phpunit --testdox --color tests
 

@@ -55,10 +55,10 @@ class JWTController
                     $this->checkClient();
                 }
             } else {
-                $this->result['error'] = "Informe todos os campos obrigatórios!";
+                $this->result['error']['msg'] = "Informe todos os campos obrigatórios!";
             }
         } else {
-            $this->result['error'] = "Chave pública inválida!";
+            $this->result['error']['msg'] = "Chave pública inválida!";
         }
 
         $response->getBody()->write(json_encode($this->result));
@@ -83,7 +83,7 @@ class JWTController
                 $this->createTokenAttendant();
             } else {
                 $this->result['result'] = false;
-                $this->result['error'] = "O usuário não existe!";
+                $this->result['error']['msg'] = "O usuário não existe!";
             }
         }
     }
@@ -96,7 +96,7 @@ class JWTController
     private function createTokenAttendant():void
     {
         $this->jwt->createToken([
-            "uuid" => $this->user->attendant_uuid,
+            "uud" => $this->user->attendant_uuid,
             "name" => $this->user->attendant_name,
             "type" => "attendant"
         ], 43200);
@@ -104,8 +104,7 @@ class JWTController
         if ($this->jwt->getResult()) {
 
             $this->result['result'] = $this->jwt->getResult();
-            $this->result['error'] = $this->jwt->getError();
-            unset($this->result['error']['this->data']);
+            $this->result['error'] = $this->jwt->getError();           
         } else {
             $this->result['result'] = $this->jwt->getResult();
             $this->result['error'] = $this->jwt->getError();
@@ -139,11 +138,11 @@ class JWTController
                         $this->user = $this->client_model->getUserUUID($this->client_model->getError()['data']['uuid']);
                         $this->createTokenClient();
                     } else {
-                        $this->result['error'] = $this->client_model->getError()['msg'];
+                        $this->result['error']['msg'] = $this->client_model->getError()['msg'];
                     }
                 }
             } else {
-                $this->result['error'] = "O usuário não existe!";
+                $this->result['error']['msg'] = "O usuário não existe!";
             }
         }
     }
@@ -162,10 +161,8 @@ class JWTController
         ], 43200);
 
         if ($this->jwt->getResult()) {
-
             $this->result['result'] = $this->jwt->getResult();
-            $this->result['error'] = $this->jwt->getError();
-            unset($this->result['error']['this->data']);
+            $this->result['error'] = $this->jwt->getError();           
         } else {
             $this->result['result'] = $this->jwt->getResult();
             $this->result['error'] = $this->jwt->getError();
