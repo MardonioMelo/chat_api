@@ -96,7 +96,7 @@ class JWTController
     private function createTokenAttendant():void
     {
         $this->jwt->createToken([
-            "uud" => $this->user->attendant_uuid,
+            "uuid" => $this->user->attendant_uuid,
             "name" => $this->user->attendant_name,
             "type" => "attendant"
         ], 43200);

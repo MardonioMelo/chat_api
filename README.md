@@ -403,6 +403,18 @@ Rotas do servidor WebSocket:
 
     No cabeçalho também deve está definido o tipo dos dados enviado.
     Type: application/json   
+
+    Response em caso de erro
+    Type: application/json  
+    {
+    "result": false,
+    "error": {
+        "msg": string,
+        "data": {
+            "cmd": "connection"
+        }
+    }
+}
 >
 
 Apos a conexão bem sucedida com o servidor de chat, já será possível enviar e receber informações conforme estrutura dos dados e cmd informado.
