@@ -19,8 +19,7 @@ use Src\Controllers\Chat\Socket\SessionRoomController;
 class AppChatController implements MessageComponentInterface
 {
     protected $clients;
-    private $session_model;
-    private $msg_model;
+    private $session_model;  
     private $call_model;
     private $log_model;
     private $msg_obj;
@@ -321,7 +320,7 @@ class AppChatController implements MessageComponentInterface
                         foreach ($this->clients as $client) {
                             if ($list_flip[$uuid] == "resourceId_$client->resourceId" && $this->msg_obj->user_uuid != $uuid) {
 
-                                $this->msg_model = (new MsgModel())->saveMsgCall($this->msg_obj->call, $this->msg_obj->text, $uuid, $this->msg_obj->user_uuid);
+                                $msg_model = (new MsgModel())->saveMsgCall($this->msg_obj->call, $this->msg_obj->text, $uuid, $this->msg_obj->user_uuid);
                                 $online = true;
                                 $data["type"] = $this->jwt->getError()['data']->type;
                                 $client->send(UtilitiesModel::dataFormatForSend(true, "Sucesso!", $data));
