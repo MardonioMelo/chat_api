@@ -232,9 +232,9 @@ class AppChatController implements MessageComponentInterface
         $msg = "Atualização da fila de espera.";
 
         if ($from) {
-            $from->send(UtilitiesModel::dataFormatForSend(true, $msg, ["cmd" => 'n_waiting_line', 'row' => $row]));
+            $from->send(UtilitiesModel::dataFormatForSend(true, $msg, ["cmd" => 'cmd_n_waiting_line', 'row' => $row]));
         } else {
-            $this->sendDataAllUsers("client", "n_waiting_line", $msg, ['row' => $row]);
+            $this->sendDataAllUsers("client", "cmd_n_waiting_line", $msg, ['row' => $row]);
         }
     }
 
@@ -286,9 +286,9 @@ class AppChatController implements MessageComponentInterface
         }
 
         if ($from) {
-            $from->send(UtilitiesModel::dataFormatForSend($this->client_model->getResult(), $msg, ["cmd" => "call_data_clients", "clients" => $data]));
+            $from->send(UtilitiesModel::dataFormatForSend($this->client_model->getResult(), $msg, ["cmd" => "cmd_call_data_clients", "clients" => $data]));
         } else {
-            $this->sendDataAllUsers("attendant", 'call_data_clients', "Atualização da fila de clientes.", ["clients" => $data]);
+            $this->sendDataAllUsers("attendant", 'cmd_call_data_clients', "Atualização da fila de clientes.", ["clients" => $data]);
         }
     }
 

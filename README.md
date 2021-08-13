@@ -2,32 +2,6 @@
 API para chat e chatbot de suporte, ainda em desenvolvimento.
 
 
-<b>Andamento do Chat:</b>
-
-- [x] Criar servidor WebSocket para chat.
-- [x] Criar tabela para salvar as conversas do chat/chatbot.
-- [x] Estabelecer conexão reservada e troca de mensagens entre o atendente o cliente.
-- [x] Consulta do histórico de conversas por atendente/cliente/data e hora de inicio e fim com limit e offset.
-- [x] Consultar quantidade de usuários online no total (atendentes + clientes)
-- [x] Criar tabela de atendimento (atendente,cliente,status,assunto,avaliação,data-hora-inicio,data-hora-fim).
-- [x] Criar tabela de usuários (usuário,nome,imagem,instituição,email).
-- [x] Criar tabela de atendentes.
-- [x] Autentificação JWT.
-- [x] Rota para gerar token JWT
-- [x] Criar sala de espera dos clientes para atendimento e sala para os atendentes.
-- [x] Consultar dados dos clientes e atendentes.
-- [x] Receber fomulário da solicitação do atendimento e salvar dados da abertura do atendimento na tabela de call.
-- [x] Enviar para o cliente o número dele na fila de espera toda vez que um cliente entrar na sala de espera.
-- [x] Enviar para os atendentes a lista de espera por ordem de chegada atualizada toda vez que um novo cliente entrar.
-- [x] Criar sala com o id do cliente ao iniciar o atendimento e adicionar o atendente e o cliente nessa sala para troca de mensagens.
-- [x] Enviar dados dos clientes da sala de espera para os atendentes.
-- [x] Validar para que o mesmo cliente não abra mais de uma ao mesmo tempo mesmo que desconecte e reconecte.
-- [x] Criar método para troca de mensagem entre usuários dentro de uma sala de call.
-- [x] Retirar cliente da sala de espera ao enviar mensagem para o cliente e iniciar o atendimento.
-- [x] Finalizar Atendimento - Enviar formulário de avaliação para o cliente, deletar sala do cliente.
-- [ ] Receber e salvar dados da avaliação do atendimento na tabela de call, enviar mensagem de obrigado e desconectar cliente.
-
-
 <i><b>E o andamento do bot?</b> Algumas coisas do bot já foram feitas/iniciadas como a implementação das lib's PHP nlp-tools e botman, por hora, essa parte está aguardando o desenvolvimento do chat para dar continuidade o desenvolvimento do bot.</i>
 
 ## Etapas do Desenvolvimento
@@ -439,7 +413,7 @@ Obs.: Caso o processo do servidor de chat caia, as calls - atendimentos em abert
     Request:
     Type: application/json
     {  
-        "cmd": "n_waiting_line"  //comando       
+        "cmd": "cmd_n_waiting_line"  //comando       
     }   
 
     Response:
@@ -449,7 +423,7 @@ Obs.: Caso o processo do servidor de chat caia, as calls - atendimentos em abert
         "error": {
             "msg": string,
             "data": {
-                "cmd": "n_waiting_line",
+                "cmd": "cmd_n_waiting_line",
                 "row": int
             }
         }
@@ -463,7 +437,7 @@ Obs.: Caso o processo do servidor de chat caia, as calls - atendimentos em abert
     Request:
     Type: application/json
     {  
-        "cmd": "call_data_clients"  //comando         
+        "cmd": "cmd_call_data_clients"  //comando         
     }   
 
     Response para todos os atendentes:
@@ -473,7 +447,7 @@ Obs.: Caso o processo do servidor de chat caia, as calls - atendimentos em abert
         "error": {
             "msg": string,
             "data": {
-                "cmd": "call_data_clients",
+                "cmd": "cmd_call_data_clients",
                 "clients": {  //dados dos clientes em espera
                     "call_00": { //00 - corresponde ao id da call.
                         "user": { //dados do cliente
@@ -512,7 +486,7 @@ Obs.: Caso o processo do servidor de chat caia, as calls - atendimentos em abert
     Request:
     Type: application/json
     {  
-        "cmd": "call_create", //comando    
+        "cmd": "cmd_call_create", //comando    
         "objective": string //assunto  
     }
 
@@ -523,7 +497,7 @@ Obs.: Caso o processo do servidor de chat caia, as calls - atendimentos em abert
         "error": {
             "msg": string,
             "data": {
-                "cmd": "call_create",
+                "cmd": "cmd_call_create",
                 "call": int|string //id da call         
             }
         }
@@ -537,7 +511,7 @@ Obs.: Caso o processo do servidor de chat caia, as calls - atendimentos em abert
             "msg": string,
             "data": {
                 "row": int, //quantidade de clientes na fila + 1
-                "cmd": "n_waiting_line"
+                "cmd": "cmd_n_waiting_line"
             }
         }
     }
@@ -549,7 +523,7 @@ Obs.: Caso o processo do servidor de chat caia, as calls - atendimentos em abert
         "error": {
             "msg": string,
             "data": {
-                "cmd": "call_data_clients",
+                "cmd": "cmd_call_data_clients",
                 "clients": {  //dados dos clientes em espera
                     "call_00": { //00 - corresponde ao id da call.
                         "user": { //dados do cliente
@@ -587,7 +561,7 @@ Obs.: Caso o processo do servidor de chat caia, as calls - atendimentos em abert
     Request:
     Type: application/json     
     {  
-        "cmd": "call_cancel", //comando    
+        "cmd": "cmd_call_cancel", //comando    
         "call": int //id da call 
     }  
 
@@ -599,7 +573,7 @@ Obs.: Caso o processo do servidor de chat caia, as calls - atendimentos em abert
             "msg": string,
             "data": {
                 "call": int, //id da call
-                "cmd": "call_cancel"
+                "cmd": "cmd_call_cancel"
             }
         }
     }
@@ -612,7 +586,7 @@ Obs.: Caso o processo do servidor de chat caia, as calls - atendimentos em abert
             "msg": string,
             "data": {
                 "row": int,
-                "cmd": "n_waiting_line"
+                "cmd": "cmd_n_waiting_line"
             }
         }
     }
@@ -624,7 +598,7 @@ Obs.: Caso o processo do servidor de chat caia, as calls - atendimentos em abert
         "error": {
             "msg": string,
             "data": {
-                "cmd": "call_data_clients",
+                "cmd": "cmd_call_data_clients",
                 "clients": {  //dados dos clientes em espera
                     "call_00": { //00 - corresponde ao id da call.
                         "user": { //dados do cliente
@@ -665,7 +639,7 @@ Obs.: Caso o processo do servidor de chat caia, as calls - atendimentos em abert
     Request:
     Type: application/json     
     {  
-        "cmd": string, //call_start        
+        "cmd": "cmd_call_start", //comando        
         "call": int //id da call  
     }   
     
@@ -677,7 +651,7 @@ Obs.: Caso o processo do servidor de chat caia, as calls - atendimentos em abert
             "msg": string,
             "data": {
                 "call": int, //id da call
-                "cmd": "call_start",
+                "cmd": "cmd_call_start",
                 "client_uuid": string, //uuid do cliente
             }
         }
@@ -691,7 +665,7 @@ Obs.: Caso o processo do servidor de chat caia, as calls - atendimentos em abert
             "msg": string,
             "data": {
                 "call": int,
-                "cmd": "call_start"
+                "cmd": "cmd_call_start"
             }
         }
     }    
@@ -703,7 +677,7 @@ Obs.: Caso o processo do servidor de chat caia, as calls - atendimentos em abert
         "error": {
             "msg": string,
             "data": {
-                "cmd": "call_data_clients",
+                "cmd": "cmd_call_data_clients",
                 "clients": {  //dados dos clientes em espera
                     "call_00": { //00 - corresponde ao id da call.
                         "user": { //dados do cliente
@@ -742,7 +716,7 @@ Obs.: Caso o processo do servidor de chat caia, as calls - atendimentos em abert
     Request:
     Type: application/json  
     {  
-        "cmd": "call_msg",  //comando          
+        "cmd": "cmd_call_msg",  //comando          
         "call": int,  //id da call
         "text": string, //mensagem        
     }  
@@ -754,7 +728,7 @@ Obs.: Caso o processo do servidor de chat caia, as calls - atendimentos em abert
         "error": {
             "msg": "call_msg",
             "data": {
-                "cmd": "call_msg"
+                "cmd": "cmd_call_msg"
             }
         }
     }
@@ -766,7 +740,7 @@ Obs.: Caso o processo do servidor de chat caia, as calls - atendimentos em abert
         "error": {
             "msg": string,
             "data": {
-                "cmd": "call_msg",
+                "cmd": "cmd_call_msg",
                 "text": string,
                 "call": int,
                 "type": string //attendant ou client
@@ -784,7 +758,7 @@ Obs.: Caso o processo do servidor de chat caia, as calls - atendimentos em abert
     Request
     Type: application/json     
     {  
-        "cmd": "call_end", //comando         
+        "cmd": "cmd_call_end", //comando         
         "call": int //id da call  
     }   
 
@@ -796,7 +770,7 @@ Obs.: Caso o processo do servidor de chat caia, as calls - atendimentos em abert
             "msg": string,
             "data": {
                 "call": int, //id da call
-                "cmd": "call_end",
+                "cmd": "cmd_call_end",
                 "client_uuid": string //uuid do cliente
             }
         }
@@ -810,7 +784,7 @@ Obs.: Caso o processo do servidor de chat caia, as calls - atendimentos em abert
             "msg": string,
             "data": {
                 "call": int,
-                "cmd": "call_end"
+                "cmd": "cmd_call_end"
             }
         }
     } 
@@ -823,7 +797,7 @@ Obs.: Caso o processo do servidor de chat caia, as calls - atendimentos em abert
             "msg": string,
             "data": {
                 "row": int, //quantidade de clientes na fila + 1
-                "cmd": "n_waiting_line"
+                "cmd": "cmd_n_waiting_line"
             }
         }
     }
@@ -835,7 +809,7 @@ Obs.: Caso o processo do servidor de chat caia, as calls - atendimentos em abert
         "error": {
             "msg": string,
             "data": {
-                "cmd": "call_data_clients",
+                "cmd": "cmd_call_data_clients",
                 "clients": {  //dados dos clientes em espera
                     "call_00": { //00 - corresponde ao id da call.
                         "user": { //dados do cliente
@@ -873,7 +847,7 @@ Obs.: Caso o processo do servidor de chat caia, as calls - atendimentos em abert
     Request:
     Type: application/json     
     {  
-        "cmd": "call_evaluation", //comando         
+        "cmd": "cmd_call_evaluation", //comando         
         "call": int, //id da call  
         "evaluation": int //nota
     }   
@@ -886,7 +860,7 @@ Obs.: Caso o processo do servidor de chat caia, as calls - atendimentos em abert
             "msg": string,
             "data": {
                 "call": int, //id da call
-                "cmd": "call_evaluation"               
+                "cmd": "cmd_call_evaluation"               
             }
         }
     }
@@ -900,7 +874,7 @@ Obs.: Caso o processo do servidor de chat caia, as calls - atendimentos em abert
     Request:
     Type: application/json     
     {  
-        "cmd": "call_check_open" //comando            
+        "cmd": "cmd_call_check_open" //comando            
     }   
 
     Response: 
@@ -910,7 +884,7 @@ Obs.: Caso o processo do servidor de chat caia, as calls - atendimentos em abert
         "error": {
             "msg": string,
             "data": {
-                "cmd": "call_check_open", //comando
+                "cmd": "cmd_call_check_open", //comando
                 "data": [ //dados da call
                     {
                         "call": int,
@@ -936,7 +910,7 @@ Obs.: Caso o processo do servidor de chat caia, as calls - atendimentos em abert
     Request:
     Type: application/json     
     {  
-        "cmd": "check_user_on", //comando  
+        "cmd": "cmd_check_user_on", //comando  
         "check_on_uuid": string, //uuid do usuário a ser verificado       
     }   
 
@@ -947,7 +921,7 @@ Obs.: Caso o processo do servidor de chat caia, as calls - atendimentos em abert
         "error": {
             "msg": string,
             "data": {
-                "cmd": "check_user_on",
+                "cmd": "cmd_check_user_on",
                 "online": bool //true = online, false = offline
             }
         }
@@ -962,7 +936,7 @@ Obs.: Caso o processo do servidor de chat caia, as calls - atendimentos em abert
     Request:
     Type: application/json     
     {  
-        "cmd": "on_n" //comando       
+        "cmd": "cmd_on_n" //comando       
     }   
 
     Response: 
@@ -972,7 +946,7 @@ Obs.: Caso o processo do servidor de chat caia, as calls - atendimentos em abert
         "error": {
             "msg": "Sucesso!",
             "data": {
-                "cmd": "on_n",
+                "cmd": "cmd_on_n",
                 "qtd": int
             }
         }
@@ -986,7 +960,7 @@ Obs.: Caso o processo do servidor de chat caia, as calls - atendimentos em abert
     Request:
     Type: application/json  
     {  
-        "cmd": "clients_on_n", //comando
+        "cmd": "cmd_clients_on_n", //comando
     }   
 
     Response:
@@ -996,7 +970,7 @@ Obs.: Caso o processo do servidor de chat caia, as calls - atendimentos em abert
         "error": {
             "msg": "Sucesso!",
             "data": {
-                "cmd": "clients_on_n",
+                "cmd": "cmd_clients_on_n",
                 "qtd": int
             }
         }
@@ -1010,7 +984,7 @@ Obs.: Caso o processo do servidor de chat caia, as calls - atendimentos em abert
     Request:
     Type: application/json  
     {  
-        "cmd": "attendants_on_n", //comando
+        "cmd": "cmd_attendants_on_n", //comando
     }   
 
     Response:
@@ -1020,7 +994,7 @@ Obs.: Caso o processo do servidor de chat caia, as calls - atendimentos em abert
         "error": {
             "msg": "Sucesso!",
             "data": {
-                "cmd": "attendants_on_n",
+                "cmd": "cmd_attendants_on_n",
                 "qtd": int
             }
         }
