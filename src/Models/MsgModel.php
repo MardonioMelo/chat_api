@@ -151,7 +151,7 @@ class  MsgModel
 
                 $this->Result = true;
                 $this->Error['msg'] = "Sucesso!";
-                $this->Error['data'] = $formatted ? $this->passeAllDataArray($msgs, $uri) : $msgs;
+                $this->Error['data']['chat'] = $formatted ? $this->passeAllDataArray($msgs, $uri) : $msgs;
 
                 if ($uri) {
                     $count = $this->tab_chat_msg->find($find_name, $find_value)->count();

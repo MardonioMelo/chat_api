@@ -887,7 +887,9 @@ Obs.: Caso o processo do servidor de chat caia, as calls - atendimentos em abert
     Type: application/json  
     {  
         "cmd": "cmd_call_history", //comando
-        "call": 1
+        "call": int, //id da call
+        "limit": int, //limite por pagina
+        "offset": int //offset da consulta
     }   
 
     Response:
@@ -896,9 +898,8 @@ Obs.: Caso o processo do servidor de chat caia, as calls - atendimentos em abert
         "result": bool,
         "error": {
             "msg": string,
-            "data": [
-                "cmd": "cmd_call_history",
-                "msgs":[
+            "data": {
+                "chat": [
                     {
                         "id": int,
                         "call": int,
@@ -907,10 +908,14 @@ Obs.: Caso o processo do servidor de chat caia, as calls - atendimentos em abert
                         "text": string, //mensagem
                         "type": string, //text
                         "date": string //data e hora
-                    },
-                    ...
-                ]
-            ]
+                        "url": string //url do registro
+                    }
+                ],
+                "count": 18,
+                "next": string|null, //url da próxima pagina
+                "previous": string|null, //url da pagina anterior
+                "cmd": "cmd_call_history"
+            }
         }
     }
 > 

@@ -564,22 +564,25 @@ class CommandController
      */
     public function cmd_call_history(object $from, string $msg = null): void
     {
-        $data['cmd'] = $this->msg_obj->cmd;
-
         if (!empty($this->msg_obj->call)) {
 
             $call = (int)strip_tags($this->msg_obj->call);
+            $limit = empty($this->msg_obj->limit) ? 500 : $this->msg_obj->limit;
+            $offset = empty($this->msg_obj->offset) ? 0 : $this->msg_obj->offset;
+            $uri = "/$call";
 
             $msg_model = new MsgModel();
-            $msg_model->readAllMsgFind("chat_call_id = :call", "call={$call}", 500);
+            $msg_model->readAllMsgFind("chat_call_id = :call", "call={$call}", $limit, $offset, $uri);
 
             if ($msg_model->getResult()) {
-                $data['msgs'] =  $msg_model->getError()['data'];
+                $data = $msg_model->getError()['data'];
             }
+
+            $data['cmd'] = $this->msg_obj->cmd;
 
             $from->send(UtilitiesModel::dataFormatForSend($msg_model->getResult(), $msg_model->getError()['msg'], $data));
         } else {
-            $from->send(UtilitiesModel::dataFormatForSend(false, "Opss! Informe os campos obrigatórios.", $data));
+            $from->send(UtilitiesModel::dataFormatForSend(false, "Opss! Informe os campos obrigatórios.", ['cmd' => $this->msg_obj->cmd]));
         }
     }
 
