@@ -15,7 +15,7 @@ class LogModel
      * @param boolean $on = true para ligar os logs
      * @param boolean $history = para mostrar histórico
      */
-    public function __construct(bool $on = true, bool $history = false)
+    public function __construct(bool $on = true, bool $history = true)
     {
         $this->on_log = $on;
         $this->history = $history;
@@ -42,11 +42,15 @@ class LogModel
     public function printLog(): void
     {
         if ($this->history) {
-            popen('cls', 'w');
+            popen('cls || clear', 'w');
         }
 
         if ($this->on_log) {
-            $this->headerLog();
+            $header = "     *>>> STATUS DO SERVIDOR <<<*";
+            $header = "\n+--------------------------------------+";
+            $header = "\n      ╭═══════════════════════╮";
+            $header = "\n        Servidor em Operação";
+            $header = "\n      ╰═══════════════════════╯";
             $in = "\n+--------" . date("d/m/Y H:i:s") . "-----------+\n";
             $out = "\n>---------------------------------------<\n";
             $process = "\n----------------------------------------\n";
@@ -54,7 +58,7 @@ class LogModel
             $process .= "\n----------------------------------------\n";
             $process .= "\nMemória: " . memory_get_usage() . " bytes";
             $process .= "\nPID: " . getmypid();
-            print_r($in . $this->log . $process . $out);
+            print_r($header . $in . $this->log . $process . $out);
         }
     }
 
@@ -66,19 +70,5 @@ class LogModel
     public function resetLog(): void
     {
         $this->log = "";
-    }
-
-    /**
-     * Cabeçalho do log
-     *
-     * @return void
-     */
-    public function headerLog()
-    {
-        print_r("     *>>> STATUS DO SERVIDOR <<<*");
-        print_r("\n+--------------------------------------+");
-        print_r("\n      ╭═══════════════════════╮");
-        print_r("\n        Servidor em Operação");
-        print_r("\n      ╰═══════════════════════╯");
     }
 }

@@ -32,7 +32,7 @@ class AppChatController extends CommandController implements MessageComponentInt
      */
     public function __construct()
     {
-        $this->log_model = new LogModel(true, true);
+        $this->log_model = new LogModel();
         $this->clients = new \SplObjectStorage;
         $this->session_model = new SessionRoomController();
         $this->call_model = new CallModel();
@@ -50,6 +50,8 @@ class AppChatController extends CommandController implements MessageComponentInt
      */
     public function onOpen(ConnectionInterface $conn): void
     {
+        $this->log_model->resetLog();
+        
         try {
 
             $this->jwt->checkToken($conn->httpRequest);
@@ -57,7 +59,6 @@ class AppChatController extends CommandController implements MessageComponentInt
             if ($this->jwt->getResult()) {
 
                 if (!$this->session_model->checkOn($this->jwt->getError()['data']->uuid)) {
-                    $this->log_model->resetLog();
                     $this->cmd_connection($conn);
                     $this->statusServidor();
                     $this->log_model->printLog();
@@ -90,7 +91,6 @@ class AppChatController extends CommandController implements MessageComponentInt
      */
     public function onMessage(ConnectionInterface $from, $msg): void
     {
-       
         $this->log_model->resetLog();
 
         try {
@@ -109,7 +109,7 @@ class AppChatController extends CommandController implements MessageComponentInt
                     ["cmd" => "error"]
                 ));
             }
-        } catch (\Throwable $e) {                
+        } catch (\Throwable $e) {
             $this->log_model->setLog($e->getMessage() . "\n");
             $from->send(UtilitiesModel::dataFormatForSend(
                 false,

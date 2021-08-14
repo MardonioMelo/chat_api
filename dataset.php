@@ -22,7 +22,7 @@ function inputMetodo()
 
 //Limpar terminal
 function clearTerminal(){    
-    popen('cls', 'w');
+    popen('cls || clear', 'w');
 };
 
 //log Inicio

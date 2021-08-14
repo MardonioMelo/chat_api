@@ -556,6 +556,26 @@ class CommandController
     }
 
     /**
+     * Consultar histórico de mensagens de uma call
+     *
+     * @param object $from
+     * @param string $msg
+     * @return void
+     */
+    public function cmd_call_history(object $from, string $msg = null): void
+    {
+        if (!empty($this->msg_obj->call)) {
+            $from->send(UtilitiesModel::dataFormatForSend(
+                true,
+                "Sucesso!",
+                ["cmd" => $this->msg_obj->cmd, 'online' => $this->session_model->checkOn($this->msg_obj->check_on_uuid)]
+            ));
+        } else {
+            $from->send(UtilitiesModel::dataFormatForSend(false, "Opss! Informe os campos obrigatórios.", ["cmd" => $this->msg_obj->cmd]));
+        }
+    }
+
+    /**
      * Verificar se um usuário especifico está online
      *
      * @param object $from

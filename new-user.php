@@ -26,6 +26,7 @@ function inputResp()
 function clearTerminal()
 {
     popen('cls', 'w');
+    popen('clear', 'w');
 };
 
 //log Inicio
