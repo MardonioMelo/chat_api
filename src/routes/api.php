@@ -43,8 +43,6 @@ $app->get(API_VERSION . '/client', ClientController::class . ":readAllClient")->
 $app->get(API_VERSION . '/client/{id}', ClientController::class . ":readClient")->add(new JWTMiddleware());
 $app->put(API_VERSION . '/client/{id}', ClientController::class . ":updateClient")->add(new JWTMiddleware());
 $app->delete(API_VERSION . '/client/{id}', ClientController::class . ":deleteClient")->add(new JWTMiddleware());
-// Mensagens
-$app->get(API_VERSION . '/history', DashboardController::class . ":msgHistory")->add(new JWTMiddleware());
 
 // View do chat
 $app->get('/home/{id}', DashboardController::class . ":home")->add(new JWTMiddleware());
