@@ -1,3 +1,4 @@
 <?php
-popen('cls', 'w');
+
+popen('cls || clear', 'w');
 require './server-chat.php';

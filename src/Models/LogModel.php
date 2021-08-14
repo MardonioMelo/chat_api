@@ -42,15 +42,16 @@ class LogModel
     public function printLog(): void
     {
         if ($this->history) {
+            echo chr(27).chr(91).'H'.chr(27).chr(91).'J'; 
             popen('cls || clear', 'w');
         }
 
         if ($this->on_log) {
             $header = "     *>>> STATUS DO SERVIDOR <<<*";
-            $header = "\n+--------------------------------------+";
-            $header = "\n      ╭═══════════════════════╮";
-            $header = "\n        Servidor em Operação";
-            $header = "\n      ╰═══════════════════════╯";
+            $header .= "\n+--------------------------------------+";
+            $header .= "\n      ╭═══════════════════════╮";
+            $header .= "\n        Servidor em Operação";
+            $header .= "\n      ╰═══════════════════════╯";
             $in = "\n+--------" . date("d/m/Y H:i:s") . "-----------+\n";
             $out = "\n>---------------------------------------<\n";
             $process = "\n----------------------------------------\n";

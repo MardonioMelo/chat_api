@@ -25,8 +25,7 @@ function inputResp()
 //Limpar terminal
 function clearTerminal()
 {
-    popen('cls', 'w');
-    popen('clear', 'w');
+    popen('cls || clear', 'w');
 };
 
 //log Inicio
