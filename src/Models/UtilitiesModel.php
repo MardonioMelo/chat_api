@@ -137,7 +137,7 @@ class UtilitiesModel
     }
 
     /**
-     * Passar data do formato BR (01/30/2020) para o formato (30/01/2020), verificar se é valida e retorna em formato (2020-01-30).
+     * Passar data do formato (01/30/2020) para o formato (30/01/2020), verificar se é valida e retorna em formato (2020-01-30).
      * 
      * @param string $date
      * @return boll|string

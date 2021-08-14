@@ -110,7 +110,10 @@ class AppChatController extends CommandController implements MessageComponentInt
                 ));
             }
         } catch (\Throwable $e) {
-            $this->log_model->setLog($e->getMessage() . "\n");
+            $this->log_model->setLog("Ocorreu um Error \n");
+            $this->log_model->setLog("Arquivo: {$e->getFile()} \n");
+            $this->log_model->setLog("Linha: {$e->getLine()} \n");
+            $this->log_model->setLog("Mensagem: {$e->getMessage()} \n");
             $from->send(UtilitiesModel::dataFormatForSend(
                 false,
                 "Ops! Algo de inesperado aconteceu, verifique se os dados enviados estão corretos e tente novamente mais tarde.",

@@ -197,7 +197,7 @@ class CommandController
                         foreach ($this->clients as $client) {
                             if ($list_flip[$uuid] == "resourceId_$client->resourceId" && $this->msg_obj->user_uuid != $uuid) {
 
-                                $msg_model = (new MsgModel())->saveMsgCall($this->msg_obj->call, $this->msg_obj->text, $uuid, $this->msg_obj->user_uuid);
+                                (new MsgModel())->saveMsgCall($this->msg_obj->call, $this->msg_obj->text, $uuid, $this->msg_obj->user_uuid);
                                 $online = true;
                                 $data["type"] = $this->jwt->getError()['data']->type;
                                 $client->send(UtilitiesModel::dataFormatForSend(true, "Sucesso!", $data));
@@ -564,14 +564,22 @@ class CommandController
      */
     public function cmd_call_history(object $from, string $msg = null): void
     {
+        $data['cmd'] = $this->msg_obj->cmd;
+
         if (!empty($this->msg_obj->call)) {
-            $from->send(UtilitiesModel::dataFormatForSend(
-                true,
-                "Sucesso!",
-                ["cmd" => $this->msg_obj->cmd, 'online' => $this->session_model->checkOn($this->msg_obj->check_on_uuid)]
-            ));
+
+            $call = (int)strip_tags($this->msg_obj->call);
+
+            $msg_model = new MsgModel();
+            $msg_model->readAllMsgFind("chat_call_id = :call", "call={$call}", 500);
+
+            if ($msg_model->getResult()) {
+                $data['msgs'] =  $msg_model->getError()['data'];
+            }
+
+            $from->send(UtilitiesModel::dataFormatForSend($msg_model->getResult(), $msg_model->getError()['msg'], $data));
         } else {
-            $from->send(UtilitiesModel::dataFormatForSend(false, "Opss! Informe os campos obrigatórios.", ["cmd" => $this->msg_obj->cmd]));
+            $from->send(UtilitiesModel::dataFormatForSend(false, "Opss! Informe os campos obrigatórios.", $data));
         }
     }
 

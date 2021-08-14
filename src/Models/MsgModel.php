@@ -80,7 +80,7 @@ class  MsgModel
             if ($history) {
                 $this->Result = true;
                 $this->Error['msg'] = "Sucesso!";
-                $this->Error['data'] = $this->passeAllDataArrayHistory($history);
+                $this->Error['data'] = $this->passeAllDataArray($history);
                 $this->Error['count'] =  $count;
                 $this->Error['next'] = $links['next'];
                 $this->Error['previous'] = $links['previous'];
@@ -126,6 +126,56 @@ class  MsgModel
     }
 
     /**
+     * Consultar todos os cadastros conforme parâmetros passado no find
+     *
+     * @param string $find_name
+     * @param string $find_value
+     * @param integer $limit
+     * @param integer $offset
+     * @param string $uri    
+     * @param bool $formatted
+     * @return void
+     */
+    public function readAllMsgFind(string $find_name, string $find_value, int $limit = 10, int $offset = 0, $uri = false, bool $formatted = true): void
+    {
+        $this->tab_chat_msg = new ChatMsg();
+
+        if ($limit == 0) {
+            $this->Result = false;
+            $this->Error['msg'] = "O limite deve ser maior que 0 (zero), tente novamente!";
+        } else {
+
+            $msgs = $this->tab_chat_msg->find($find_name, $find_value)->limit($limit)->offset($offset)->fetch("chat_id ASC");
+
+            if ($msgs) {              
+
+                $this->Result = true;
+                $this->Error['msg'] = "Sucesso!";
+                $this->Error['data'] = $formatted ? $this->passeAllDataArray($msgs, $uri) : $msgs;
+
+                if ($uri) {
+                    $count = $this->tab_chat_msg->find($find_name, $find_value)->count();
+                    $links = UtilitiesModel::paginationLink(HOME . $uri, $limit, $offset, $count);                   
+                   
+                    $this->Error['data']['count'] =  $count;
+                    $this->Error['data']['next'] = $links['next'];
+                    $this->Error['data']['previous'] = $links['previous'];
+                }
+            } else {
+                $msgs = $this->tab_chat_msg->find($find_name, $find_value)->limit(10)->offset(0)->fetch("call_id ASC");
+
+                if ($msgs) {
+                    $this->Result = false;
+                    $this->Error['msg'] = "Não existem cadastros no limite e deslocamento informados, tente outra margem de consulta!";
+                } else {
+                    $this->Result = false;
+                    $this->Error['msg'] = "Não existem cadastros para os parâmetros informados!";
+                }
+            }
+        }
+    }
+
+    /**
      * Verificar Ação
      * 
      * @return bool 
@@ -149,20 +199,25 @@ class  MsgModel
      * Organizar dados do histórico para envio  
      *
      * @param Object $obj
+     * @param null|string $uri
      * @return array
      */
-    public function passeAllDataArrayHistory($obj): array
+    public function passeAllDataArray($obj, $uri = null): array
     {
         $result = [];
 
         if ($obj) {
             foreach ($obj as $key => $arr) {
+                $result[$key]['id'] = $arr->data()->chat_id;
                 $result[$key]['call'] = $arr->data()->chat_call_id;
                 $result[$key]['origin'] = $arr->data()->chat_user_uuid;
                 $result[$key]['destiny'] = $arr->data()->chat_user_dest_uuid;
                 $result[$key]['text'] = $arr->data()->chat_text;
                 $result[$key]['type'] = $arr->data()->chat_type;
-                $result[$key]['date'] = $arr->data()->chat_date;
+                $result[$key]['date'] = date("d/m/Y H:i:s", strtotime($arr->data()->chat_date));
+                if ($uri) {
+                    $result[$key]['url'] = HOME . $uri . '/' .  $arr->data()->chat_id;
+                }
             }
         }
         return $result;

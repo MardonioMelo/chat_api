@@ -350,6 +350,7 @@ Informe o id do remetente, id do destinatário, data de inicio e fim da troca de
 
 Exemplo de envio:   
 - localhost:81/chatbot_api/api/history?ori={id_user_origem}&des={id_user_destino}&sta={dt_inicio}&end={dt_fim}&limit={limit}&offset={offset}
+
 >   
     Dados via GET:     
         ori: int - id do remetente
@@ -878,6 +879,41 @@ Obs.: Caso o processo do servidor de chat caia, as calls - atendimentos em abert
         }
     }
 >
+
+<b>Consultar mensagens de uma call</b>
+
+>     
+    Request:
+    Type: application/json  
+    {  
+        "cmd": "cmd_call_history", //comando
+        "call": 1
+    }   
+
+    Response:
+    Type: application/json   
+    {
+        "result": bool,
+        "error": {
+            "msg": string,
+            "data": [
+                "cmd": "cmd_call_history",
+                "msgs":[
+                    {
+                        "id": int,
+                        "call": int,
+                        "origin": string, //uuid do user de origem
+                        "destiny": string, //uuid do user de destino
+                        "text": string, //mensagem
+                        "type": string, //text
+                        "date": string //data e hora
+                    },
+                    ...
+                ]
+            ]
+        }
+    }
+> 
 
 <b>Verificar se existem atendimentos em aberto para um usuário</b>
 <br>Se for um cliente, o resultado caso tenha call aberta, será sempre de uma call.
