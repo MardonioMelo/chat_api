@@ -344,43 +344,6 @@ O cadastro, consulta, atualização e delete de clientes segue o mesmo fluxo e m
 
 [Clique aqui](https://viewer.diagrams.net/?highlight=0000ff&edit=_blank&layers=1&nav=1&page-id=7SM0Ji58Qv2cIDF6IUad&title=Diagrama%20do%20Chat#Uhttps%3A%2F%2Fdrive.google.com%2Fuc%3Fid%3D13BHcugWv8KVK3ha1CztGjqo_SD-VmPBF%26export%3Ddownload) para ver o diagrama do CRUD dos clientes
 
-<b>Consultar Histórico de Mensagens</b><br>
-
-Informe o id do remetente, id do destinatário, data de inicio e fim da troca de mensagens.
-
-Exemplo de envio:   
-- localhost:81/chatbot_api/api/history?ori={id_user_origem}&des={id_user_destino}&sta={dt_inicio}&end={dt_fim}&limit={limit}&offset={offset}
-
->   
-    Dados via GET:     
-        ori: int - id do remetente
-        des: int - id do destinatário
-        sta: string - data de inicio 
-        end: string - data de fim 
-        limit: int
-        offset: int
-
-    Dados de retorno: 
-    {
-        "result": bool,
-        "error": {
-            "msg": string,
-            "data": [
-                {
-                    "origin": int,
-                    "destiny": int,
-                    "text": string,
-                    "type": string,
-                    "date": string                   
-                }
-            ],
-            "count": int,
-            "next": string,
-            "previous": string
-    }
-}       
-> 
-
 <b>Exemplo de implementação no cliente</b>
 
 Criar um aquivo js e importa-lo na home da pagina após o login do usuário.<br>
@@ -1060,16 +1023,24 @@ Obs.: Caso o processo do servidor de chat caia, as calls - atendimentos em abert
 ## Comandos
 
 ### Iniciar servidor WebSocket do chat
-> php run
+> 
+    php run
+>
 
 ### Cadastrar usuário
-> php new-user.php
+>
+    php new-user.php
+>
 
 ### Comandos para treino do bot
-> php dataset.php
+>
+    php dataset.php
+>
 
 ### Testes Automatizados - PHPUnit
 - Execute o comando para os testes automatizados com PHPUnit
 - Os testes automatizados ainda não foram implementados
-> php vendor/bin/phpunit --testdox --color tests
+> 
+    php vendor/bin/phpunit --testdox --color tests
+>
 

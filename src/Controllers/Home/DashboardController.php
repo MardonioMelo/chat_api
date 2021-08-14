@@ -39,37 +39,5 @@ class DashboardController
         $payload = $this->painel_view->tplPainelView(["Painel de Chat", $id, USER_NAME, USER_IMG, BOT_NAME, BOT_IMG]);
         $response->getBody()->write($payload);
         return $response;
-    }
-
-    /**
-     * Consulta e retorna histórico de mensagens em um intervalo de data
-     *  [ori]: int - id do remetente |
-     *  [des]: int - id do destinatário |
-     *  [sta]: string - data de inicio |
-     *  [end]: string - data de fim |
-     *
-     * @param Request $request
-     * @param Response $response    
-     * @return void
-     */
-    public function msgHistory(Request $request, Response $response)
-    {
-        $this->jwt->checkToken($request);
-
-        if (!empty($this->jwt->getError()['data']->type) && $this->jwt->getError()['data']->type === "attendant") {
-
-            $params = UtilitiesModel::filterParams($request->getQueryParams());
-            $uri = $request->getUri()->getPath();
-            $this->msg_model->getHistory($params, $uri);
-
-            $result['result'] = $this->msg_model->getResult();
-            $result['error'] = $this->msg_model->getError();
-        } else {
-            $result['result'] = false;
-            $result['error'] = "Você não tem permissão para consultar atendentes!";
-        }
-
-        $response->getBody()->write(json_encode($result));
-        return $response->withHeader('Content-Type', 'application/json');
-    }
+    }   
 }
