@@ -61,7 +61,7 @@ Recomenda-se rodar essa API em duas portas ou dois HOST diferentes se preferir. 
 
 Se o projeto for instalado em http://localhost você deve definir uma porta para o servidor WS diferente de 80 e 443 ou que esteja sendo utilizada, essa porta pode ser 81 ou 8080 por exemplo. A porta 81 por exemplo, deve ser definida no SERVER_CHAT_PORT no arquivo src/config/app.php.
 
-Iniciar servidor
+Iniciar servidor WS
 >
     php run
 >
@@ -95,7 +95,9 @@ Exemplo de envio:
     } 
 > 
 
-O name | lastname | avatar: são opcionais porque só serão utilizados quando a API tiver que cadastrar um usuário que não existe no db e que informou um CPF válido no campo uuid, nesse caso o name e lastname passam a ser obrigatórios..
+O name | lastname | avatar: são opcionais porque só serão utilizados quando a API tiver que cadastrar um usuário que não existe no db e que informou um CPF válido no campo uuid, nesse caso o name e lastname passam a ser obrigatórios. 
+
+O cadastro automático do usuário na solicitação do token se aplica apenas para clientes que informarem um CPF valido. Por segurança, não é permitido cadastrar atendentes dessa forma.
 
 <b>Cadastrar Atendente</b>
 
