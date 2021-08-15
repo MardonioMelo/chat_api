@@ -10,7 +10,7 @@ use Src\Controllers\User\AttendantController;
 
 
 # Define o caminho base
-$app->setBasePath("/chatbot_api");
+$app->setBasePath("/chat_api");
 
 $app->options('/{routes:.+}', function ($request, $response, $args) {
     return $response;
@@ -43,12 +43,6 @@ $app->get(API_VERSION . '/client', ClientController::class . ":readAllClient")->
 $app->get(API_VERSION . '/client/{id}', ClientController::class . ":readClient")->add(new JWTMiddleware());
 $app->put(API_VERSION . '/client/{id}', ClientController::class . ":updateClient")->add(new JWTMiddleware());
 $app->delete(API_VERSION . '/client/{id}', ClientController::class . ":deleteClient")->add(new JWTMiddleware());
-
-// View do chat
-$app->get('/home/{id}', DashboardController::class . ":home")->add(new JWTMiddleware());
-$app->get('/bot', BotController::class . ":widget")->add(new JWTMiddleware());
-// Rotas POST
-$app->post('/bot', BotController::class . ":chatBot")->add(new JWTMiddleware());
 
 // --------------------------+
 // Fim da rotas

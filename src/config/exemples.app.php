@@ -24,14 +24,6 @@ define("DATA_LAYER_CONFIG", [
     ]
 ]);
 
-# Chatbot
-define("USER_ID", "2"); // implemente aqui o id do login do usuário
-define("USER_DEST_ID", "1"); // implementar id do usuário de destino
-define("USER_NAME", "João");
-define("USER_IMG", "assets/img/user.png");
-define("BOT_NAME", "Zé");
-define("BOT_IMG", "assets/img/bot.jpg");
-
 # WebSocket
 define("SERVER_CHAT_PORT", "8081");
 define("SERVER_CHAT_URL", "ws://localhost:" . SERVER_CHAT_PORT . API_VERSION);
