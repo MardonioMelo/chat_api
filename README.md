@@ -1,10 +1,12 @@
 # API para Chat de Atendimento
 API para chat de suporte e atendimento, ainda em desenvolvimento.
+
 ## Front-end
 Este projeto não inclui front-end. Uma versão do front-end está sendo desenvolvida em Vue3 em outro repositório. Assim, você fica livre para desenvolver seu próprio front-end em qualquer tecnologia.
 
 ## Entidades
 No momento, essa API tem duas entidades sendo uma o Atendente e a outra o Cliente. A identificação de ambos dentro da API será através do UUID gerado automaticamente no momento do cadastro do user.
+
 ## Instalação
 Após clonar este repositório, siga as instruções abaixo.
 ### Instar dependências
@@ -64,10 +66,11 @@ Iniciar servidor
     php run
 >
 # Rotas do Servidor HTTP
-## Token
+
 Para gerar o token de autorização, o usuário deverá previamente ser cadastrado no db do chat e a aplicação front-end deverá acessar primeiramente a rota de geração de token e informar os dados obrigatórios. Apos a obtenção do token, a aplicação front-end deverá informa-lo no cabeçalho para acesso as demais rotas da API.
 
-### Gerar Token
+<b>Gerar Token</b>
+
 Exemplo de envio:   
 - POST: localhost/chatbot_api/api/token
 >   
@@ -93,7 +96,8 @@ Exemplo de envio:
 > 
 
 O name | lastname | avatar: são opcionais porque só serão utilizados quando a API tiver que cadastrar um usuário que não existe no db e que informou um CPF válido no campo uuid, nesse caso o name e lastname passam a ser obrigatórios..
-## Cadastrar Atendente
+
+<b>Cadastrar Atendente</b>
 
 Apenas os atendentes tem permissão para cadastrar outros atendentes ou clientes.
 
@@ -134,7 +138,7 @@ Descrição da resposta
 - error - token: Token que deverá informar no cabeçalho das requisições. Ex.: Bearer ...token...
 - error - msg: Mensagem informativa do resultado. 
 
-## Consultar um Cadastro
+<b>Consultar um Cadastro</b>
 
 Apenas os atendentes tem permissão para consultar o cadastro de outros atendentes ou clientes.
 
@@ -179,7 +183,7 @@ Descrição da resposta
 - error - data - created_at: data de cadastro
 - error - data - updated_at: data de atualização
 
-## Consultar Todos Cadastros
+<b>Consultar Todos Cadastros</b>
 
 Apenas os atendentes tem permissão para consultar o cadastro de outros atendentes ou clientes.
 
@@ -232,7 +236,8 @@ Descrição da resposta
 - error - data[ ] - avatar: Link da imagem
 - error - data[ ] - created_at: data de cadastro
 - error - data[ ] - updated_at: data de atualização
-##  Atualizar Atendente
+
+<b>Atualizar Atendente</b>
 
 Apenas os atendentes tem permissão para atualizar outros atendentes ou clientes.
 
@@ -280,7 +285,7 @@ Descrição da resposta
 - error - data - created_at: data de cadastro
 - error - data - updated_at: data de atualização
 
-## Deletar Atendente
+<b>Deletar Atendente</b>
 
 Apenas os atendentes tem permissão para deletar outros atendentes ou clientes.
 
@@ -318,9 +323,11 @@ Cadastrar atendentes e clientes pelo terminal.
 >
     php user
 >
-## CRUD de Clientes
+
+<b>CRUD de Clientes</b>
 
 O cadastro, consulta, atualização e delete de clientes segue o mesmo fluxo e método do cadastro de atendentes apenas substituindo na rota o  <i>"attendant"</i> por <i>"client"</i>.
+
 # Rotas do Servidor WebSocket
 A conexão é aberta assim que a url é acessada. O cabeçalho da requisição de conexão deverá ter o token de autorização valido ou a conexão será fechada. 
 
