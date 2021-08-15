@@ -13,7 +13,7 @@ define("DATA_LAYER_CONFIG", [
     "driver" => "mysql",
     "host" => "localhost",
     "port" => "3306",
-    "dbname" => "chatbot",
+    "dbname" => "db_chat",
     "username" => "root",
     "passwd" => "",
     "options" => [
@@ -25,7 +25,6 @@ define("DATA_LAYER_CONFIG", [
 ]);
 
 # WebSocket
-define("SERVER_CHAT_PORT", "8081");
-define("SERVER_CHAT_URL", "ws://localhost:" . SERVER_CHAT_PORT . API_VERSION);
-define("JWT_PUBLIC", "ffc6wwq2eb25f5asasf11a7f1b7546cb3ca"); // Chave publica gerada com md5(uniqid(rand(),true))); para o 1º token
-define("JWT_SECRET", "ffc68a2eb25f5a1f11a7f1b7546cb3ca"); // Chave privada gerada com md5(uniqid(rand(),true))); para o 2º token
+define("SERVER_CHAT_PORT", "81");
+define("JWT_PUBLIC", "28ca067230b119148dbedbdea1762e5c"); // Chave publica
+define("JWT_SECRET", "188f54f9ce1af48eb6a0774e0e9dcd5a"); // Chave privada/secreta

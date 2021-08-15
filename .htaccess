@@ -150,7 +150,7 @@ ExpiresDefault "access 2 days"
 #### JWT
 RewriteRule .* - [env=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
 
-#### Escrita para o compente de Rotas
+#### Escrita para o componete de Rotas
 
 # DEFINIR PASTA RAIZ
 RewriteEngine on

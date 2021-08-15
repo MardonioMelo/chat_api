@@ -1,0 +1,8 @@
+<?php
+
+echo "\nChave PUBLIC: ";
+echo  md5(uniqid("PUBLIC".rand(),true)) . "\n";
+echo "\nChave SECRET: ";
+echo  md5(uniqid("SECRET".rand(),true)) . "\n";
+echo "\nCopie da chave e cole no arquivo src/config/app.php \n";
+echo "*-------------------------------------------------------->";

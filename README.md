@@ -6,16 +6,68 @@ Este projeto não inclui front-end. Uma versão do front-end está sendo desenvo
 ## Entidades
 No momento, essa API tem duas entidades sendo uma o Atendente e a outra o Cliente. A identificação de ambos dentro da API será através do UUID gerado automaticamente no momento do cadastro do user.
 ## Instalação
-Basicamente essa API roda em duas portas sendo uma para servidor HTTP (normal) e outra par WS (WebSokect), ambos podem rodar no mesmo HOST. A porta do servidor HTTP por padrão é a 80, já a porta do WS pode ser qualquer uma não utilizada por outro serviço do seu servidor.
-## WebSocket
-A conexão é aberta assim que a url é acessada. O cabeçalho da requisição de conexão deverá ter o token de autorização valido ou a conexão será fechada. 
+Após clonar este repositório, siga as instruções abaixo.
+### Instar dependências
+> 
+    composer install
+>
+### Configurações
+Renomeie o arquivo src/config/exemples.app.php para "app.php" e defina as configurações a seguir.
 
-### Token
+Defina o HOST da HOME
+>
+    define("HOME", "http://localhost"); 
+>
 
-Para gerar o token de autorização, o usuário deverá estar previamente cadastrado no db do chat e a aplicação front-end deverá acessar primeiramente a rota de geração de token e informar os dados obrigatórios. Apos a obtenção do token, a aplicação fornt-end deverá informa-lo no cabeçalho para acesso as demais rotas da API.
+Crie um banco de dados com nome "db_chat" ou de sua escolha. Importe para o db os scripts de tabelas em sql que estão na pasta src/db.
 
-### Criar token do usuário
+Informe os dados para conexão com banco de dados.
+>
+    define("DATA_LAYER_CONFIG", [
+        "driver" => "mysql",
+        "host" => "localhost",
+        "port" => "3306",
+        "dbname" => "db_chat",
+        "username" => "root",
+        "passwd" => "",
+        "options" => [
+            PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8",
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ,
+            PDO::ATTR_CASE => PDO::CASE_NATURAL
+        ]
+    ]);
+>
 
+Defina a porta do servidor WS do chat
+>
+    define("SERVER_CHAT_PORT", "81");   
+>
+
+Gere a chave pública e privada com o comando
+>
+    php newkey
+>
+
+Informe a chave publica e privada respectivamente.
+>  
+    define("JWT_PUBLIC", "ffc6wwq2eb25f5asasf11a7f1b7546cb3ca"); // Chave publica
+    define("JWT_SECRET", "ffc68a2eb25f5a1f11a7f1b7546cb3ca"); // Chave privada 
+>
+### Iniciar servidor WebSocket
+Recomenda-se rodar essa API em duas portas ou dois HOST diferentes se preferir. Sendo um para o servidor HTTP e outra para servidor WS (WebSocket). 
+
+Se o projeto for instalado em http://localhost você deve definir uma porta para o servidor WS diferente de 80 e 443 ou que esteja sendo utilizada, essa porta pode ser 81 ou 8080 por exemplo. A porta 81 por exemplo, deve ser definida no SERVER_CHAT_PORT no arquivo src/config/app.php.
+
+Iniciar servidor
+>
+    php run
+>
+# Rotas do Servidor HTTP
+## Token
+Para gerar o token de autorização, o usuário deverá previamente ser cadastrado no db do chat e a aplicação front-end deverá acessar primeiramente a rota de geração de token e informar os dados obrigatórios. Apos a obtenção do token, a aplicação front-end deverá informa-lo no cabeçalho para acesso as demais rotas da API.
+
+### Gerar Token
 Exemplo de envio:   
 - POST: localhost/chatbot_api/api/token
 >   
@@ -41,8 +93,7 @@ Exemplo de envio:
 > 
 
 O name | lastname | avatar: são opcionais porque só serão utilizados quando a API tiver que cadastrar um usuário que não existe no db e que informou um CPF válido no campo uuid, nesse caso o name e lastname passam a ser obrigatórios..
-
-<b>Cadastrar Atendente</b><br>
+## Cadastrar Atendente
 
 Apenas os atendentes tem permissão para cadastrar outros atendentes ou clientes.
 
@@ -83,7 +134,7 @@ Descrição da resposta
 - error - token: Token que deverá informar no cabeçalho das requisições. Ex.: Bearer ...token...
 - error - msg: Mensagem informativa do resultado. 
 
-<b>Consultar um Cadastro </b><br>
+## Consultar um Cadastro
 
 Apenas os atendentes tem permissão para consultar o cadastro de outros atendentes ou clientes.
 
@@ -128,7 +179,7 @@ Descrição da resposta
 - error - data - created_at: data de cadastro
 - error - data - updated_at: data de atualização
 
-<b>Consultar Todos Cadastros </b><br>
+## Consultar Todos Cadastros
 
 Apenas os atendentes tem permissão para consultar o cadastro de outros atendentes ou clientes.
 
@@ -181,9 +232,7 @@ Descrição da resposta
 - error - data[ ] - avatar: Link da imagem
 - error - data[ ] - created_at: data de cadastro
 - error - data[ ] - updated_at: data de atualização
-
-
-<b>Atualizar Atendente</b><br>
+##  Atualizar Atendente
 
 Apenas os atendentes tem permissão para atualizar outros atendentes ou clientes.
 
@@ -231,7 +280,7 @@ Descrição da resposta
 - error - data - created_at: data de cadastro
 - error - data - updated_at: data de atualização
 
-<b>Deletar Atendente</b><br>
+## Deletar Atendente
 
 Apenas os atendentes tem permissão para deletar outros atendentes ou clientes.
 
@@ -265,33 +314,26 @@ Descrição da resposta
 
 Recomenda-se que os usuários sejam cadastrados através das rotas citadas acima, porém o mesmo poderá ser cadastrado via terminal caso prefira. Esse recurso só deve ser usado para testes, quando ainda não há uma interface para cadastro do usuário ou quando não existem usuários do tipo atendente cadastrado.
 
+Cadastrar atendentes e clientes pelo terminal.
 >
-    php new-user.php
+    php user
 >
-
-<b>CRUD de Clientes</b><br>
+## CRUD de Clientes
 
 O cadastro, consulta, atualização e delete de clientes segue o mesmo fluxo e método do cadastro de atendentes apenas substituindo na rota o  <i>"attendant"</i> por <i>"client"</i>.
+# Rotas do Servidor WebSocket
+A conexão é aberta assim que a url é acessada. O cabeçalho da requisição de conexão deverá ter o token de autorização valido ou a conexão será fechada. 
 
-[Clique aqui](https://viewer.diagrams.net/?highlight=0000ff&edit=_blank&layers=1&nav=1&page-id=7SM0Ji58Qv2cIDF6IUad&title=Diagrama%20do%20Chat#Uhttps%3A%2F%2Fdrive.google.com%2Fuc%3Fid%3D13BHcugWv8KVK3ha1CztGjqo_SD-VmPBF%26export%3Ddownload) para ver o diagrama do CRUD dos clientes
+<b>Rotas do servidor WebSocket:</b>
 
-<b>Exemplo de implementação no cliente</b>
-
-Criar um aquivo js e importa-lo na home da pagina após o login do usuário.<br>
-Confira um exemplo de implementação pasta ./examples
-<br><br>
-
-<b>WebSocket</b><br>
-
-SERVER_CHAT_PORT = porta de conexão com o servidor websocket. Essa porta pode ser configurada no arquivo src\config\app.php
-
-Rotas do servidor WebSocket: 
 >
     ws://localhost:SERVER_CHAT_PORT/api/attendant //rota do atendente
-    Ex.: localhost:8081/api/attendan
+    Ex.: localhost:81/api/attendan
 
     ws://localhost:SERVER_CHAT_PORT/api/client    //rota do cliente   
-    Ex.: localhost:8081/api/client
+    Ex.: localhost:81/api/client
+
+    SERVER_CHAT_PORT = porta de conexão com o servidor websocket. Essa porta pode ser configurada no arquivo src\config\app.php
 
     - Header: Deve ser informado no cabeçalho da requisição no campo Authorization um token JWT valido obtido anteriormente ex.: Authorization:  Bearer ...token...
 
@@ -301,21 +343,21 @@ Rotas do servidor WebSocket:
     Response em caso de erro
     Type: application/json  
     {
-    "result": false,
-    "error": {
-        "msg": string,
-        "data": {
-            "cmd": "connection"
+        "result": false,
+        "error": {
+            "msg": string,
+            "data": {
+                "cmd": "connection"
+            }
         }
     }
-}
 >
 
 Apos a conexão bem sucedida com o servidor de chat, já será possível enviar e receber informações conforme estrutura dos dados e cmd informado.
 
 Obs.: Caso o processo do servidor de chat caia, as calls - atendimentos em aberto com status 1 e 2 serão reestabelecidos ao reiniciar o servidor.
 
-<b>Quantidade de clientes na fila de espera</b>
+<b> Quantidade de clientes na fila de espera</b>
 
 >
     Request:
@@ -949,26 +991,7 @@ Obs.: Caso o processo do servidor de chat caia, as calls - atendimentos em abert
     }
 > 
 
-
-
-## Comandos
-
-### Iniciar servidor WebSocket do chat
-> 
-    php run
->
-
-### Cadastrar usuário
->
-    php new-user.php
->
-
-### Comandos para treino do bot
->
-    php dataset.php
->
-
-### Testes Automatizados - PHPUnit
+# Testes Automatizados - PHPUnit
 - Execute o comando para os testes automatizados com PHPUnit
 - Os testes automatizados ainda não foram implementados
 > 
