@@ -319,6 +319,10 @@ Descrição da resposta
 - result: true ou false.
 - error - data - id: ID do cadastro.
 
+<b>CRUD de Clientes</b>
+
+O cadastro, consulta, atualização e delete de clientes segue o mesmo fluxo e método do cadastro de atendentes apenas substituindo na rota o  <i>"attendant"</i> por <i>"client"</i>.
+
 Recomenda-se que os usuários sejam cadastrados através das rotas citadas acima, porém o mesmo poderá ser cadastrado via terminal caso prefira. Esse recurso só deve ser usado para testes, quando ainda não há uma interface para cadastro do usuário ou quando não existem usuários do tipo atendente cadastrado.
 
 Cadastrar atendentes e clientes pelo terminal.
@@ -326,9 +330,17 @@ Cadastrar atendentes e clientes pelo terminal.
     php user
 >
 
-<b>CRUD de Clientes</b>
+O terminal do servidor websocket mostra alguns dados quando em execução como:
 
-O cadastro, consulta, atualização e delete de clientes segue o mesmo fluxo e método do cadastro de atendentes apenas substituindo na rota o  <i>"attendant"</i> por <i>"client"</i>.
+- Total usuário Online
+- Total Atendentes
+- Total Clientes
+- UUID dos Atendentes Online    
+- UUID dos Clientes Online
+- Salas de Atendimento   
+- CPU - Processo           
+- Consumo de Memória
+- PID do processo
 
 # Rotas do Servidor WebSocket
 A conexão é aberta assim que a url é acessada. O cabeçalho da requisição de conexão deverá ter o token de autorização valido ou a conexão será fechada. 
