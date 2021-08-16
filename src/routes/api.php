@@ -1,11 +1,9 @@
 <?php
 
-use Src\Controllers\Bot\BotController;
 use Src\Controllers\JWT\JWTController;
 use Src\Controllers\Middleware\JWTMiddleware;
 use Slim\Exception\HttpNotFoundException;
 use Src\Controllers\User\ClientController;
-use Src\Controllers\Home\DashboardController;
 use Src\Controllers\User\AttendantController;
 
 
