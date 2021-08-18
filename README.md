@@ -9,7 +9,7 @@ No momento, essa API tem duas entidades sendo uma o Atendente e a outra o Client
 
 ## Instalação
 Após clonar este repositório, siga as instruções abaixo.
-### Instalar dependências
+### Instar dependências
 > 
     composer install
 >
@@ -51,7 +51,7 @@ Gere a chave pública e privada com o comando
     php newkey
 >
 
-Informe a chave publica e privada respectivamente gerada no comando anterior.
+Informe a chave publica e privada respectivamente.
 >  
     define("JWT_PUBLIC", "ffc6wwq2eb25f5asasf11a7f1b7546cb3ca"); // Chave publica
     define("JWT_SECRET", "ffc68a2eb25f5a1f11a7f1b7546cb3ca"); // Chave privada 
@@ -155,8 +155,7 @@ Exemplo de envio:
     Content-Type: none
     Informar o id do cadastro no final da rota            
 
-    Response: 
-    Type: application/json 
+    Dados de retorno: 
     {
         "result": bool,
         "error": {
@@ -201,12 +200,11 @@ Exemplo de envio:
 - GET: localhost/chatbot_api/api/attendant?limit=10&offset=0
 >   
     Content-Type: none
-    Request:
+    Dados:
         limit: int
         offset: int         
 
-    Response: 
-    Type: application/json 
+    Dados de retorno: 
     {
         "result": bool,
         "error": {
@@ -260,14 +258,13 @@ Exemplo de envio:
 >      
     Informar o id do cadastro no final da rota 
     Content-Type: application/x-www-form-urlencoded. 
-    Request:
+    Dados:
         cpf: string    
         name: string  
         lastname: string     
         avatar: string - opcional          
 
-    Response: 
-    Type: application/json
+    Dados de retorno: 
     {
         "result": bool,
         "error": {
@@ -306,8 +303,7 @@ Exemplo de envio:
     Informar o id do cadastro no final da rota 
     Content-Type: none.    
 
-    Response: 
-    Type: application/json 
+    Dados de retorno: 
     {
         "result": bool,
         "error": {
