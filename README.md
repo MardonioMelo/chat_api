@@ -72,7 +72,7 @@ Para gerar o token de autorização, o usuário deverá previamente ser cadastra
 <b>Gerar Token</b>
 
 Exemplo de envio:   
-- POST: localhost/chatbot_api/api/token
+- POST: localhost/chat_api/api/token
 >   
     Content-Type: multipart/form-data
     Request:     
@@ -111,7 +111,7 @@ type: tipo de usuário (client ou attendant).
 name | lastname | avatar: são opcionais porque só serão utilizados quando a API tiver que cadastrar um usuário que não existe no db e que informou um CPF válido no campo uuid, nesse caso o name e lastname passam a ser obrigatórios.
 
 Exemplo de envio:   
-- POST: localhost/chatbot_api/api/attendant
+- POST: localhost/chat_api/api/attendant
 >   
     Content-Type: multipart/form-data
     Request:   
@@ -150,7 +150,7 @@ Descrição da requisição
 - Body: Deve ser informado no cabeçalho da requisição no campo Content-Type o valor "none"
 
 Exemplo de envio:   
-- GET: localhost/chatbot_api/api/attendant/{id}
+- GET: localhost/chat_api/api/attendant/{id}
 >   
     Content-Type: none
     Informar o id do cadastro no final da rota            
@@ -197,7 +197,7 @@ ex.: Authorization:  Bearer ...token...
 - Body: Deve ser informado no cabeçalho da requisição no campo Content-Type o valor "none"
 
 Exemplo de envio:   
-- GET: localhost/chatbot_api/api/attendant?limit=10&offset=0
+- GET: localhost/chat_api/api/attendant?limit=10&offset=0
 >   
     Content-Type: none
     Dados:
@@ -254,7 +254,7 @@ ex.: Authorization:  Bearer ...token...
 - Body: Deve ser informado no cabeçalho da requisição no campo Content-Type o valor "application/x-www-form-urlencoded".
 
 Exemplo de envio:   
-- PUT: localhost/chatbot_api/api/attendant/{id}
+- PUT: localhost/chat_api/api/attendant/{id}
 >      
     Informar o id do cadastro no final da rota 
     Content-Type: application/x-www-form-urlencoded. 
@@ -298,7 +298,7 @@ ex.: Authorization:  Bearer ...token...
 - Body: Deve ser informado no cabeçalho da requisição no campo Content-Type o valor "none"
 
 Exemplo de envio:   
-- DELETE: localhost/chatbot_api/api/attendant/{id}
+- DELETE: localhost/chat_api/api/attendant/{id}
 >      
     Informar o id do cadastro no final da rota 
     Content-Type: none.    
