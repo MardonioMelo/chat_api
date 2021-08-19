@@ -71,6 +71,32 @@ class  AttendantModel
     }
 
     /**
+     * Consultar um cadastro 
+     *   
+     * @param string $uuid
+     * @return void
+     */
+    public function perfilAttendant(string $uuid): void
+    {
+        $attendant = $this->getUserUUID($uuid);
+        if ($attendant) {
+            $this->Result = true;
+            $this->Error['msg'] = "Sucesso!";
+            $this->Error['data']['id'] = $attendant->attendant_id;
+            $this->Error['data']['uuid'] = $attendant->attendant_uuid;
+            $this->Error['data']['cpf'] = $attendant->attendant_cpf;
+            $this->Error['data']['name'] = $attendant->attendant_name;
+            $this->Error['data']['lastname'] = $attendant->attendant_lastname;
+            $this->Error['data']['avatar'] = $attendant->attendant_avatar;
+            $this->Error['data']['created_at'] = date("d/m/Y", strtotime($attendant->created_at));
+            $this->Error['data']['updated_at'] = date("d/m/Y", strtotime($attendant->updated_at));
+        } else {
+            $this->Result = false;
+            $this->Error['msg'] = "Opss! O ID informado não existe ou o atendente foi excluído.";
+        }
+    }
+
+    /**
      * Atualizar todos os dados de um cadastro
      *   
      * @param int $id

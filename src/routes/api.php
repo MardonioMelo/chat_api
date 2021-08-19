@@ -33,6 +33,7 @@ $app->post(API_VERSION . '/token', JWTController::class . ":createToken");
 $app->post(API_VERSION . '/attendant', AttendantController::class . ":createAttendant")->add(new JWTMiddleware());
 $app->get(API_VERSION . '/attendant', AttendantController::class . ":readAllAttendant")->add(new JWTMiddleware());
 $app->get(API_VERSION . '/attendant/{id}', AttendantController::class . ":readAttendant")->add(new JWTMiddleware());
+$app->get(API_VERSION . '/attendant/perfil', AttendantController::class . ":perfilAttendant")->add(new JWTMiddleware());
 $app->put(API_VERSION . '/attendant/{id}', AttendantController::class . ":updateAttendant")->add(new JWTMiddleware());
 $app->delete(API_VERSION . '/attendant/{id}', AttendantController::class . ":deleteAttendant")->add(new JWTMiddleware());
 // CRUD Cliente

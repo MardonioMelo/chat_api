@@ -163,4 +163,29 @@ class AttendantController
         $response->getBody()->write(json_encode($result));
         return $response->withHeader('Content-Type', 'application/json');
     }
+
+    /**
+     * Consultar um perfil 
+     *
+     * @param Request $request
+     * @param Response $response
+     * @return static
+     */
+    public function perfilAttendant(Request $request, Response $response)
+    {
+        $this->jwt->checkToken($request);
+
+        if (!empty($this->jwt->getError()['data']->type) && $this->jwt->getError()['data']->type === "attendant") {          
+
+            $this->attendant_model->perfilAttendant($this->jwt->getError()['data']->uuid);
+            $result['result'] = $this->attendant_model->getResult();
+            $result['error'] = $this->attendant_model->getError();
+        } else {
+            $result['result'] = false;
+            $result['error'] = "Você não tem permissão para consultar este perfil!";
+        }
+
+        $response->getBody()->write(json_encode($result));
+        return $response->withHeader('Content-Type', 'application/json');
+    }
 }

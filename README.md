@@ -185,6 +185,50 @@ Descrição da resposta
 - error - data - created_at: data de cadastro
 - error - data - updated_at: data de atualização
 
+<b>Consultar meu Perfil</b>
+
+O perfil consultado é de acordo com o UUID do token de acesso, por tanto basta acessar a rota para obter os dados.
+
+Descrição da requisição
+- Header: Deve ser informado no cabeçalho da requisição no campo Authorization um token JWT valido obtido anteriormente ex.: Authorization:  Bearer ...token...
+- Body: Deve ser informado no cabeçalho da requisição no campo Content-Type o valor "none"
+
+Exemplo de envio:   
+- GET: localhost/chat_api/api/attendant/perfil
+>   
+    Content-Type: none
+    Informar o id do cadastro no final da rota            
+
+    Dados de retorno: 
+    {
+        "result": bool,
+        "error": {
+            "msg": string,
+            "data": {
+                "id": 1,
+                "cpf": int,
+                "uuid": string,
+                "name": string,
+                "lastname": string,
+                "avatar": string,
+                "created_at": string
+                "updated_at": string
+            }
+        }
+    }           
+> 
+
+Descrição da resposta
+- result: true ou false.
+- error - data - id: ID do cadastro.
+- error - data - cpf: CPF do atendente.
+- error - data - uuid: UUID do atendente.
+- error - data - name: Nome.
+- error - data - lastname: Sobrenome.
+- error - data - avatar: Link da imagem
+- error - data - created_at: data de cadastro
+- error - data - updated_at: data de atualização
+
 <b>Consultar Todos Cadastros</b>
 
 Apenas os atendentes tem permissão para consultar o cadastro de outros atendentes ou clientes.
