@@ -32,8 +32,8 @@ $app->post(API_VERSION . '/token', JWTController::class . ":createToken");
 // CRUD Atendente
 $app->post(API_VERSION . '/attendant', AttendantController::class . ":createAttendant")->add(new JWTMiddleware());
 $app->get(API_VERSION . '/attendant', AttendantController::class . ":readAllAttendant")->add(new JWTMiddleware());
-$app->get(API_VERSION . '/attendant/{id}', AttendantController::class . ":readAttendant")->add(new JWTMiddleware());
 $app->get(API_VERSION . '/attendant/perfil', AttendantController::class . ":perfilAttendant")->add(new JWTMiddleware());
+$app->get(API_VERSION . '/attendant/{id}', AttendantController::class . ":readAttendant")->add(new JWTMiddleware());
 $app->put(API_VERSION . '/attendant/{id}', AttendantController::class . ":updateAttendant")->add(new JWTMiddleware());
 $app->delete(API_VERSION . '/attendant/{id}', AttendantController::class . ":deleteAttendant")->add(new JWTMiddleware());
 // CRUD Cliente
@@ -66,7 +66,7 @@ try {
     } elseif ($e->getMessage() === "Malformed UTF-8 characters") {
         $msg = "Caracteres UTF-8 malformados";
     } else {
-        $msg = "Erro 404 - Não encontrado!";
+        $msg = "Erro 404 - Não encontrado! ";      
     }
 
     $result = array(
