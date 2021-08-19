@@ -92,7 +92,7 @@ class  AttendantModel
             $this->Error['data']['updated_at'] = date("d/m/Y", strtotime($attendant->updated_at));
         } else {
             $this->Result = false;
-            $this->Error['msg'] = "Opss! O ID informado não existe ou o atendente foi excluído.";
+            $this->Error['msg'] = "Opss! O perfil informado não existe ou foi excluído.";
         }
     }
 

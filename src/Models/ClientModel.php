@@ -43,6 +43,7 @@ class  ClientModel
             $this->saveData();
         }
     }
+
     /**
      * Consultar um cadastro 
      *   
@@ -66,6 +67,32 @@ class  ClientModel
         } else {
             $this->Result = false;
             $this->Error['msg'] = "Opss! O ID informado não existe ou o cliente foi excluído.";
+        }
+    }
+
+    /**
+     * Consultar um perfil 
+     *   
+     * @param int $uuid
+     * @return void
+     */
+    public function perfilClient(int $uuid): void
+    {
+        $client = $this->getUserUUID($uuid);
+        if ($client) {
+            $this->Result = true;
+            $this->Error['msg'] = "Sucesso!";
+            $this->Error['data']['id'] = $client->client_id;
+            $this->Error['data']['cpf'] = $client->client_cpf;
+            $this->Error['data']['uuid'] = $client->client_uuid;
+            $this->Error['data']['name'] = $client->client_name;
+            $this->Error['data']['lastname'] = $client->client_lastname;
+            $this->Error['data']['avatar'] = $client->client_avatar;
+            $this->Error['data']['created_at'] = date("d/m/Y", strtotime($client->created_at));
+            $this->Error['data']['updated_at'] = date("d/m/Y", strtotime($client->updated_at));
+        } else {
+            $this->Result = false;
+            $this->Error['msg'] = "Opss! O perfil informado não existe ou foi excluído.";
         }
     }
 

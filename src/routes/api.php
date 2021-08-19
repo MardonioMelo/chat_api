@@ -39,6 +39,7 @@ $app->delete(API_VERSION . '/attendant/{id}', AttendantController::class . ":del
 // CRUD Cliente
 $app->post(API_VERSION . '/client', ClientController::class . ":createClient")->add(new JWTMiddleware());
 $app->get(API_VERSION . '/client', ClientController::class . ":readAllClient")->add(new JWTMiddleware());
+$app->get(API_VERSION . '/client/perfil', ClientController::class . ":perfilClient")->add(new JWTMiddleware());
 $app->get(API_VERSION . '/client/{id}', ClientController::class . ":readClient")->add(new JWTMiddleware());
 $app->put(API_VERSION . '/client/{id}', ClientController::class . ":updateClient")->add(new JWTMiddleware());
 $app->delete(API_VERSION . '/client/{id}', ClientController::class . ":deleteClient")->add(new JWTMiddleware());

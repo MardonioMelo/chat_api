@@ -187,7 +187,7 @@ Descrição da resposta
 
 <b>Consultar meu Perfil</b>
 
-O perfil consultado é de acordo com o UUID do token de acesso, por tanto basta acessar a rota para obter os dados.
+O perfil é consultado de acordo com o UUID do token de acesso, por tanto basta acessar a rota para obter os dados.
 
 Descrição da requisição
 - Header: Deve ser informado no cabeçalho da requisição no campo Authorization um token JWT valido obtido anteriormente ex.: Authorization:  Bearer ...token...

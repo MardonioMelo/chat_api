@@ -163,4 +163,30 @@ class ClientController
         $response->getBody()->write(json_encode($result));
         return $response->withHeader('Content-Type', 'application/json');
     }
+
+    /**
+     * Consultar um cadastro 
+     *
+     * @param Request $request
+     * @param Response $response
+     * @param array $params
+     * @return static
+     */
+    public function perfilClient(Request $request, Response $response)
+    {
+        $this->jwt->checkToken($request);
+
+        if (!empty($this->jwt->getError()['data']->type) && $this->jwt->getError()['data']->type === "client") {         
+
+            $this->client_model->perfilClient($this->jwt->getError()['data']->uuid);
+            $result['result'] = $this->client_model->getResult();
+            $result['error'] = $this->client_model->getError();
+        } else {
+            $result['result'] = false;
+            $result['error'] = "Você não tem permissão para consultar este perfil!";
+        }
+
+        $response->getBody()->write(json_encode($result));
+        return $response->withHeader('Content-Type', 'application/json');
+    }
 }
