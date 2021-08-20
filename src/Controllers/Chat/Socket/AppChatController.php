@@ -94,7 +94,7 @@ class AppChatController extends CommandController implements MessageComponentInt
         $this->log_model->resetLog();
 
         try {
-            $this->jwt->checkToken($from->httpRequest);
+            $this->jwt->checkTokenMethodGET($from);
             $autor = json_decode($msg, true);
             $autor['user_uuid'] = $this->jwt->getError()['data']->uuid;
             $this->msg_obj = (object) $autor;
