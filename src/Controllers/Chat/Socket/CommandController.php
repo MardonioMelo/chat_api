@@ -105,7 +105,7 @@ class CommandController
     {
         $calls = $this->session_model->getUsersRoom("call");
         $row = count($calls) + 1;
-        $msg = "Atualização da fila de espera.";
+        $msg = "Atualização da fila de espera!";
 
         if ($from) {
             $from->send(UtilitiesModel::dataFormatForSend(true, $msg, ["cmd" => 'cmd_n_waiting_line', 'row' => $row]));
@@ -164,7 +164,7 @@ class CommandController
         if ($from) {
             $from->send(UtilitiesModel::dataFormatForSend($this->client_model->getResult(), $msg, ["cmd" => "cmd_call_data_clients", "clients" => $data]));
         } else {
-            $this->sendDataAllUsers("attendant", 'cmd_call_data_clients', "Atualização da fila de clientes.", ["clients" => $data]);
+            $this->sendDataAllUsers("attendant", 'cmd_call_data_clients', "Atualização da fila de clientes!", ["clients" => $data]);
         }
     }
 
@@ -209,13 +209,13 @@ class CommandController
                         $from->send(UtilitiesModel::dataFormatForSend(false, "A mensagem foi enviada, mas o usuário está offline!", ["cmd" => $this->msg_obj->cmd]));
                     }
                 } else {
-                    $from->send(UtilitiesModel::dataFormatForSend(false, "Opss! Você não está na sala da Call informada.", ["cmd" => $this->msg_obj->cmd]));
+                    $from->send(UtilitiesModel::dataFormatForSend(false, "Você não está na sala da Call informada!", ["cmd" => $this->msg_obj->cmd]));
                 }
             } else {
-                $from->send(UtilitiesModel::dataFormatForSend(false, "Opss! A sala da Call não existe ou já foi encerrada.", ["cmd" => $this->msg_obj->cmd]));
+                $from->send(UtilitiesModel::dataFormatForSend(false, "A sala da Call não existe ou já foi encerrada!", ["cmd" => $this->msg_obj->cmd]));
             }
         } else {
-            $from->send(UtilitiesModel::dataFormatForSend(false, "Opss! Informe os dados obrigatórios para enviar mensagem.", ["cmd" => $this->msg_obj->cmd]));
+            $from->send(UtilitiesModel::dataFormatForSend(false, "Informe os dados obrigatórios para enviar mensagem!", ["cmd" => $this->msg_obj->cmd]));
         }
     }
 
@@ -307,35 +307,34 @@ class CommandController
      */
     public function cmd_connection(object $conn): void
     {
-        $rota = strip_tags($conn->httpRequest->getRequestTarget());
         $user_token = $this->jwt->getError()['data'];
 
-        switch ($rota) {
+        switch ($user_token->type) {
 
-            case '/api/attendant':
+            case 'attendant':
 
                 $user = $this->attendant_model->getUserUUID($user_token->uuid);
                 if ($user) {
                     $this->newConnection($conn, $user_token->uuid, "attendant", $user_token->name);
                 } else {
-                    $conn->send(UtilitiesModel::dataFormatForSend(false, "Opss! Usuário invalido.", ['cmd' => "cmd_connection"]));
+                    $conn->send(UtilitiesModel::dataFormatForSend(false, "Usuário inválido!", ['cmd' => "cmd_connection"]));
                     $conn->close();
                 }
                 break;
 
-            case "/api/client":
+            case "client":
 
                 $user = $this->client_model->getUserUUID($user_token->uuid);
                 if ($user) {
                     $this->newConnection($conn, $user_token->uuid, "client", $user_token->name);
                 } else {
-                    $conn->send(UtilitiesModel::dataFormatForSend(false, "Opss! Usuário invalido.", ['cmd' => "cmd_connection"]));
+                    $conn->send(UtilitiesModel::dataFormatForSend(false, "Usuário inválido!", ['cmd' => "cmd_connection"]));
                     $conn->close();
                 }
                 break;
 
             default:
-                $conn->send(UtilitiesModel::dataFormatForSend(false, "Opss! URL invalida. " . $rota, ['cmd' => "cmd_connection"]));
+                $conn->send(UtilitiesModel::dataFormatForSend(false, "Tipo de usuário inválido!", ['cmd' => "cmd_connection"]));
                 $conn->close();
                 break;
         }
@@ -365,7 +364,7 @@ class CommandController
         if ($this->jwt->getError()['data']->type == "attendant") {
             $this->customerListData($from);
         } else {
-            $from->send(UtilitiesModel::dataFormatForSend(false, "Opss! Você não tem permissão para executar essa ação.", ["cmd" => $this->msg_obj->cmd]));
+            $from->send(UtilitiesModel::dataFormatForSend(false, "Você não tem permissão para executar essa ação!", ["cmd" => $this->msg_obj->cmd]));
         }
     }
 
@@ -408,7 +407,7 @@ class CommandController
                 ));
             }
         } else {
-            $from->send(UtilitiesModel::dataFormatForSend(false, "Opss! Você não tem permissão para executar essa ação.", ["cmd" => $this->msg_obj->cmd]));
+            $from->send(UtilitiesModel::dataFormatForSend(false, "Você não tem permissão para executar essa ação!", ["cmd" => $this->msg_obj->cmd]));
         }
     }
 
@@ -470,11 +469,11 @@ class CommandController
                 if ($call_flip['attendant'] == $this->msg_obj->user_uuid) {
                     $from->send(UtilitiesModel::dataFormatForSend(false, "Você já está nessa call!", ["cmd" => $this->msg_obj->cmd]));
                 } else {
-                    $from->send(UtilitiesModel::dataFormatForSend(false, "Opss! Já existe um atendente nessa call.", ["cmd" => $this->msg_obj->cmd]));
+                    $from->send(UtilitiesModel::dataFormatForSend(false, "Já existe um atendente nessa call!", ["cmd" => $this->msg_obj->cmd]));
                 }
             }
         } else {
-            $from->send(UtilitiesModel::dataFormatForSend(false, "Opss! A sala da Call não existe ou já foi encerrada.", ["cmd" => $this->msg_obj->cmd]));
+            $from->send(UtilitiesModel::dataFormatForSend(false, "A sala da Call não existe ou já foi encerrada!", ["cmd" => $this->msg_obj->cmd]));
         }
     }
 
@@ -582,7 +581,7 @@ class CommandController
 
             $from->send(UtilitiesModel::dataFormatForSend($msg_model->getResult(), $msg_model->getError()['msg'], $data));
         } else {
-            $from->send(UtilitiesModel::dataFormatForSend(false, "Opss! Informe os campos obrigatórios.", ['cmd' => $this->msg_obj->cmd]));
+            $from->send(UtilitiesModel::dataFormatForSend(false, "Informe os campos obrigatórios!", ['cmd' => $this->msg_obj->cmd]));
         }
     }
 
@@ -602,7 +601,7 @@ class CommandController
                 ["cmd" => $this->msg_obj->cmd, 'online' => $this->session_model->checkOn($this->msg_obj->check_on_uuid)]
             ));
         } else {
-            $from->send(UtilitiesModel::dataFormatForSend(false, "Opss! Informe os campos obrigatórios.", ["cmd" => $this->msg_obj->cmd]));
+            $from->send(UtilitiesModel::dataFormatForSend(false, "Informe os campos obrigatórios!", ["cmd" => $this->msg_obj->cmd]));
         }
     }
 
@@ -618,7 +617,7 @@ class CommandController
         if ($this->jwt->getError()['data']->type == "attendant") {
             $from->send(UtilitiesModel::dataFormatForSend(true, "Sucesso!", ["cmd" => $this->msg_obj->cmd, 'qtd' => $this->qtdUsersServer()]));
         } else {
-            $from->send(UtilitiesModel::dataFormatForSend(false, "Opss! Você não tem permissão para executar essa ação.", ["cmd" => $this->msg_obj->cmd]));
+            $from->send(UtilitiesModel::dataFormatForSend(false, "Você não tem permissão para executar essa ação!", ["cmd" => $this->msg_obj->cmd]));
         }
     }
 
@@ -634,7 +633,7 @@ class CommandController
         if ($this->jwt->getError()['data']->type == "attendant") {
             $from->send(UtilitiesModel::dataFormatForSend(true, "Sucesso!", ["cmd" => $this->msg_obj->cmd, 'qtd' => count($this->session_model->getUsersRoom("client"))]));
         } else {
-            $from->send(UtilitiesModel::dataFormatForSend(false, "Opss! Você não tem permissão para executar essa ação.", ["cmd" => $this->msg_obj->cmd]));
+            $from->send(UtilitiesModel::dataFormatForSend(false, "Você não tem permissão para executar essa ação!", ["cmd" => $this->msg_obj->cmd]));
         }
     }
 
@@ -650,7 +649,7 @@ class CommandController
         if ($this->jwt->getError()['data']->type == "attendant") {
             $from->send(UtilitiesModel::dataFormatForSend(true, "Sucesso!", ["cmd" => $this->msg_obj->cmd, 'qtd' => count($this->session_model->getUsersRoom("attendant"))]));
         } else {
-            $from->send(UtilitiesModel::dataFormatForSend(false, "Opss! Você não tem permissão para executar essa ação.", ["cmd" => $this->msg_obj->cmd]));
+            $from->send(UtilitiesModel::dataFormatForSend(false, "Você não tem permissão para executar essa ação!", ["cmd" => $this->msg_obj->cmd]));
         }
     }
 }

@@ -26,6 +26,7 @@ class AppChatController extends CommandController implements MessageComponentInt
     protected $attendant_model;
     protected $client_model;
     protected $jwt;
+    protected $text_error;
 
     /**
      * Set class - informe true para exibir os logs no terminal  
@@ -40,6 +41,7 @@ class AppChatController extends CommandController implements MessageComponentInt
         $this->client_model = new ClientModel();
         $this->jwt = new JWTModel();
         $this->importCalls();
+        $this->text_error = "Algo de inesperado aconteceu, verifique se os dados enviados estão corretos e tente novamente!";
     }
 
     /**
@@ -51,13 +53,11 @@ class AppChatController extends CommandController implements MessageComponentInt
     public function onOpen(ConnectionInterface $conn): void
     {
         $this->log_model->resetLog();
-        
-        try {
 
-            $this->jwt->checkToken($conn->httpRequest);
+        try {
+            $this->jwt->checkTokenMethodGET($conn);
 
             if ($this->jwt->getResult()) {
-
                 if (!$this->session_model->checkOn($this->jwt->getError()['data']->uuid)) {
                     $this->cmd_connection($conn);
                     $this->statusServidor();
@@ -67,7 +67,7 @@ class AppChatController extends CommandController implements MessageComponentInt
                     $conn->close();
                 }
             } else {
-                $conn->send(UtilitiesModel::dataFormatForSend(false, $this->jwt->getError()["msg"], ['cmd' => "cmd_connection", 'data' => $this->jwt->getError()["data"]]));
+                $conn->send(UtilitiesModel::dataFormatForSend(false, $this->jwt->getError()["msg"], ['cmd' => "cmd_connection"]));
                 $conn->close();
             }
         } catch (\Throwable $e) {
@@ -75,7 +75,7 @@ class AppChatController extends CommandController implements MessageComponentInt
             $this->log_model->setLog($e->getMessage() . "\n");
             $conn->send(UtilitiesModel::dataFormatForSend(
                 false,
-                "Ops! Algo de inesperado aconteceu, verifique se os dados enviados estão corretos e tente novamente mais tarde.",
+                $this->text_error,
                 ["cmd" => "cmd_connection"]
             ));
             $conn->close();
@@ -97,7 +97,7 @@ class AppChatController extends CommandController implements MessageComponentInt
             $this->jwt->checkToken($from->httpRequest);
             $autor = json_decode($msg, true);
             $autor['user_uuid'] = $this->jwt->getError()['data']->uuid;
-            $this->msg_obj = json_decode(json_encode($autor));
+            $this->msg_obj = (object) $autor;
             $object = $this->msg_obj->cmd;
 
             if (method_exists($this, $object)) {
@@ -116,7 +116,7 @@ class AppChatController extends CommandController implements MessageComponentInt
             $this->log_model->setLog("Mensagem: {$e->getMessage()} \n");
             $from->send(UtilitiesModel::dataFormatForSend(
                 false,
-                "Ops! Algo de inesperado aconteceu, verifique se os dados enviados estão corretos e tente novamente mais tarde.",
+                $this->text_error,
                 ["cmd" => "error"]
             ));
         }

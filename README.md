@@ -390,29 +390,24 @@ O terminal do servidor websocket mostra alguns dados quando em execução como:
 A conexão é aberta assim que a url é acessada. O cabeçalho da requisição de conexão deverá ter o token de autorização valido ou a conexão será fechada. 
 
 <b>Rotas do servidor WebSocket:</b>
-
 >
-    ws://localhost:SERVER_CHAT_PORT/api/attendant //rota do atendente
-    Ex.: localhost:81/api/attendan
+    Rota do atendente   
+    ws://localhost:SERVER_CHAT_PORT/api?t=TOKEN 
 
-    ws://localhost:SERVER_CHAT_PORT/api/client    //rota do cliente   
-    Ex.: localhost:81/api/client
-
-    SERVER_CHAT_PORT = porta de conexão com o servidor websocket. Essa porta pode ser configurada no arquivo src\config\app.php
-
-    - Header: Deve ser informado no cabeçalho da requisição no campo Authorization um token JWT valido obtido anteriormente ex.: Authorization:  Bearer ...token...
-
-    No cabeçalho também deve está definido o tipo dos dados enviado.
-    Type: application/json   
+    Rota do cliente
+    ws://localhost:SERVER_CHAT_PORT/api?t=TOKEN     
+   
+    SERVER_CHAT_PORT = porta de conexão com o servidor websocket. Essa porta pode ser configurada no arquivo src\config\app.php.
+    TOKEN = token de autorização para conexão. 
 
     Response em caso de erro
-    Type: application/json  
+    Type: json  
     {
         "result": false,
         "error": {
             "msg": string,
             "data": {
-                "cmd": "connection"
+                "cmd": "cmd_connection"
             }
         }
     }

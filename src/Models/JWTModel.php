@@ -43,7 +43,7 @@ class JWTModel
             "nbf" => $now, # Identifica a hora em que o JWT começará a ser aceito para processamento. O valor deve ser um NumericDate.
             "exp" => $now + $exp,
             "data" => $data
-        );     
+        );
     }
 
     /**
@@ -116,7 +116,7 @@ class JWTModel
     }
 
     /**
-     * Verificar token no servidor de conexão
+     * Verificar token iformado via 
      * @param Object $request
      * @return void
      */
@@ -131,7 +131,36 @@ class JWTModel
             $this->Error['msg'] = "Conexão Autorizada!";
         } else {
             $this->Result = false;
-            $this->Error['data'] = $is_authorization;
+            $this->Error['msg'] = "Conexão Recusada: o token de autorização não foi informado corretamente.";
+        }
+    }
+
+    /**
+     * Verificar token informado via GET
+     * 
+     * @param Object $request
+     * @return void
+     */
+    public function checkTokenMethodGET(object $request)
+    {
+        $get = parse_url($request->httpRequest->getRequestTarget());
+        parse_str($get['query'], $token);
+        $now = time();
+
+        if (!empty($token['t'])) {
+            $decoded = JWT::decode($token['t'], $this->key, $this->algorithms);
+            $decoded_array = (array) $decoded;
+
+            if ((int)$now < (int)$decoded_array['exp']) {
+                $this->Result = true;
+                $this->Error['data'] = $this->getDecodeJWT($token['t'])['data'];
+                $this->Error['msg'] = "Conexão Autorizada!";
+            } else {
+                $this->Result = false;
+                $this->Error['msg'] = "Conexão Recusada: o token de autorização está vencido: " . date("d/m/Y H:i", $decoded_array['iat']) . "hs";
+            }
+        } else {
+            $this->Result = false;
             $this->Error['msg'] = "Conexão Recusada: o token de autorização não foi informado corretamente.";
         }
     }
