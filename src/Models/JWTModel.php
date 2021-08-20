@@ -111,7 +111,7 @@ class JWTModel
 
         $this->Result = true;
         $this->Error['header'] = "Authorization";
-        $this->Error['token'] = "Bearer " . $this->getToken();
+        $this->Error['token'] = $this->getToken();
         $this->Error['msg'] = "Token gerado com sucesso!";
     }
 
