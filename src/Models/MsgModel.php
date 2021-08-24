@@ -13,7 +13,6 @@ class  MsgModel
     private $tab_chat_msg;
     private $Error;
     private $Result;
-    private $params;
 
     /**
      * Declara a classe ChatMsg na inicialização

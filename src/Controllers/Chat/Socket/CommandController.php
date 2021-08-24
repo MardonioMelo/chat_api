@@ -186,6 +186,7 @@ class CommandController
                 $data['cmd'] = $this->msg_obj->cmd;
                 $data['text'] = $this->msg_obj->text;
                 $data['call'] = $this->msg_obj->call;
+                $data["type"] = $this->jwt->getError()['data']->type;
                 $call = $calls['call_' . $this->msg_obj->call];
                 $list_flip = array_flip($list_uuid);
                 $call_flip = array_flip($call);
@@ -196,16 +197,18 @@ class CommandController
 
                         foreach ($this->clients as $client) {
                             if ($list_flip[$uuid] == "resourceId_$client->resourceId" && $this->msg_obj->user_uuid != $uuid) {
-
-                                (new MsgModel())->saveMsgCall($this->msg_obj->call, $this->msg_obj->text, $uuid, $this->msg_obj->user_uuid);
                                 $online = true;
-                                $data["type"] = $this->jwt->getError()['data']->type;
+                                (new MsgModel())->saveMsgCall($this->msg_obj->call, $this->msg_obj->text, $this->msg_obj->user_uuid, $uuid);                               
                                 $client->send(UtilitiesModel::dataFormatForSend(true, "Sucesso!", $data));
                             }
                         }
                     }
                     //Resposta caso o destinatário esteja offline       
                     if ($online === false) {
+                        $get_call = $this->call_model->getCall($this->msg_obj->call);
+                        $user_dest_uuid = $data["type"] == 'client' ? $get_call->call_attendant_uuid : $get_call->call_client_uuid;
+
+                        (new MsgModel())->saveMsgCall($this->msg_obj->call, $this->msg_obj->text, $this->msg_obj->user_uuid, $user_dest_uuid);
                         $from->send(UtilitiesModel::dataFormatForSend(false, "A mensagem foi enviada, mas o usuário está offline!", ["cmd" => $this->msg_obj->cmd]));
                     }
                 } else {
@@ -461,7 +464,6 @@ class CommandController
 
                 $data = $this->call_model->getResult() ? $this->call_model->getError()['data'] : [];
                 $data['online'] =  $this->session_model->checkOn($call_flip['client']);
-                $data['cmd'] = $this->msg_obj->cmd;
 
                 $from->send(UtilitiesModel::dataFormatForSend($this->call_model->getResult(), $this->call_model->getError()['msg'], $data));
             } else {
