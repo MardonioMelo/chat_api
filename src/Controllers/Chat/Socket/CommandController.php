@@ -187,7 +187,8 @@ class CommandController
                 $data['cmd'] = $this->msg_obj->cmd;
                 $data['text'] = $this->msg_obj->text;
                 $data['call'] = $this->msg_obj->call;
-                $data["type"] = $this->jwt->getError()['data']->type;
+                $data['type'] = $this->jwt->getError()['data']->type;
+                $data['date'] = date("Y-m-d H:i:s");
                 $call = $calls['call_' . $this->msg_obj->call];
                 $list_flip = array_flip($list_uuid);
                 $call_flip = array_flip($call);
