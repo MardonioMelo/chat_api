@@ -194,11 +194,27 @@ class  CallModel
     /**
      * Consultar dados de uma call pelo ID
      *
-     * @param integer $uuid
+     * @param integer $id
      * @return null|Object
      */
     public function getCall(int $id)
+    {      
+        if ($this->tab_chat_call->findById($id)) {
+            return $this->tab_chat_call->findById($id)->data();
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Este método é igual ao método getCall porem este inicia a class ChatCall independentemente
+     *
+     * @param integer $id
+     * @return null|Object
+     */
+    public function getCall2(int $id)
     {
+        $this->tab_chat_call = new ChatCall();
         if ($this->tab_chat_call->findById($id)) {
             return $this->tab_chat_call->findById($id)->data();
         } else {

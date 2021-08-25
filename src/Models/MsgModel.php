@@ -28,8 +28,8 @@ class  MsgModel
      *
      * @param Int $call
      * @param String $text
-     * @param String $user_id
-     * @param String $user_dest_id   
+     * @param String $user_uuid
+     * @param String $user_dest_uuid   
      * @param String $drive
      * @param String $chat_type
      * @param String $attachment

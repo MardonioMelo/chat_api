@@ -3,6 +3,7 @@
 namespace Src\Controllers\Chat\Socket;
 
 use Src\Models\MsgModel;
+use Src\Models\CallModel;
 use Src\Models\UtilitiesModel;
 use Ratchet\ConnectionInterface;
 
@@ -205,11 +206,17 @@ class CommandController
                     }
                     //Resposta caso o destinatário esteja offline       
                     if ($online === false) {
-                        $get_call = $this->call_model->getCall($this->msg_obj->call);
-                        $user_dest_uuid = $data["type"] == 'client' ? $get_call->call_attendant_uuid : $get_call->call_client_uuid;
-
-                        (new MsgModel())->saveMsgCall($this->msg_obj->call, $this->msg_obj->text, $this->msg_obj->user_uuid, $user_dest_uuid);
-                        $from->send(UtilitiesModel::dataFormatForSend(false, "A mensagem foi enviada, mas o usuário está offline!", ["cmd" => $this->msg_obj->cmd]));
+                        $this->call_model = new CallModel();                                                
+                        $get_call = $this->call_model->getCall2($this->msg_obj->call);                      
+                        $user_dest_uuid = $data["type"] == 'client' ? $get_call->call_attendant_uuid : $get_call->call_client_uuid;       
+                     
+                        if($user_dest_uuid == NULL){                         
+                            (new MsgModel())->saveMsgCall($this->msg_obj->call, $this->msg_obj->text, $this->msg_obj->user_uuid, "undefined");
+                            $from->send(UtilitiesModel::dataFormatForSend(false, "Sua mensagem foi enviada, aguarde o atendimento!", ["cmd" => $this->msg_obj->cmd]));
+                        }else{
+                            (new MsgModel())->saveMsgCall($this->msg_obj->call, $this->msg_obj->text, $this->msg_obj->user_uuid, $user_dest_uuid);
+                            $from->send(UtilitiesModel::dataFormatForSend(false, "Sua mensagem foi enviada, mas o usuário está offline!", ["cmd" => $this->msg_obj->cmd]));
+                        }                     
                     }
                 } else {
                     $from->send(UtilitiesModel::dataFormatForSend(false, "Você não está na sala da Call informada!", ["cmd" => $this->msg_obj->cmd]));
