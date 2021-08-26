@@ -649,6 +649,7 @@ Obs.: Caso o processo do servidor de chat caia, as calls - atendimentos em abert
 <br>Os clientes não tem permissão para este comando.
 <br>No momento, não é permitido entrar mais de um atendente por sala de call. 
 <br>Caso, um atendente inicie a call, o mesmo não poderá sair até finalizar o atendimento. 
+<br>A hora e data estão em formato UTC então devem ser convertido para data e hora conforme local do usuário
 
 > 
     Request:
@@ -724,8 +725,9 @@ Obs.: Caso o processo do servidor de chat caia, as calls - atendimentos em abert
     }
 >
 
-<b>Troca de Mensagens</b>
+<b>Envio de Mensagens</b>
 <br>As mensagens são enviadas para os outros usuários que estão na mesma sala da call.
+<br>A hora e data das mensagens estão em formato UTC então devem ser convertido para data e hora conforme local do usuário
 
 >      
     Request:
@@ -759,6 +761,7 @@ Obs.: Caso o processo do servidor de chat caia, as calls - atendimentos em abert
                 "text": string,
                 "call": int,
                 "type": string //attendant ou client
+                "date": string //UTC
             }
         }
     }
@@ -768,6 +771,7 @@ Obs.: Caso o processo do servidor de chat caia, as calls - atendimentos em abert
 <b>Finalizar Call</b>
 <br>Os clientes não tem permissão para este comando.
 <br>Outro atendente que não esteja na call, também pode finalizar.
+<br>A hora e data estão em formato UTC então devem ser convertido para data e hora conforme local do usuário
 
 > 
     Request
@@ -844,10 +848,10 @@ Obs.: Caso o processo do servidor de chat caia, as calls - atendimentos em abert
                             "call_attendant_uuid": "string,
                             "call_objective": string,
                             "call_status": int,
-                            "call_start": string,
-                            "call_end": string,
+                            "call_start": string,  //UTC
+                            "call_end": string, //UTC
                             "call_evaluation": int,
-                            "call_update": string
+                            "call_update": string  //UTC
                         }                        
                     }...
                 }                
