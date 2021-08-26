@@ -137,7 +137,7 @@ class  MsgModel
                 $result[$key]['destiny'] = $arr->data()->chat_user_dest_uuid;
                 $result[$key]['text'] = $arr->data()->chat_text;
                 $result[$key]['type'] = $arr->data()->chat_type;
-                $result[$key]['date'] = date("d/m/Y H:i:s", strtotime($arr->data()->chat_date));
+                $result[$key]['date'] = $arr->data()->chat_date;
                 if ($uri) {
                     $result[$key]['url'] = HOME . $uri . '/' .  $arr->data()->chat_id;
                 }
@@ -152,8 +152,8 @@ class  MsgModel
      * @return string
      */
     private function saveCreate(): void
-    {
-        $this->tab_chat_msg->chat_date = date("Y-m-d H:i:s");
+    {       
+        $this->tab_chat_msg->chat_date = gmdate("Y-m-d H:i:s"); //data e hora UTC
         $id = $this->tab_chat_msg->save();
 
         if ((int)$id > 0) {
