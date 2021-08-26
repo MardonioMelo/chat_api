@@ -26,5 +26,6 @@ define("DATA_LAYER_CONFIG", [
 
 # WebSocket
 define("SERVER_CHAT_PORT", "81");
+define("JWT_EXP", 43200); //12hs - Tempo de expiração do token em segundos
 define("JWT_PUBLIC", "28ca067230b119148dbedbdea1762e5c"); // Chave publica
 define("JWT_SECRET", "188f54f9ce1af48eb6a0774e0e9dcd5a"); // Chave privada/secreta

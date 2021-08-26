@@ -99,7 +99,7 @@ class JWTController
             "uuid" => $this->user->attendant_uuid,
             "name" => $this->user->attendant_name,
             "type" => "attendant"
-        ], 43200); //12hs
+        ], JWT_EXP);
 
         if ($this->jwt->getResult()) {
 
@@ -158,7 +158,7 @@ class JWTController
             "uuid" => $this->user->client_uuid,
             "name" => $this->user->client_name,
             "type" => "client"
-        ], 43200); //12hs
+        ], JWT_EXP);
 
         if ($this->jwt->getResult()) {
             $this->result['result'] = $this->jwt->getResult();

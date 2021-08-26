@@ -51,6 +51,11 @@ Gere a chave pública e privada com o comando
     php newkey
 >
 
+Defina o tempo de expiração do token.
+>  
+    define("JWT_EXP", 43200); //12hs - Tempo de expiração do token em segundos    
+>
+
 Informe a chave publica e privada respectivamente.
 >  
     define("JWT_PUBLIC", "ffc6wwq2eb25f5asasf11a7f1b7546cb3ca"); // Chave publica

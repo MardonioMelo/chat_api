@@ -34,7 +34,7 @@ class JWTModel
      * @param integer $exp  Identifica o tempo de expiração a partir do qual o JWT não deve ser aceito para processamento. O valor deve ser um NumericDate   
      * @return void
      */
-    public function setPayload(array $data = [], int $exp = 3600): void
+    public function setPayload(array $data = [], int $exp = JWT_EXP): void
     {
         $now = time();
         $this->payload = array(
@@ -104,7 +104,7 @@ class JWTModel
      * @param integer $time_exp
      * @return void
      */
-    public function createToken(array $data = [], int $time_exp = 3600): void
+    public function createToken(array $data = [], int $time_exp = JWT_EXP): void
     {
         $this->setPayload($data, $time_exp);
         $this->setEncodeJWT();
