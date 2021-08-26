@@ -100,7 +100,7 @@ class  CallModel
                 if ($get_call) {
                     $this->tab_chat_call->call_id = (int) $data['call'];
                     $this->tab_chat_call->call_attendant_uuid = $attendant_uuid;
-                    $this->tab_chat_call->call_start = date("Y-m-d H:i:s");
+                    $this->tab_chat_call->call_start = gmdate("Y-m-d H:i:s"); //data e hora UTC
                     $this->tab_chat_call->call_status = 2;
                     $this->saveData();
                     $this->Error['data']['client_uuid'] =  $get_call->call_client_uuid;
@@ -137,7 +137,7 @@ class  CallModel
 
                 if ($get_call) {
                     $this->tab_chat_call->call_id = (int) $data['call'];
-                    $this->tab_chat_call->call_end = date("Y-m-d H:i:s");
+                    $this->tab_chat_call->call_end = gmdate("Y-m-d H:i:s"); //data e hora UTC
                     $this->tab_chat_call->call_status = 3;
                     $this->saveData();
                     $this->Error['data']['client_uuid'] =  $get_call->call_client_uuid;
@@ -287,10 +287,10 @@ class  CallModel
                 $result[$key]['attendant_uuid'] = $arr->data()->call_attendant_uuid;
                 $result[$key]['objective'] = $arr->data()->call_objective;
                 $result[$key]['status'] = $arr->data()->call_status;
-                $result[$key]['start'] = date("d/m/Y H:i:s", strtotime($arr->data()->call_start));
-                $result[$key]['end'] = date("d/m/Y H:i:s", strtotime($arr->data()->call_end));
+                $result[$key]['start'] = $arr->data()->call_start;
+                $result[$key]['end'] = $arr->data()->call_end;
                 $result[$key]['evaluation'] = $arr->data()->call_evaluation;
-                $result[$key]['update'] = date("d/m/Y H:i:s", strtotime($arr->data()->call_update));
+                $result[$key]['update'] = $arr->data()->call_update;
                 if ($url) {
                     $result[$key]['url'] = $url . '/' .  $arr->data()->call_id;
                 }
@@ -326,7 +326,7 @@ class  CallModel
      */
     private function saveData(): void
     {
-        $this->tab_chat_call->call_update = date("Y-m-d H:i:s");
+        $this->tab_chat_call->call_update = gmdate("Y-m-d H:i:s"); //data e hora UTC
         $result = $this->tab_chat_call->save();
 
         if ($result) {
