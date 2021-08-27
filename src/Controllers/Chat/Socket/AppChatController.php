@@ -72,12 +72,20 @@ class AppChatController extends CommandController implements MessageComponentInt
             }
         } catch (\Throwable $e) {
 
-            $this->log_model->setLog($e->getMessage() . "\n");
-            $conn->send(UtilitiesModel::dataFormatForSend(
-                false,
-                $this->text_error,
-                ["cmd" => "cmd_connection"]
-            ));
+            if ($e->getMessage() != "Expired token") {
+                $this->log_model->setLog($e->getMessage() . "\n");
+                $conn->send(UtilitiesModel::dataFormatForSend(
+                    false,
+                    $this->text_error,
+                    ["cmd" => "cmd_connection"]
+                ));
+            } else {
+                $conn->send(UtilitiesModel::dataFormatForSend(
+                    true,
+                    "Token expirado!",
+                    ["cmd" => "cmd_token_expired"]
+                ));
+            };
             $conn->close();
         }
     }
@@ -95,6 +103,7 @@ class AppChatController extends CommandController implements MessageComponentInt
 
         try {
             $this->jwt->checkTokenMethodGET($from);
+
             $autor = json_decode($msg, true);
             $autor['user_uuid'] = $this->jwt->getError()['data']->uuid;
             $this->msg_obj = (object) $autor;
@@ -106,19 +115,28 @@ class AppChatController extends CommandController implements MessageComponentInt
                 $from->send(UtilitiesModel::dataFormatForSend(
                     false,
                     "Comando não reconhecido. Verifique se todos os campos e dados foram informados corretamente!",
-                    ["cmd" => "error"]
+                    ["cmd" => "cmd_error"]
                 ));
             }
         } catch (\Throwable $e) {
-            $this->log_model->setLog("Ocorreu um Error \n");
-            $this->log_model->setLog("Arquivo: {$e->getFile()} \n");
-            $this->log_model->setLog("Linha: {$e->getLine()} \n");
-            $this->log_model->setLog("Mensagem: {$e->getMessage()} \n");
-            $from->send(UtilitiesModel::dataFormatForSend(
-                false,
-                $this->text_error,
-                ["cmd" => "error"]
-            ));
+
+            if ($e->getMessage() != "Expired token") {
+                $this->log_model->setLog("Ocorreu um Error \n");
+                $this->log_model->setLog("Arquivo: {$e->getFile()} \n");
+                $this->log_model->setLog("Linha: {$e->getLine()} \n");
+                $this->log_model->setLog("Mensagem: {$e->getMessage()} \n");
+                $from->send(UtilitiesModel::dataFormatForSend(
+                    false,
+                    $this->text_error,
+                    ["cmd" => "cmd_error"]
+                ));
+            } else {
+                $from->send(UtilitiesModel::dataFormatForSend(
+                    true,
+                    "Token expirado!",
+                    ["cmd" => "cmd_token_expired"]
+                ));
+            };
         }
 
         $this->statusServidor();

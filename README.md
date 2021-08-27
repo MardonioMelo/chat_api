@@ -98,6 +98,17 @@ Exemplo de envio:
             "msg": string
         }
     } 
+
+    Quando o token expirar a resposta para toda requisição será esta:    
+    {
+        "result": true,
+        "error": {
+            "msg": "Token expirado!",
+            "data": {
+                "cmd": "cmd_token_expired"
+            }
+        }
+    }    
 > 
 
 O name | lastname | avatar: são opcionais porque só serão utilizados quando a API tiver que cadastrar um usuário que não existe no db e que informou um CPF válido no campo uuid, nesse caso o name e lastname passam a ser obrigatórios. 
