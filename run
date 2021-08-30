@@ -14,7 +14,8 @@ $server = IoServer::factory(
             new AppChatController()
         )
     ),
-    SERVER_CHAT_PORT
+    SERVER_CHAT_PORT,
+    SERVER_CHAT_HOST
 );
 print_r("
     ⣶⣦⡶⣶⡾⣿⣤⣤⣤⣶⣦⠀⠀⠀⠀⠀
