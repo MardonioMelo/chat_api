@@ -41,8 +41,9 @@ Informe os dados para conexão com banco de dados.
     ]);
 >
 
-Defina a porta do servidor WS do chat
+Defina o host/ip e a porta do servidor WS do chat
 >
+    define("SERVER_CHAT_HOST", "0.0.0.0");
     define("SERVER_CHAT_PORT", "81");   
 >
 
