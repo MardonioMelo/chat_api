@@ -73,10 +73,10 @@ class  ClientModel
     /**
      * Consultar um perfil 
      *   
-     * @param int $uuid
+     * @param string $uuid
      * @return void
      */
-    public function perfilClient(int $uuid): void
+    public function perfilClient(string $uuid): void
     {
         $client = $this->getUserUUID($uuid);
         if ($client) {
