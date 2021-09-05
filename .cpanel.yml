@@ -1,0 +1,12 @@
+---
+deployment:
+  tasks:
+    - export DEPLOYPATH=/home1/gr8netadmin/public_html/chat/
+    - /bin/cp -R public $DEPLOYPATH
+    - /bin/cp -R src $DEPLOYPATH
+    - /bin/cp .env $DEPLOYPATH
+    - /bin/cp .htaccess $DEPLOYPATH
+    - /bin/cp composer.json $DEPLOYPATH
+    - /bin/cp newkey $DEPLOYPATH
+    - /bin/cp run $DEPLOYPATH
+    - /bin/cp user $DEPLOYPATH

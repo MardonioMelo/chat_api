@@ -2,4 +2,3 @@ composer.phar
 vendor/
 .vscode
 .env
-.cpanel.yml
