@@ -1,16 +1,21 @@
 <?php
 
 use Dotenv\Dotenv;
+use Symfony\Component\HttpFoundation\Session\Session;
 
 # hora local
 setlocale(LC_TIME, 'pt_BR', 'pt_BR.utf-8', 'pt_BR.utf-8', 'portuguese');
 date_default_timezone_set("Brazil/East");
 
-$dotenv = Dotenv::createImmutable("./../");
+#Iniciar sessão
+(new Session())->start();
+
+#Set dotenv
+$dotenv = Dotenv::createImmutable(__DIR__ . DIRECTORY_SEPARATOR . ".." . DIRECTORY_SEPARATOR . "..");
 $dotenv->load();
 
 # Definições padrão do sistema
-define("HOME",  $_ENV['HOME']); 
+define("HOME",  $_ENV['HOME']);
 define("API_VERSION",  $_ENV['API_VERSION']);
 
 # Definições para conexão com banco de dados
@@ -30,7 +35,7 @@ define("DATA_LAYER_CONFIG", [
 ]);
 
 # WebSocket
-define("SERVER_CHAT_HOST",$_ENV['CHAT_HOST']);
+define("SERVER_CHAT_HOST", $_ENV['CHAT_HOST']);
 define("SERVER_CHAT_PORT", $_ENV['CHAT_PORT']);
 define("JWT_EXP", $_ENV['JWT_EXP']); //12hs - Tempo de expiração do token em segundos
 define("JWT_PUBLIC", $_ENV['JWT_PUBLIC']); // Chave publica

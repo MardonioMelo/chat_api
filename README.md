@@ -2,7 +2,11 @@
 API para chat de suporte e atendimento, ainda em desenvolvimento.
 
 ## Front-end
-Este projeto não inclui front-end. Uma versão do front-end está sendo desenvolvida em Vue3 em outro repositório. Assim, você fica livre para desenvolver seu próprio front-end em qualquer tecnologia.
+Este projeto não inclui front-end. O front-end do atendente e do cliente foi desenvolvido separadamente para consumo dessa API. Assim, você fica livre para desenvolver seu próprio front-end em qualquer tecnologia.
+
+Front-end do atendente: [chat_front_end](https://github.com/MardonioMelo/chat_front_end)
+
+Front-ned do cliente: [chatbox_front_end](https://github.com/MardonioMelo/chatbox_front_end)
 
 ## Entidades
 No momento, essa API tem duas entidades sendo uma o Atendente e a outra o Cliente. A identificação de ambos dentro da API será através do UUID gerado automaticamente no momento do cadastro do user.
@@ -14,53 +18,36 @@ Após clonar este repositório, siga as instruções abaixo.
     composer install
 >
 ### Configurações
-Renomeie o arquivo src/config/exemples.app.php para "app.php" e defina as configurações a seguir.
-
-Defina o HOST da HOME
->
-    define("HOME", "http://localhost"); 
->
-
-Crie um banco de dados com nome "db_chat" ou de sua escolha. Importe para o db os scripts de tabelas em sql que estão na pasta src/db.
-
-Informe os dados para conexão com banco de dados.
->
-    define("DATA_LAYER_CONFIG", [
-        "driver" => "mysql",
-        "host" => "localhost",
-        "port" => "3306",
-        "dbname" => "db_chat",
-        "username" => "root",
-        "passwd" => "",
-        "options" => [
-            PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8",
-            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ,
-            PDO::ATTR_CASE => PDO::CASE_NATURAL
-        ]
-    ]);
->
-
-Defina o host/ip e a porta do servidor WS do chat
->
-    define("SERVER_CHAT_HOST", "0.0.0.0");
-    define("SERVER_CHAT_PORT", "81");   
->
-
-Gere a chave pública e privada com o comando
+Gere a chave pública e privada com o comando. Copie as chave pública e privada exibidas no terminal pois você vai informa-las nas configurações a seguintes.
 >
     php newkey
 >
 
-Defina o tempo de expiração do token.
->  
-    define("JWT_EXP", 43200); //12hs - Tempo de expiração do token em segundos    
+Renomeie o arquivo .env.example para ".env" e defina as configurações a seguir.
+>
+    HOME = "http://localhost"
+
+    API_VERSION = "/api"
+
+    # Definições para conexão com banco de dados
+    DB_DRIVE = "mysql"
+    DB_HOST = "localhost"
+    DB_PORT = "3306"
+    DB_NAME = "db_chat"
+    DB_USER = "root"
+    DB_PASS = ""   
+
+    # WebSocket
+    CHAT_HOST = "0.0.0.0"
+    CHAT_PORT = "82"
+    JWT_EXP = 43200 # 12hs -  Tempo de expiração do token em segundos
+    JWT_PUBLIC = "28ca067230b119148dbedbdea1762e5c" # Chave publica
+    JWT_SECRET = "188f54f9ce1af48eb6a0774e0e9dcd5a" # Chave privada/secreta
 >
 
-Informe a chave publica e privada respectivamente.
->  
-    define("JWT_PUBLIC", "ffc6wwq2eb25f5asasf11a7f1b7546cb3ca"); // Chave publica
-    define("JWT_SECRET", "ffc68a2eb25f5a1f11a7f1b7546cb3ca"); // Chave privada 
+Cadastre os atendentes pelo terminal.
+>
+    php user
 >
 ### Iniciar servidor WebSocket
 Recomenda-se rodar essa API em duas portas ou dois HOST diferentes se preferir. Sendo um para o servidor HTTP e outra para servidor WS (WebSocket). 

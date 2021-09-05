@@ -18,8 +18,7 @@ class SessionRoomController
      */
     public function __construct()
     {
-        $this->session = new Session();
-        $this->session->start();
+        $this->session = new Session();     
         $this->pre_key = 'resourceId_';
         $this->setRoom('attendant');
         $this->setRoom('client');
