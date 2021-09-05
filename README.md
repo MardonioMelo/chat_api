@@ -13,6 +13,9 @@ No momento, essa API tem duas entidades sendo uma o Atendente e a outra o Client
 
 ## Instalação
 Após clonar este repositório, siga as instruções abaixo.
+
+### Instar dependências
+Verifique suporte do seu servidor para executar o arquivo cpanel.yml de deploy. 
 ### Instar dependências
 > 
     composer install
